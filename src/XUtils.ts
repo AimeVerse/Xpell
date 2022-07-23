@@ -1,7 +1,7 @@
 
 
 
-class XUtils {
+export class XUtils {
     /**
      * create ignore list for parser to ignore spells words
      * @param list - list of reserved words (comma separated)
@@ -83,6 +83,29 @@ class XUtils {
 export const SpellDeg = {
     "half" : Math.PI / 2
 }
+
+
+
+
+export class FPSCalc  {
+    #accumulatedFPS:number = 0  //accumulated FPS
+    #his_mavg:number = 0//history moving average
+    #lastTimestamp:number  = 0//timestamp
+
+
+
+    calc() {
+        const now:number = performance.now();
+        const diff:number = now-this.#lastTimestamp
+        this.#lastTimestamp = now
+        
+        this.#his_mavg = .9 * this.#his_mavg + .1 * diff //#stable FPS with moving avarage
+        this.#accumulatedFPS = Math.floor((1 / this.#his_mavg)*1000)
+        return this.#accumulatedFPS
+    }
+
+}
+
 
 
 export default XUtils
