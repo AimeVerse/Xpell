@@ -1,27 +1,27 @@
-# XPell - Universal UI Framework
+# Xpell - Universal UI Framework
 
-XPell is a universal user interface (UI) framework for distributed application development, such application requires control on several devices with full sync but each device provides a different user interface, Spell enables real-time translation from any command (spell-command) to platform specific command (like HTML, video file, sound, lights and more).  
+Xpell is a universal user interface (UI) framework for distributed application development, such application requires control on several devices with full sync but each device provides a different user interface, Spell enables real-time translation from any command (spell-command) to platform specific command (like HTML, video file, sound, lights and more).  
 
-# XPell.js
-This package is an implementation of XPell engine for web applications (Javascript/HTML), the engine supports native HTML DOM manipulation engine (XUI) and real-time 3D engine for browsers based on THREE.JS and WebGL.
+# Xpell.js
+This package is an implementation of Xpell engine for web applications (Javascript/HTML), the engine supports native HTML DOM manipulation engine (XUI) and real-time 3D engine for browsers based on THREE.JS and WebGL.
 
 
 ## Overview
 
 ## Xpell Real-Time Interpreter 
-XPell is a rear-time interpreter that provides an interface to control both output and input devices (like screens, lights, sounds, microphones, vr headset etc').
+Xpell is a rear-time interpreter that provides an interface to control both output and input devices (like screens, lights, sounds, microphones, vr headset etc').
 
 ```   
   
 
-## XPell Engine
+## Xpell Engine
 
-XPell is a modular framework, meaning the basic engine can load external modules ad run them. 
+Xpell is a modular framework, meaning the basic engine can load external modules ad run them. 
 
-XPell objects can be identified by the X prefix.
+Xpell objects can be identified by the X prefix.
 
 ```
-  [user] --> XCommand --> [XPell]  
+  [user] --> XCommand --> [Xpell]  
                                   |  
                                   |-----> [XUIell-module-ui]  
                                   |  

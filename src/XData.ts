@@ -2,7 +2,7 @@
 
 
 /**
- * XData (XPell Global shared Variables & Objects)
+ * XData (Xpell Global shared Variables & Objects)
  */
 
 

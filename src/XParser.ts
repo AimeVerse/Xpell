@@ -2,7 +2,7 @@ import XCommand from "./XCommand"
 import * as _XC from "./XConst"
 
 /**
- * XPell Parser
+ * Xpell Parser
  */
 
 export class XParser {
@@ -12,6 +12,7 @@ export class XParser {
             elements:{
                 div: "view",
                 a: "link",
+                b:"xhtml",
                 h1: "xhtml",h2: "xhtml",h3: "xhtml",h4: "xhtml",h5: "xhtml",p: "xhtml",small:"xhtml",aside:"xhtml",span:"xhtml",
                 table:"xhtml",th:"xhtml",td:"xhtml",tr:"xhtml",thead:"xhtml",tbody:"xhtml",
                 ul:"xhtml",li:"xhtml",ol:"xhtml",
@@ -22,8 +23,14 @@ export class XParser {
             }
     }
 
+
+    static addHtml2SpellMapItem(htmlElement:string,xpellElement:string) {
+        XParser.html2XMap.elements[htmlElement] = xpellElement
+    }
+
+
     /**
-     * convert text command to XPell json command
+     * convert text command to Xpell json command
      * @param {string} txt 
      */
     static parse(txt:string):XCommand {        
@@ -54,8 +61,8 @@ export class XParser {
     }
 
 
-    static parseXPell(rawXPell) {
-        let code = rawXPell.trim();
+    static parseXpell(rawXpell) {
+        let code = rawXpell.trim();
 
         let args:Array<string> = XParser.parseArguments(code);
 
@@ -117,21 +124,21 @@ export class XParser {
 
     static xpellify(XP2Json)  {
         const tkeys = Object.keys(XP2Json)
-        let outputXPell:any = {[_XC.NODES.type]:tkeys[0]}
-        outputXPell[_XC.NODES.children] = [] // child's xpells
+        let outputXpell:any = {[_XC.NODES.type]:tkeys[0]}
+        outputXpell[_XC.NODES.children] = [] // child's xpells
         const firstObject = XP2Json[tkeys[0]]
         const foKeys = Object.keys(firstObject)
         
         foKeys.forEach(iKey => {
-            if(iKey === "_attr") { Object.assign(outputXPell,firstObject[iKey]) }
+            if(iKey === "_attr") { Object.assign(outputXpell,firstObject[iKey]) }
             else {
                 const lob ={}
                 lob[iKey]=firstObject[iKey]
                 
-                outputXPell[_XC.NODES.children].push(XParser.xpellify(lob))
+                outputXpell[_XC.NODES.children].push(XParser.xpellify(lob))
             }
         })
-        return outputXPell
+        return outputXpell
     }
 
 
@@ -188,7 +195,7 @@ export class XParser {
                 }
             }   
         }
-        console.log("output" , outputXpell);
+        //console.log("output" , outputXpell);
         
         return outputXpell
 

@@ -1,5 +1,5 @@
 /**
- * XPell Constants File
+ * Xpell Constants File
  */
 
 

@@ -6,7 +6,7 @@
  * */
 
  import * as _XEM from "../XEventManager"
- import {XPell as _X} from "../XPell"
+ import {Xpell as _X} from "../Xpell"
  import * as _XC from "../XConst"
  import XUI from "./XUI"
  import {XUtils as _XU} from "../XUtils"

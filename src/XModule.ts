@@ -5,7 +5,7 @@ import XObjectManager from "./XObjectManager";
 import * as _XC from "./XConst"
 import {XObject,XObjectPack} from "./XObject";
 
-/** XPell Module **/
+/** Xpell Module **/
 
 const XModuleOp = (opName, functionName) => { return { op_name: functionName } }
 
@@ -102,7 +102,7 @@ export  class XModule {
             let xCommand = XParser.parse(strCmd)
             return await this.execute(xCommand)
         } else {
-            throw "Unable to parse XPell Command"
+            throw "Unable to parse Xpell Command"
         }
     }
 
@@ -124,17 +124,17 @@ export  class XModule {
             console.log("STILL RUNNING FROM ENGINE -- DEPRECATED");
              const o = this.engine.om.getObjectByName(xCommand.op)
             if (o) { o.execute(xCommand) }
-            else { throw "XPell Module cant find op:" + xCommand.op }
+            else { throw "Xpell Module cant find op:" + xCommand.op }
         }
         else if (this.#om) //direct xpell injection to specific module
         {
             const o = this.#om.getObjectByName(xCommand.op)
             //console.log(o);
             if (o) { o.execute(xCommand) }
-            else { throw "XPell Module cant find op:" + xCommand.op }
+            else { throw "Xpell Module cant find op:" + xCommand.op }
         }
         else {
-            throw "XPell Module cant find op:" + xCommand.op
+            throw "Xpell Module cant find op:" + xCommand.op
         }
 
 

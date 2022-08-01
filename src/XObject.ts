@@ -47,7 +47,7 @@ export class XObject {
     //get _id() {return this.#_id}
 
     /**
-     * occurs on XPell.init
+     * occurs on Xpell.init
      * must override
      */
     init() {
@@ -83,7 +83,7 @@ export class XObject {
 
 
     /**
-     * triggers from XPell frame
+     * triggers from Xpell frame
      * @param {int} frameNumber 
      * 
      * 

@@ -2,7 +2,7 @@
 import { IXObjectData, XObjectPack } from "./src/XObject"
 import { XImage, XLabel } from "./src/xui/XUICoreObjects"
 import XUIObject from "./src/xui/XUIObject"
-import {XPell as _x,XUI,XUtils as _XU,XData as _XD,XParser} from "./xpell"
+import {Xpell as _x,XUI,XUtils as _XU,XData as _XD,XParser} from "./xpell"
 
 console.log(_x.version)
 
@@ -176,10 +176,9 @@ const _app = {
 // XUI.vm.showView("hello-view")
 
 
-const xml = `<svg>
-<circle cx='40' cy='40' r='36' stroke='blue' stroke-width='1'></circle>
-</svg>`
+const xml = `<sub>ho</sub>`
 
+XParser.addHtml2SpellMapItem("sub","xhtml")
 const spltxt = XParser.xmlString2Xpell(xml)
 
 if(spltxt) {

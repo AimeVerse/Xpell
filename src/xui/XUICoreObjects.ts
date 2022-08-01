@@ -1,5 +1,5 @@
 import XUIObject from "./XUIObject";
-import {XPell as _X} from "../XPell"
+import {Xpell as _X} from "../Xpell"
 import * as _XC from "../XConst"
 import { IXObjectData,XObjectPack } from "../XObject";
 

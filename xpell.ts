@@ -1,4 +1,4 @@
-export {default as XPell} from "./src/XPell"
+export {default as Xpell} from "./src/Xpell"
 export {XUtils} from "./src/XUtils"
 export {XData} from "./src/XData"
 export {XParser} from "./src/XParser"

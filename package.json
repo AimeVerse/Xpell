@@ -1,7 +1,7 @@
 {
   "name": "xpell",
-  "version": "1.0.23",
-  "description": "XPell UI JS Framework",
+  "version": "1.0.25",
+  "description": "Xpell UI JS Framework",
   "files": [
     "dist",
     "src",
@@ -19,7 +19,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "vite .",
     "build": "vite build",
-    "publish": "vite build && npm publish"
+    "pub": "vite build && npm publish"
   },
   "author": "",
   "license": "ISC",

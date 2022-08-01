@@ -1,5 +1,5 @@
 /**
- * XPell - Universal User Interface Platform
+ * Xpell - Universal User Interface Platform
  * Javascript Edition
  * 
  * @description Universal User Interface (UI) Engine for Javascript supporting devices & browsers
@@ -30,7 +30,7 @@ import {XEventManager as XEM,XEventList,XEvent} from  "./XEventManager"
 
 
 
-class XPellMainModule extends XModule {
+class XpellMainModule extends XModule {
 
     
 
@@ -40,7 +40,7 @@ class XPellMainModule extends XModule {
     }
 
     _info(xcmd:XCommand) {
-        console.log("XPell Engine V:" + XPell.version)
+        console.log("Xpell Engine V:" + Xpell.version)
     }
 
     _loadModule(xcmd:XCommand) {
@@ -48,7 +48,7 @@ class XPellMainModule extends XModule {
     }
 }
 
-class XPellEngine {
+class XpellEngine {
     version : string
     engineId: string
     frameNumber: number
@@ -91,7 +91,7 @@ class XPellEngine {
 
 
     load() {
-        this.loadModule(new XPellMainModule({}))
+        this.loadModule(new XpellMainModule({}))
     }
 
     info(){
@@ -109,7 +109,7 @@ class XPellEngine {
             let scmd = XParser.parse(stringXCommand)
             return this.execute(scmd)
         } else {
-            throw "Unable to parse XPell command"
+            throw "Unable to parse Xpell command"
         }
     }
 
@@ -121,7 +121,7 @@ class XPellEngine {
         if(xcmd && xcmd.module && this.#modules[xcmd.module]) {
             return this.#modules[xcmd.module].execute(xcmd)
         } else {
-            throw "XPell module " + xcmd.module + " not loaded"
+            throw "Xpell module " + xcmd.module + " not loaded"
         }
     }
 
@@ -140,7 +140,7 @@ class XPellEngine {
         })
         XData.variables["frame-number"] = this.frameNumber
         XData.variables["fps"] = this.#fpsCalc.calc()
-        requestAnimationFrame(() => {XPell.onFrame()})         
+        requestAnimationFrame(() => {Xpell.onFrame()})         
     }
 
 
@@ -149,13 +149,13 @@ class XPellEngine {
     }
 
     start() {
-        console.log("Starting XPell")
+        console.log("Starting Xpell")
         this.onFrame()
     }
 
 }
 
 
-export const XPell = new XPellEngine()
+export const Xpell = new XpellEngine()
 
-export default XPell
+export default Xpell

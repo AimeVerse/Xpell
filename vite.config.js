@@ -24,7 +24,7 @@ export default {
         // Provide global variables to use in the UMD build
         // for externalized deps
         globals: {
-          XPell: '_X'
+          Xpell: '_X'
         }
       }
     }

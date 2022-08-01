@@ -1,5 +1,5 @@
 /**
- * XPell-logger
+ * Xpell-logger
  */
 
 

@@ -46,7 +46,7 @@ export class XUIObject extends XObject {
 
 
     /**
-     * occurs on XPell.init
+     * occurs on Xpell.init
      * @override 
      */
     init() {
@@ -175,7 +175,7 @@ export class XUIObject extends XObject {
 
 
     /**
-     * triggers from XPell main engine onFrame
+     * triggers from Xpell main engine onFrame
      * @param {int} frameNumber 
      * 
      * object that extends XUIObject can override this method and call super.onFrame
