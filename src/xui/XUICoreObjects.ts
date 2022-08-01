@@ -213,12 +213,32 @@ export class XLabel extends XUIObject {
 export class XHTML extends XUIObject {    
     constructor(data) {
         const defaults = {
-            [_XC.NODES.type]:"label",
-            _html_tag:"label",
-            class:"",
+            [_XC.NODES.type]:"xhtml",
+            _html_tag: (data["_html_tag"]) ?data["_html_tag"] : "div"
 
         }
         super(data,defaults);
+    }
+}
+
+export class XSVG extends XUIObject {
+    private _svg_data: string;    
+
+    constructor(data) {
+        const defaults = {
+            [_XC.NODES.type]:"svg",
+            _html_tag: "svg",
+            _svg_data: ""
+
+        }
+        super(data,defaults);
+    }
+
+    async onCreate() {
+        const dom = this.getDOMObject()
+        console.log(this._svg_data)
+        dom.insertAdjacentHTML("beforeend",this._svg_data);
+        
     }
 }
 
@@ -277,7 +297,8 @@ export class XUIObjects extends XObjectPack {
             "list": XList,
             "form":XForm,
             "webcam":XWebcam,
-            "xhtml":XHTML
+            "xhtml":XHTML,
+            "svg":XSVG
             // "grid" : TO-DO,
             // "table": TO-DO,
         }

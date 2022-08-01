@@ -7,7 +7,7 @@
  * XObject json nodes
  */
  export const NODES = {
-    type: "_type", // spell object type
+    type: "_type", // xpell object type
     children: "_children" //child objects
 }
 

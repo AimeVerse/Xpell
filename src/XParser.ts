@@ -11,9 +11,11 @@ export class XParser {
     private static html2XMap = {
             elements:{
                 div: "view",
-                span: "view",
                 a: "link",
-                h1: "xhtml",h2: "xhtml",h3: "xhtml",h4: "xhtml",h5: "xhtml",p: "xhtml",img: "image"
+                h1: "xhtml",h2: "xhtml",h3: "xhtml",h4: "xhtml",h5: "xhtml",p: "xhtml",small:"xhtml",aside:"xhtml",span:"xhtml",
+                table:"xhtml",th:"xhtml",td:"xhtml",tr:"xhtml",thead:"xhtml",tbody:"xhtml",
+                ul:"xhtml",li:"xhtml",ol:"xhtml",
+                img: "image",
             },
             attributes:{
                 id:"_id"
@@ -133,18 +135,19 @@ export class XParser {
     }
 
 
-    static xmlString2XPell(xmlString) {
+    static xmlString2Xpell(xmlString) {
         const parser = new DOMParser();
         const xmlDoc = parser.parseFromString(xmlString,"text/xml");
         if(xmlDoc.childNodes.length>0) {
-            return XParser.xml2XPell(xmlDoc.childNodes[0])
+            return XParser.xml2Xpell(xmlDoc.childNodes[0])
         }
   
     }
 
-    static xml2XPell  (xmlNode)  {
+    static xml2Xpell  (xmlNode)  {
         //Conversation map for elements and attributes
         const cMap = XParser.html2XMap
+        let scanChildren = true
         let outputXpell = {}
         outputXpell[_XC.NODES.children] = []
         const root_name = xmlNode.nodeName
@@ -163,14 +166,29 @@ export class XParser {
         if(outputXpell[_XC.NODES.type] == "xhtml") {
             outputXpell["_html_tag"] = _html_tag_attr
         }
-        if(xmlNode?.childNodes.length>0) {
+        else if(outputXpell[_XC.NODES.type] == "svg" ) {
             for(let i=0;i<xmlNode.childNodes.length;++i)  {
                 const node = (xmlNode.childNodes[i])
                 if(!node.nodeName.startsWith("#")) {
-                    outputXpell[_XC.NODES.children].push(XParser.xml2XPell(node))
+                    const str = new XMLSerializer().serializeToString(node)
+                    console.log(str);
+                    outputXpell["_svg_data"] =  str
+                }
+                
+            }  
+                
+            
+            scanChildren = false
+        }
+        if(scanChildren &&  xmlNode?.childNodes.length>0) {
+            for(let i=0;i<xmlNode.childNodes.length;++i)  {
+                const node = (xmlNode.childNodes[i])
+                if(!node.nodeName.startsWith("#")) {
+                    outputXpell[_XC.NODES.children].push(XParser.xml2Xpell(node))
                 }
             }   
         }
+        console.log("output" , outputXpell);
         
         return outputXpell
 

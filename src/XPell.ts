@@ -60,7 +60,7 @@ class XPellEngine {
     ts: number
 
     constructor() {
-        this.version = "1.0.0"
+        this.version = "1.0.23"
         this.engineId = XUtils.guid()
         this.frameNumber = 0
         this.#fpsCalc = new FPSCalc()

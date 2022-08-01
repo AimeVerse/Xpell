@@ -13,10 +13,10 @@ class XEventManager {
      */
     static fire(type_arg, options?){
         const se = new XEvent(type_arg,options)
-        XEventManager.fireSpellEvent(se)
+        XEventManager.fireXpellEvent(se)
     }
 
-    static fireSpellEvent(spell_event) {
+    static fireXpellEvent(spell_event) {
         //console.log('fire',spell_event)
         document.dispatchEvent(spell_event)
     }

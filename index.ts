@@ -2,7 +2,7 @@
 import { IXObjectData, XObjectPack } from "./src/XObject"
 import { XImage, XLabel } from "./src/xui/XUICoreObjects"
 import XUIObject from "./src/xui/XUIObject"
-import {XPell as _x,XUI,XUtils as _XU,XData as _XD} from "./xpell"
+import {XPell as _x,XUI,XUtils as _XU,XData as _XD,XParser} from "./xpell"
 
 console.log(_x.version)
 
@@ -113,6 +113,7 @@ XUI.importObjects(CardObjects)
 
 _x.loadModule(XUI)
 
+console.log(_x.version);
 
 
 _x.start()
@@ -153,12 +154,7 @@ const _app = {
             _type: "view",
             style:"",
             _id: "hello-view",
-            animation: "fade",
-            _children:[{
-                _type:"xhtml",
-                _html_tag:"h4",
-                text:"hi"
-            }]
+            animation: "fade"
         }
     },
     defaults: {
@@ -175,32 +171,45 @@ const _app = {
 
 
 
-XUI.loadApp(_app)
+// XUI.loadApp(_app)
 
-XUI.vm.showView("hello-view")
+// XUI.vm.showView("hello-view")
 
 
+const xml = `<svg>
+<circle cx='40' cy='40' r='36' stroke='blue' stroke-width='1'></circle>
+</svg>`
 
-setTimeout(() => {
-        console.log("ok");
-        let list = _XD.objects["players-list"]
-        list.push({id:4,name:"Keren",img:imgpai})
-}, 3000);
+const spltxt = XParser.xmlString2Xpell(xml)
 
-setTimeout(() => {
+if(spltxt) {
+    const spl = XUI.create(spltxt)
+    const dom = spl.getDOMObject()
+    document.getElementById("player")?.append(spl.getDOMObject())
+}
+console.log(spltxt);
+
+
+// setTimeout(() => {
+//         console.log("ok");
+//         let list = _XD.objects["players-list"]
+//         list.push({id:4,name:"Keren",img:imgpai})
+// }, 3000);
+
+// setTimeout(() => {
     
-        console.log("delete");
-        let list = _XD.objects["players-list"]
-        const p = list.pop()
+//         console.log("delete");
+//         let list = _XD.objects["players-list"]
+//         const p = list.pop()
 
-        _XD.objects["players-list"] = list
-        console.log(list,p);
+//         _XD.objects["players-list"] = list
+//         console.log(list,p);
         
         
     
 
 
-}, 6000);
+// }, 6000);
 
 
 
