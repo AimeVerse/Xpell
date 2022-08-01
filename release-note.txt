@@ -1,0 +1,7 @@
+
+
+1.0.083
+---------
+
+- xhtml object
+- basic display block "show"
