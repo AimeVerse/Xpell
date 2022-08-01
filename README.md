@@ -23,17 +23,17 @@ Xpell objects can be identified by the X prefix.
 ```
   [user] --> XCommand --> [Xpell]  
                                   |  
-                                  |-----> [XUIell-module-ui]  
+                                  |-----> [XUI] -> UI Module  (HTML)
                                   |  
-                                  |-----> [spell-module-3d]  
+                                  |-----> [X3D] -> 3D Module (three.js)  
                                   |  
-                                  |-----> [spell-module]  
+                                  |-----> [xpell-module]  -> Base Module
 ```   
 
-The way to communicate with Spell engine is to send SpellCommand that will be analyzed and activate the appropriate module:
+The way to communicate with Xpell engine is to send XCommand that will be analyzed and activate the appropriate module:
 
 ```
-  [spell-command]
+  [XCommand]
      - module (the name of the module to run the command)
      - created (date/timestamp of the command)
      - op (the operation (method/function) to run within the module)
@@ -43,7 +43,7 @@ The way to communicate with Spell engine is to send SpellCommand that will be an
      = on-event (event to run the command)
 ```
 
-SpellCommand can be send in several formats:
+XCommand can be send in several formats:
 
 - CLI style    
   >   module-name op-name on-frame:"frame-number" param1:"param1-value" param2:"param2-value" ...
@@ -59,9 +59,9 @@ SpellCommand can be send in several formats:
   }
 
 
-Creating Spell Object
+Creating Xpell Objects
 -----------------------
-Spell objects can be created by calling the interpreter with create command, the parameters is the object meta json:
+Xpell objects can be created by calling the interpreter with create command, the parameters is the object meta json:
 {
   _id:"object-id",
   _type:"object-type",
@@ -70,29 +70,9 @@ Spell objects can be created by calling the interpreter with create command, the
 
 
 
-- spell
-  - object-manager (om)
-  - event-manager (em)
-  - spell-command
-  - spell-module
-  - spell-ui
-    - spell-ui-engine
-    - spell-ui-module
-    - spell-ui-object
-    - spell-core-objects
-  - spell3d
-    - spell3d-engine
-    - spell3d-world
-    - spell3d-object
-      - spell-primitives
-      - spell-gltf
 
 
 
 
 
 
-
-Credits & References:
-
-THREE.JS: [threejs.org](https://threejs.org/)

@@ -111,6 +111,10 @@ export class XUIObject extends XObject {
         return this._html;
     }
 
+    attach(parentElementId:string){
+        document.getElementById(parentElementId)?.append(this.getDOMObject())
+        this.onMount()
+    }
    
     
 

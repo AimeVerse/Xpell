@@ -1,11 +1,11 @@
 {
   "name": "xpell",
-  "version": "1.0.25",
+  "version": "1.0.26",
   "description": "Xpell UI JS Framework",
   "files": [
     "dist",
     "src",
-    "xpell.ts"
+    "XLib.ts"
   ],
   "main": "./dist/xpell.umd.js",
   "module": "./dist/xpell.es.js",
@@ -22,7 +22,11 @@
     "pub": "vite build && npm publish"
   },
   "author": "",
-  "license": "ISC",
+  "license": "GPL-3",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fridman-tamir/Xpell"
+  },
   "devDependencies": {
     "@types/node": "^18.0.6",
     "@types/three": "^0.142.0",

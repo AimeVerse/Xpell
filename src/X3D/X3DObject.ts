@@ -41,7 +41,7 @@ class X3DObject extends XObject {
     private _current_action: THREE.AnimationMixer
     xNanoCommands: { move: (ns_cmd: any) => void; position: (ns_cmd: any) => void; scale: (ns_cmd: any) => void; rotation: (ns_cmd: any) => void; spin: (ns_cmd: any) => void; "stop-spin": (ns_cmd: any) => void; log: (ns_cmd: any) => void; rotate: (ns_cmd: any) => void; "rotate-toward": (ns_cmd: any) => void; play: (ns_cmd: any) => void; "follow-joystick": (ns_cmd: any) => void; "follow-keypoint": (ns_cmd: any) => void; "follow-path": (ns_cmd: any) => void; hover: (ns_cmd: any) => void }
 
-    static get_spell_data(three_obj:THREE.Object3D, defaults) {
+    static getXData(three_obj:THREE.Object3D, defaults) {
         let _spell_data = {
             _id: three_obj.name,
             [_XC.NODES.type]: "spell3d-object",
@@ -59,7 +59,7 @@ class X3DObject extends XObject {
     }
 
     static get_from_three_object(three_obj, defaults) {
-        let _spell_data:any = X3DObject.get_spell_data(three_obj, defaults)
+        let _spell_data:any = X3DObject.getXData(three_obj, defaults)
         return new X3DObject(_spell_data)
     }
 

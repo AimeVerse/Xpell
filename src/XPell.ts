@@ -48,6 +48,9 @@ class XpellMainModule extends XModule {
     }
 }
 
+/**
+ * @class  Xpell main engine
+ */
 class XpellEngine {
     version : string
     engineId: string
@@ -60,7 +63,7 @@ class XpellEngine {
     ts: number
 
     constructor() {
-        this.version = "1.0.23"
+        this.version = "0.0.1"
         this.engineId = XUtils.guid()
         this.frameNumber = 0
         this.#fpsCalc = new FPSCalc()
@@ -155,7 +158,9 @@ class XpellEngine {
 
 }
 
-
+/**
+ * Xpell Engine instance
+ */
 export const Xpell = new XpellEngine()
 
 export default Xpell

@@ -234,11 +234,9 @@ export class XSVG extends XUIObject {
         super(data,defaults);
     }
 
-    async onCreate() {
+    async onMount() {
         const dom = this.getDOMObject()
-        console.log(this._svg_data)
         dom.insertAdjacentHTML("beforeend",this._svg_data);
-        
     }
 }
 

@@ -178,7 +178,6 @@ export class XParser {
                 const node = (xmlNode.childNodes[i])
                 if(!node.nodeName.startsWith("#")) {
                     const str = new XMLSerializer().serializeToString(node)
-                    console.log(str);
                     outputXpell["_svg_data"] =  str
                 }
                 
@@ -195,8 +194,6 @@ export class XParser {
                 }
             }   
         }
-        //console.log("output" , outputXpell);
-        
         return outputXpell
 
     }

@@ -2,7 +2,7 @@
 import { IXObjectData, XObjectPack } from "./src/XObject"
 import { XImage, XLabel } from "./src/xui/XUICoreObjects"
 import XUIObject from "./src/xui/XUIObject"
-import {Xpell as _x,XUI,XUtils as _XU,XData as _XD,XParser} from "./xpell"
+import {Xpell as _x,XUI,XUtils as _XU,XData as _XD,XParser} from "./XLib"
 
 console.log(_x.version)
 
@@ -176,17 +176,19 @@ const _app = {
 // XUI.vm.showView("hello-view")
 
 
-const xml = `<sub>ho</sub>`
+const xml = `<svg>
+<circle cx="400" cy="400" r="300" stroke="#707073" fill="none"  stroke-width="1px"></circle>
+</svg>`
 
-XParser.addHtml2SpellMapItem("sub","xhtml")
+//XParser.addHtml2SpellMapItem("sub","xhtml")
 const spltxt = XParser.xmlString2Xpell(xml)
 
 if(spltxt) {
     const spl = XUI.create(spltxt)
-    const dom = spl.getDOMObject()
-    document.getElementById("player")?.append(spl.getDOMObject())
+    spl.attach("player")
+    
 }
-console.log(spltxt);
+//console.log(spltxt);
 
 
 // setTimeout(() => {
