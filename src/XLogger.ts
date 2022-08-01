@@ -26,5 +26,5 @@
     
 }
 
-const XLogger = new XLoggerEngine()
+export const XLogger = new XLoggerEngine()
 export default XLogger

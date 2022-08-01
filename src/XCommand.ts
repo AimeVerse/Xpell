@@ -4,7 +4,7 @@ import XUtils from "./XUtils"
 
 
 
-export default class XCommand {
+export  class XCommand {
     id:string
     module: string 
     op:string 
@@ -19,3 +19,5 @@ export default class XCommand {
         this.dateCreated = Date.now()
     }
 }
+
+export default  XCommand

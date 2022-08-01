@@ -19,7 +19,7 @@ export class XObject {
     
     _id: string
     id: string | null
-    name:string | null
+    name:string 
     _ignore:{}
 
     constructor(data:IXObjectData , defaults?:{} ) {

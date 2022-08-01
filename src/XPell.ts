@@ -22,7 +22,7 @@ import {XUtils,FPSCalc} from "./XUtils"
 import XData from "./XData"
 import XParser from "./XParser"
 import XModule from "./XModule"
-import {XEventManager as XEM,XEvents,XEvent} from  "./XEventManager"
+import {XEventManager as XEM,XEventList,XEvent} from  "./XEventManager"
 
 
 
@@ -66,7 +66,7 @@ class XPellEngine {
         this.#fpsCalc = new FPSCalc()
         this.parser = XParser
         this.#modules = {}
-        XEM.fire(XEvents.ENGINE_INIT)
+        XEM.fire(XEventList.ENGINE_INIT)
         //this.load()
     }
 
@@ -139,10 +139,6 @@ class XPellEngine {
             }
         })
         XData.variables["frame-number"] = this.frameNumber
-        
-        
-        
-
         XData.variables["fps"] = this.#fpsCalc.calc()
         requestAnimationFrame(() => {XPell.onFrame()})         
     }

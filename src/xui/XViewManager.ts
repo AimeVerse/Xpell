@@ -17,7 +17,7 @@
  
  
  
- class XViewManager {
+ export class XViewManager {
      rawViews: Record<string,IXObjectData> ={}
      views:Record<string,XView>= {}
      activeView: string  
@@ -37,7 +37,7 @@
      init() {
          //handle back functionality for browser
          window.addEventListener('hashchange', this.hashchange)
-         _XEM.XEventManager.fire(_XEM.XEvents.vm_loaded)
+         _XEM.XEventManager.fire(_XEM.XEventList.vm_loaded)
      }
  
      /**

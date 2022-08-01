@@ -8,6 +8,18 @@ import * as _XC from "./XConst"
 export class XParser {
 
 
+    private static html2XMap = {
+            elements:{
+                div: "view",
+                span: "view",
+                a: "link",
+                h1: "xhtml",h2: "xhtml",h3: "xhtml",h4: "xhtml",h5: "xhtml",p: "xhtml",img: "image"
+            },
+            attributes:{
+                id:"_id"
+            }
+    }
+
     /**
      * convert text command to XPell json command
      * @param {string} txt 
@@ -98,8 +110,6 @@ export class XParser {
 
             }
         }
-
-
         return args;
     }
 
@@ -134,23 +144,11 @@ export class XParser {
 
     static xml2XPell  (xmlNode)  {
         //Conversation map for elements and attributes
-        const cMap = {
-                elements:{
-                    div: "view",
-                    span: "view",
-                    img: "image",
-                    a: "link",
-                    h2: "view",
-                    p: "view",
-                    input: "text"
-                },
-                attributes:{
-                    id:"_id"
-                }
-        }
+        const cMap = XParser.html2XMap
         let outputXpell = {}
         outputXpell[_XC.NODES.children] = []
         const root_name = xmlNode.nodeName
+        const _html_tag_attr = xmlNode.nodeName
         outputXpell[_XC.NODES.type] = (cMap.elements[root_name]) ?cMap.elements[root_name] : root_name  //html element to xpell object name
         if(xmlNode.attributes) {
             for(let i=0;i<xmlNode.attributes.length;++i)  {
@@ -161,6 +159,9 @@ export class XParser {
         }
         if (xmlNode?.firstChild?.nodeValue) {
             outputXpell["text"] = xmlNode?.firstChild.nodeValue.trim();
+        }
+        if(outputXpell[_XC.NODES.type] == "xhtml") {
+            outputXpell["_html_tag"] = _html_tag_attr
         }
         if(xmlNode?.childNodes.length>0) {
             for(let i=0;i<xmlNode.childNodes.length;++i)  {

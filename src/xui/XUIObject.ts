@@ -145,7 +145,7 @@ export class XUIObject extends XObject {
 
     show() {
         if(this._dom_object) {
-            this._dom_object.style.display = this._base_display 
+            this._dom_object.style.display = "show"
         }
     }
 

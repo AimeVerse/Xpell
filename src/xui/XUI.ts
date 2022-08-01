@@ -9,7 +9,7 @@
  import XUIObject from "./XUIObject"
  import XViewManager from "./XViewManager"
  import XModule from "../XModule"
- import {XEventManager,XEvents} from  "../XEventManager"
+ import {XEventManager,XEventList} from  "../XEventManager"
  import XUICoreObjects from "./XUICoreObjects"
 //  import SpellDashboardObjects from "./spell-dashboard"
 //  import SpellMoveControls  from "./sui-objects/spell-move-controls";
@@ -42,7 +42,7 @@
              this.vm["parentHTMLElement"] = xpellApp.player.html_element
          }
          this.vm.addRawViews(xpellApp.views);
-         XEventManager.fire(XEvents.app_loaded)
+         XEventManager.fire(XEventList.app_loaded)
      }
  
      openUrl(url, target = null) {

@@ -18,6 +18,6 @@
 }
 
 //singletone
-const XData = new XDataSource()
+export const XData = new XDataSource()
 
 export default XData

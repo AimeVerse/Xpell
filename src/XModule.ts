@@ -9,7 +9,7 @@ import {XObject,XObjectPack} from "./XObject";
 
 const XModuleOp = (opName, functionName) => { return { op_name: functionName } }
 
-export default class XModule {
+export  class XModule {
 
     _id:string 
     name: string;
@@ -163,7 +163,7 @@ export default class XModule {
      * The object class should be like XObjects with static implementation of getObjects() method
      * @param {XObjects} xObjectPack 
      */
-    importObjects(xObjectPack:any) {
+    importObjects(xObjectPack:XObjectPack | any) {
         this.#om.registerObjects(xObjectPack.getObjects())
     }
 
@@ -172,3 +172,4 @@ export default class XModule {
 }
 
 
+export default  XModule

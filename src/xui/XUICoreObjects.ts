@@ -156,9 +156,17 @@ export class XTextField extends XUIObject {
         }
         super(data,defaults);
     }
-
-    
-
+}
+export class XInput extends XUIObject {
+    constructor(data) {
+        const tag = "input"
+        const defaults = {
+            [_XC.NODES.type] : tag,
+            class:"x" + tag,
+            _html_tag:"input"
+        }
+        super(data,defaults);
+    }
 }
 
 export class XTextArea extends XUIObject {
@@ -191,8 +199,7 @@ export class XLink extends XUIObject {
     }
 }
 
-export class XLabel extends XUIObject {
-    
+export class XLabel extends XUIObject {    
     constructor(data) {
         const defaults = {
             [_XC.NODES.type]:"label",
@@ -201,10 +208,18 @@ export class XLabel extends XUIObject {
         }
         super(data,defaults);
     }
+}
 
-    
+export class XHTML extends XUIObject {    
+    constructor(data) {
+        const defaults = {
+            [_XC.NODES.type]:"label",
+            _html_tag:"label",
+            class:"",
 
-   
+        }
+        super(data,defaults);
+    }
 }
 
 export class XButton extends XUIObject {
@@ -217,9 +232,6 @@ export class XButton extends XUIObject {
         }
         super(data,defs);        
     }
-
-  
-
     setOnclick(fun:CallableFunction)
     {
         this.onClick = fun;
@@ -250,7 +262,7 @@ export class XList extends XUIObject {
 
 
 
-export class XUIObjects implements XObjectPack {
+export class XUIObjects extends XObjectPack {
     static getObjects() {
         return {
             "view":XView,
@@ -258,12 +270,14 @@ export class XUIObjects implements XObjectPack {
             "link" :XLink,
             "button" :XButton,
             "text" : XTextField,
+            "input":XInput,
             "textarea":XTextArea,
             "video" : XVideo,
             "image" : XImage,
             "list": XList,
             "form":XForm,
-            "webcam":XWebcam
+            "webcam":XWebcam,
+            "xhtml":XHTML
             // "grid" : TO-DO,
             // "table": TO-DO,
         }

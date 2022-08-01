@@ -1,11 +1,24 @@
 {
   "name": "xpell",
-  "version": "1.0.0",
+  "version": "1.0.083",
   "description": "XPell UI JS Framework",
-  "main": "XPellLib.js",
+  "files": [
+    "dist",
+    "src",
+    "xpell.ts"
+  ],
+  "main": "./dist/xpell.umd.js",
+  "module": "./dist/xpell.es.js",
+  "exports": {
+    ".": {
+      "import": "./dist/xpell.es.js",
+      "require": "./dist/xpell.umd.js"
+    }
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "vite ."
+    "dev": "vite .",
+    "build": "vite build"
   },
   "author": "",
   "license": "ISC",
@@ -13,5 +26,8 @@
     "@types/node": "^18.0.6",
     "@types/three": "^0.142.0",
     "vite": "^3.0.2"
+  },
+  "dependencies": {
+    "three": "^0.143.0"
   }
 }

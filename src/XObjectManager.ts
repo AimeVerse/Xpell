@@ -1,7 +1,7 @@
 import XEM from "./XEventManager"
-import XObject from "./XObject";
+import XObject, { XObjectPack } from "./XObject";
 
-class XObjectManager {
+export class XObjectManager {
     objectClasses: {};
     xObjects: {};
     namesIndex: {};
@@ -20,7 +20,7 @@ class XObjectManager {
      *
      * @param xObjects - key value list -> {"view":XView,...}
      */
-    registerObjects(xObjects:{}):void {
+    registerObjects(xObjects:XObjectPack):void {
         let names = Object.keys(xObjects)
         names.forEach(name => this.registerObject(name, xObjects[name]))
     }

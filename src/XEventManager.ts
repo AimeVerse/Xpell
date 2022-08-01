@@ -1,5 +1,5 @@
 
-export const XEvents = {
+export const XEventList = {
     ENGINE_INIT:"xpell-init",
     app_loaded:"xapp-loaded",
     vm_loaded:"xvm-loaded",
