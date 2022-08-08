@@ -1,9 +1,11 @@
-# Xpell - Universal UI Framework
+# Xpell - Real-Time User Interface (UI) Engine
 
-Xpell is a universal user interface (UI) framework for distributed application development, such application requires control on several devices with full sync but each device provides a different user interface, Spell enables real-time translation from any command (spell-command) to platform specific command (like HTML, video file, sound, lights and more).  
+Xpell is a real-time user interface (UI) framework for frontend application development, such application requires control on several modules like dom management, 3D engine and AI engine to run within high FPS.
+
+Xpell enables real-time translation from any command (XCommand) to platform specific command (like HTML, video file, sound, lights and more).  
 
 # Xpell.js
-This package is an implementation of Xpell engine for web applications (Javascript/HTML), the engine supports native HTML DOM manipulation engine (XUI) and real-time 3D engine for browsers based on THREE.JS and WebGL.
+This package is an implementation of Xpell engine for web applications (/Typescript/Javascript/HTML), the engine supports native HTML DOM manipulation engine (XUI) and real-time 3D (X3D) engine for browsers based on THREE.JS and WebGL.
 
 
 ## Overview
@@ -11,7 +13,7 @@ This package is an implementation of Xpell engine for web applications (Javascri
 ## Xpell Real-Time Interpreter 
 Xpell is a rear-time interpreter that provides an interface to control both output and input devices (like screens, lights, sounds, microphones, vr headset etc').
 
-```   
+
   
 
 ## Xpell Engine
@@ -68,11 +70,10 @@ Xpell objects can be created by calling the interpreter with create command, the
   style:"html style",
 }
 
-
-
-
-
-
-
-
-
+ 
+ @description devices & browsers
+ @author Fridman Fridman <tamirf@yahoo.com>
+ @since  22/07/2022
+ @Copyright Fridman Tamir 2022, all right reserved
+ 
+ @license  GPL-3 
