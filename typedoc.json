@@ -1,7 +1,7 @@
 {
     "entryPoints": ["./src/*.ts","./src/XUI/*.ts"],
     "exclude": [],
-    "out": "./docs",
+    "out": "./wiki",
     "categorizeByGroup": false,
     "theme":"github-wiki"
 }
