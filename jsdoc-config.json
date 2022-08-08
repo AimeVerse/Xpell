@@ -1,53 +1,22 @@
 {
   "source": {
-    "include": ["package.json", "README.md","XLib.ts","index.ts","LICENSE"],
+    "include": ["package.json", "README.md","XLib.ts","index.ts","LICENSE","src"],
     "exclude": ["dist","docs","node_modules"],
-    "includePattern": ".ts$",
-    "excludePattern": "(node_modules/|docs/|dist/)"
+    "includePattern": ".+\\.ts(doc|x)?$",
+    "excludePattern": "(^|\\/|\\\\)_"
   },
 
   "plugins": ["plugins/markdown"],
 
-  "opts": {
-    "encoding": "utf8",
-    "readme": "./README.md",
-    "destination": "docs/",
-    "recurse": true,
-    "recurseDepth": 10,
-    "verbose": true,
-    "#template": "./node_modules/clean-jsdoc-theme",
-    "#template": "./node_modules/docdash",
-    "theme_opts": {
-      "theme": "dark",
-      "title": "Xpell",
-      "menu": [
-        {
-          "title": "Website",
-          "link": "https://xpell.org",
-          "target": "_blank",
-          "id": "pai-web-site"
-        },
-        {
-          "title": "Github",
-          "link": "https://github.com/fridman-tamir/Xpell",
-          "target": "_blank",
-          "id": "xpell-github"
-        }
-      ],
-      "meta" : [
-        {
-          "name": "author",
-          "content": "Tamir Fridman"
-        },
-        {
-          "name": "description",
-          "content": "Xpell Source code"
-        }
-      ]
-    },
+  "recurseDepth": 10,
+    
+    "sourceType": "module",
     "tags": {
-      "allowUnknownTags": true,
-      "dictionaries": ["jsdoc","closure"]
+        "allowUnknownTags": true,
+        "dictionaries": ["jsdoc","closure"]
+    },
+    "templates": {
+        "cleverLinks": false,
+        "monospaceLinks": false
     }
-  }
 }

@@ -1,7 +1,9 @@
 import XUtils from "./XUtils"
 
 
-
+/**
+ * @class XCommand
+ */
 
 
 export  class XCommand {

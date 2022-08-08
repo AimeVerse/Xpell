@@ -44,7 +44,7 @@
       * Creates new SpellView 
       * @description turns view-data (JSON) to a spell object 
       * @param view_data
-      * @param auto_add - if true and the view data {view_data} contains a "name" string the new view will be added automatically to the view manager
+      * @param auto_add - if true and the view data (view_data) contains a "name" string the new view will be added automatically to the view manager
       * @return {XView}
       */
      createView(view_data, auto_add = true) {

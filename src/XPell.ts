@@ -1,16 +1,19 @@
 /**
  * Xpell - Universal User Interface Platform
  * Javascript Edition
- * 
+ * @module Xpell
  * @description Universal User Interface (UI) Engine for Javascript supporting devices & browsers
  * @author Fridman Fridman <tamirf@yahoo.com>
  * @since  22/07/2022
  * @Copyright Fridman Tamir 2022, all right reserved
  *
- *      This program is free software; you can redistribute it and/or
- *		modify it under the terms of the GNU General Public License
- *		as published by the Free Software Foundation; either version
- *		3 of the License, or (at your option) any later version.
+ * @license  GPL-3    
+ *      
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version
+ * 3 of the License, or (at your option) any later version.
+ *
  *
  */
 
@@ -19,6 +22,7 @@
 /** interface */
 import XCommand from "./XCommand"
 import {XUtils,FPSCalc} from "./XUtils"
+import {XLogger as _xlog} from "./XLogger"
 import XData from "./XData"
 import XParser from "./XParser"
 import XModule from "./XModule"
@@ -30,28 +34,28 @@ import {XEventManager as XEM,XEventList,XEvent} from  "./XEventManager"
 
 
 
-class XpellMainModule extends XModule {
+// class XpellMainModule extends XModule {
 
     
 
-    constructor(data) {
-        const defaults = {name:"xpell"}
-        super(data,defaults)
-    }
+//     constructor(data) {
+//         const defaults = {name:"xpell"}
+//         super(data,defaults)
+//     }
 
-    _info(xcmd:XCommand) {
-        console.log("Xpell Engine V:" + Xpell.version)
-    }
+//     _info(xcmd:XCommand) {
+//         _xlog.log("Xpell Engine V:" + Xpell.version)
+//     }
 
-    _loadModule(xcmd:XCommand) {
-        console.log(xcmd.params["name"])
-    }
-}
+//     _loadModule(xcmd:XCommand) {
+//         _xlog.log(xcmd.params["name"])
+//     }
+// }
 
 /**
  * @class  Xpell main engine
  */
-class XpellEngine {
+export class XpellEngine {
     version : string
     engineId: string
     frameNumber: number
@@ -74,12 +78,11 @@ class XpellEngine {
     }
 
 
-
-  
+   
 
     loadModule(xModule:XModule):void {
         if (this.#modules.hasOwnProperty(xModule.name)) {
-            console.log("module " + xModule.name + " already loaded")
+            _xlog.log("module " + xModule.name + " already loaded")
         } else {
             this.#modules[xModule.name] = xModule;
             xModule.load()
@@ -94,11 +97,11 @@ class XpellEngine {
 
 
     load() {
-        this.loadModule(new XpellMainModule({}))
+        //this.loadModule(new XpellMainModule({}))
     }
 
     info(){
-        console.log("Spell Engine Id " + this.engineId)   
+        _xlog.log("Xpell version " + this.version)   
     }
 
 
@@ -117,7 +120,7 @@ class XpellEngine {
     }
 
     /**
-     * Execute Spell Command 
+     * Execute Xpell Command 
      * @param {XCommand} 
      */
     execute(xcmd:XCommand):any {
@@ -143,6 +146,7 @@ class XpellEngine {
         })
         XData.variables["frame-number"] = this.frameNumber
         XData.variables["fps"] = this.#fpsCalc.calc()
+        
         requestAnimationFrame(() => {Xpell.onFrame()})         
     }
 
@@ -151,8 +155,11 @@ class XpellEngine {
         return this.#modules[moduleName]
     }
 
+    /**
+     * Start Xpell engine for web browsers using requestAnimationFrame
+     */
     start() {
-        console.log("Starting Xpell")
+        _xlog.log("Starting Xpell")
         this.onFrame()
     }
 
@@ -160,6 +167,7 @@ class XpellEngine {
 
 /**
  * Xpell Engine instance
+ * @public Xpell Engine instance
  */
 export const Xpell = new XpellEngine()
 

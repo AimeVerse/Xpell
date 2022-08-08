@@ -24,7 +24,7 @@ export class XParser {
     }
 
 
-    static addHtml2SpellMapItem(htmlElement:string,xpellElement:string) {
+    static addHtml2XpellMapItem(htmlElement:string,xpellElement:string) {
         XParser.html2XMap.elements[htmlElement] = xpellElement
     }
 
@@ -151,7 +151,7 @@ export class XParser {
   
     }
 
-    static xml2Xpell  (xmlNode)  {
+    static xml2Xpell  (xmlNode,forceXhtml?)  {
         //Conversation map for elements and attributes
         const cMap = XParser.html2XMap
         let scanChildren = true
@@ -159,7 +159,13 @@ export class XParser {
         outputXpell[_XC.NODES.children] = []
         const root_name = xmlNode.nodeName
         const _html_tag_attr = xmlNode.nodeName
-        outputXpell[_XC.NODES.type] = (cMap.elements[root_name]) ?cMap.elements[root_name] : root_name  //html element to xpell object name
+        let forceXhtmlOnChildren = forceXhtml
+        if(forceXhtml) { 
+            outputXpell[_XC.NODES.type] = "xhtml"
+            outputXpell["_html_ns"] = 'http://www.w3.org/2000/svg'
+        }else {
+            outputXpell[_XC.NODES.type] = (cMap.elements[root_name]) ?cMap.elements[root_name] : root_name  //html element to xpell object name
+        }
         if(xmlNode.attributes) {
             for(let i=0;i<xmlNode.attributes.length;++i)  {
                 const n = xmlNode.attributes[i]
@@ -174,23 +180,14 @@ export class XParser {
             outputXpell["_html_tag"] = _html_tag_attr
         }
         else if(outputXpell[_XC.NODES.type] == "svg" ) {
-            for(let i=0;i<xmlNode.childNodes.length;++i)  {
-                const node = (xmlNode.childNodes[i])
-                if(!node.nodeName.startsWith("#")) {
-                    const str = new XMLSerializer().serializeToString(node)
-                    outputXpell["_svg_data"] =  str
-                }
-                
-            }  
-                
-            
-            scanChildren = false
+            forceXhtmlOnChildren = true
+            outputXpell["_html_ns"] = 'http://www.w3.org/2000/svg'
         }
         if(scanChildren &&  xmlNode?.childNodes.length>0) {
             for(let i=0;i<xmlNode.childNodes.length;++i)  {
                 const node = (xmlNode.childNodes[i])
                 if(!node.nodeName.startsWith("#")) {
-                    outputXpell[_XC.NODES.children].push(XParser.xml2Xpell(node))
+                    outputXpell[_XC.NODES.children].push(XParser.xml2Xpell(node,forceXhtmlOnChildren))
                 }
             }   
         }

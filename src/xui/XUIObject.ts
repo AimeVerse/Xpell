@@ -10,16 +10,18 @@ const xpell_object_html_fields_mapping = { "_id": "id", "css-class": "class", "a
 
 
 export class XUIObject extends XObject {
+    [k:string]: string | null | [] | undefined | Function | boolean | {}
     _html_tag: string
-    private _dom_object: HTMLElement | null
+    _html_ns:string | null
+    private _dom_object: any 
     _type:string  //[_SC.NODES.type]
     _html: string | undefined
-    animation: boolean
     _base_display: string  = "block"
     text: string
     _data_source: string | null 
     _on_frame_skip_data_source: any
     _format: string | null
+    _ignore: {}
     
 
 
@@ -28,11 +30,11 @@ export class XUIObject extends XObject {
         super(data,defaults)
         reserved_words[_XC.NODES.children] = "child objects"
         this._html_tag = "div";
+        this._html_ns = null
         this._dom_object = null;
         this[_XC.NODES.type] = "view";
         this._html = "";
         this[_XC.NODES.children] = [];
-        this.animation = true;
         this._ignore = reserved_words;
         this._base_display = "block"
 
@@ -73,10 +75,12 @@ export class XUIObject extends XObject {
         console.log(this.getHTML());
     }
 
-    getDOMObject():HTMLElement  {
+    getDOMObject():Element  {
         if (!this._dom_object) {
             //console.log("creating " + this._html_tag);
-            let dom_object = document.createElement(this._html_tag);
+            let dom_object = (this._html_ns)
+                 ? document.createElementNS(this._html_ns,this._html_tag)
+                 : document.createElement(this._html_tag)
             let fields = Object.keys(this);
 
             fields.forEach(field => {
@@ -86,15 +90,15 @@ export class XUIObject extends XObject {
                         f_out = xpell_object_html_fields_mapping[field];
                     }
                     if (!f_out.startsWith("_") && f_out !== "text") {
-                        dom_object.setAttribute(f_out, this[field]);
+                        dom_object.setAttribute(f_out, <string>this[field]);
                     }
                 }
             });
 
             if (this["text"] && this["text"].length > 0) {
-                dom_object.innerText = this["text"];
-            } else if (this[_XC.NODES.children].length > 0) {
-                this[_XC.NODES.children].forEach(child => {
+                dom_object.textContent = this["text"];
+            } else if (this._children.length > 0) {
+                this._children.forEach((child:XUIObject) => {
                     const coo = child.getDOMObject()
                     dom_object.appendChild(coo);
                 })
@@ -122,14 +126,14 @@ export class XUIObject extends XObject {
     /**
      * return the do
      */
-    get DOMElementFromHTML() {
-        return document.getElementById(this._id)
+    get DOMElementFromHTML():HTMLElement {
+        return document.getElementById(<string>this._id)
     }
 
-    append(XObject:XUIObject) {
-        this[_XC.NODES.children].push(XObject);
+    append(xObject:XUIObject) {
+        this._children.push(<XObject>xObject)
         if (this._dom_object) {
-            this.DOMElementFromHTML?.appendChild(XObject.getDOMObject())
+            this.DOMElementFromHTML?.appendChild(xObject.getDOMObject())
         }
     }
 
@@ -142,19 +146,19 @@ export class XUIObject extends XObject {
     }
 
     setStyle(attr, val) {
-        if(this._dom_object) {
+        if(this._dom_object instanceof HTMLElement) {
             this._dom_object.style[attr]= val
         }
     }
 
     show() {
-        if(this._dom_object) {
+        if(this._dom_object instanceof HTMLElement) {
             this._dom_object.style.display = "show"
         }
     }
 
     hide() {
-        if(this._dom_object) {
+        if(this._dom_object instanceof HTMLElement) {
             this._base_display = this._dom_object.style.display
             this._dom_object.style.display = "none"
         }
@@ -164,14 +168,14 @@ export class XUIObject extends XObject {
      * this method triggered after the HTML DOM object has been created and added to the parent element
      */
     async onCreate() {
-        this[_XC.NODES.children].forEach(child => {
+        this._children.forEach( (child:XUIObject) => {
             if(child.onCreate && typeof child.onCreate === 'function') {
                 child.onCreate()
             }})
     }
 
     async onMount() {
-        this[_XC.NODES.children].forEach(child => {
+        this._children.forEach( (child:XUIObject) => {
             if(child.onMount && typeof child.onMount === 'function') {
                 child.onMount()
             }})
@@ -190,7 +194,7 @@ export class XUIObject extends XObject {
             if(XData.variables[this._data_source]) {
                 const ph = "_$"
                 if(this._format && this._format.indexOf(ph)>0) {
-                    this.setText(this._format.replace(ph,XData.variables[this._data_source]))
+                    this.setText(this._format.replace(ph,<string>XData.variables[this._data_source]))
                 } else {
                     this.setText(XData.variables[this._data_source])
                 }

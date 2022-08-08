@@ -233,11 +233,6 @@ export class XSVG extends XUIObject {
         }
         super(data,defaults);
     }
-
-    async onMount() {
-        const dom = this.getDOMObject()
-        dom.insertAdjacentHTML("beforeend",this._svg_data);
-    }
 }
 
 export class XButton extends XUIObject {

@@ -1,13 +1,21 @@
 
 import XUtils from "./XUtils"
 import XParser from "./XParser"
+import {XLogger as _xl} from "./XLogger";
 import XObjectManager from "./XObjectManager";
 import * as _XC from "./XConst"
 import {XObject,XObjectPack} from "./XObject";
 
-/** Xpell Module **/
+/**
+ * Xpell Base Module
+ * This class represents xpell base module to be extends
+ * @class XModule
+ * 
+ */
 
-const XModuleOp = (opName, functionName) => { return { op_name: functionName } }
+export interface ModuleData {
+    name:string
+}
 
 export  class XModule {
 
@@ -15,34 +23,22 @@ export  class XModule {
     name: string;
 
     //private object manager instance
-    #om = new XObjectManager()
-    engine: any;  //deprecated remove after spell3d
+    protected objectManger = new XObjectManager()
+    //engine: any;  //deprecated remove after spell3d
 
-    constructor(data, defaults = { name: "xpell-module" }) {
-        if (defaults) {
-            if (!data) {
-                data = defaults
-            } else {
-                XUtils.mergeDefaultsWithData(data, defaults)
-            }
-        }
-        if (data) {
-            let dkey = Object.keys(data);
-            dkey.forEach(key => {
-                this[key] = data[key];
-            })
-        }
+    constructor(data:ModuleData) {
+        this.name = data.name
         this._id = XUtils.guid()
 
 
     }
 
     load() {
-        console.log("module " + this.name + " loaded")
+        _xl.log("module " + this.name + " loaded")
     }
 
     /**
-     * create new SPELL_OBJECT
+     * create new XOBJECT
      * @static
      * @param data - The data of the new object (JSON)
      * @return {XObject|*}
@@ -51,16 +47,16 @@ export  class XModule {
 
         let xObject;
         if (data.hasOwnProperty(_XC.NODES.type)) {
-            if (this.#om.hasObjectClass(data[_XC.NODES.type])) {
+            if (this.objectManger.hasObjectClass(data[_XC.NODES.type])) {
 
-                let spell_object_class = this.#om.getObjectClass(data[_XC.NODES.type]);
-                if (spell_object_class.hasOwnProperty("defaults")) {
-                    XUtils.mergeDefaultsWithData(data, spell_object_class.defaults);
+                let xObjectClass = this.objectManger.getObjectClass(data[_XC.NODES.type]);
+                if (xObjectClass.hasOwnProperty("defaults")) {
+                    XUtils.mergeDefaultsWithData(data, xObjectClass.defaults);
                 }
-                xObject = new spell_object_class(data);
+                xObject = new xObjectClass(data);
             }
             else {
-                throw "Spell object '" + data[_XC.NODES.type] + "' not found";
+                throw "Xpell object '" + data[_XC.NODES.type] + "' not found";
             }
         }
         else {
@@ -68,7 +64,7 @@ export  class XModule {
         }
 
         //await spell_object.init();
-        this.#om.addObject(xObject)
+        this.objectManger.addObject(xObject)
         if (data[_XC.NODES.children]) {
             const sthis = this //strong "this" for anonymous function use
             data[_XC.NODES.children].forEach(async (spell) => {
@@ -82,7 +78,7 @@ export  class XModule {
     }
 
     _info(xCommand) {
-        console.log("module info")
+        _xl.log("module info")
     }
 
     //xpell interpreter 
@@ -107,8 +103,8 @@ export  class XModule {
     }
 
     /**
-     * Run spell command - CLI mode
-     * @param {SpellCommand} SpellCommand input (JSON)
+     * Run xpell command - CLI mode
+     * @param {XCommand} XCommand input (JSON)
      * @returns command execution result
      */
     async execute(xCommand) {
@@ -119,17 +115,16 @@ export  class XModule {
         if (this[lop] && typeof this[lop] === 'function') {
             return this[lop](xCommand)
         } 
-        else if (this.engine && this.engine.om) //direct spell injection to specific module -> deprecated rem
+        // else if (this.engine && this.engine.om) //direct spell injection to specific module -> deprecated rem
+        // {
+        //     _xl.log("STILL RUNNING FROM ENGINE -- DEPRECATED");
+        //      const o = this.engine.om.getObjectByName(xCommand.op)
+        //     if (o) { o.execute(xCommand) }
+        //     else { throw "Xpell Module cant find op:" + xCommand.op }
+        // }
+        else if (this.objectManger) //direct xpell injection to specific module
         {
-            console.log("STILL RUNNING FROM ENGINE -- DEPRECATED");
-             const o = this.engine.om.getObjectByName(xCommand.op)
-            if (o) { o.execute(xCommand) }
-            else { throw "Xpell Module cant find op:" + xCommand.op }
-        }
-        else if (this.#om) //direct xpell injection to specific module
-        {
-            const o = this.#om.getObjectByName(xCommand.op)
-            //console.log(o);
+            const o = this.objectManger.getObjectByName(xCommand.op)
             if (o) { o.execute(xCommand) }
             else { throw "Xpell Module cant find op:" + xCommand.op }
         }
@@ -141,8 +136,8 @@ export  class XModule {
     }
 
     async onFrame(frameNumber) {
-        Object.keys(this.#om.xObjects).forEach(key=>{
-            const so = this.#om.xObjects[key]
+        Object.keys(this.objectManger.xObjects).forEach(key=>{
+            const so = this.objectManger.xObjects[key]
             if(so.onFrame && typeof so.onFrame === 'function') {
                 so.onFrame(frameNumber)
             }
@@ -155,16 +150,16 @@ export  class XModule {
      */
 
     //getter for om (object manager) instance
-    get om() { return this.#om }
+    get om() { return this.objectManger }
 
-    get object_manager() { return this.#om } //alias
+    get object_manager() { return this.objectManger } //alias
     /**
      * Imports external objects to the engine
      * The object class should be like XObjects with static implementation of getObjects() method
      * @param {XObjects} xObjectPack 
      */
     importObjects(xObjectPack:XObjectPack | any) {
-        this.#om.registerObjects(xObjectPack.getObjects())
+        this.objectManger.registerObjects(xObjectPack.getObjects())
     }
 
     

@@ -3,28 +3,44 @@
  */
 
 
- class XLoggerEngine {
-    debug: boolean;
+
+
+
+export class XLoggerEngine {
+    enabled: boolean = true
+    showDate:boolean = false
+    showTime:boolean = true
 
     constructor() {
-        this.debug = true
     }
 
-
-    log(){
+    private getTimeSignature() {
         const d = new Date()
-        const LOG_PREFIX = d.getDate() + '.' + d.getMonth() + '.' + d.getFullYear() + ' ' + d.getHours() + ':' + d.getMinutes() + ':' + d.getSeconds() + d.getMilliseconds();
-        // 1. Convert args to a normal array
-        var args = Array.prototype.slice.call(arguments);
-            
-        // 2. Prepend log prefix log string
-        args.unshift(LOG_PREFIX + "|");
-            
-        // 3. Pass along arguments to console.log
-        console.log.apply(console, args);
+
+        const getDate = () => {return (this.showDate) ? d.getDate() + '.' + d.getMonth() + '.' + d.getFullYear() + " ": "" }
+        const getTime = () => {return (this.showTime) ?d.getHours() + ':' + d.getMinutes() + ':' + d.getSeconds() + "." + d.getMilliseconds() +"|": "" }
+        return  getDate() + getTime()
     }
-    
+
+    log(message?: any, ...optionalParams: any[]) {
+        if (this.enabled) {
+            var args = Array.prototype.slice.call(arguments);
+            args.unshift(this.getTimeSignature());
+            console.log.apply(console, args);
+        }
+    }
+
+    error(message?: any, ...optionalParams: any[]) {
+        var args = Array.prototype.slice.call(arguments);
+        args.unshift(this.getTimeSignature());
+        console.error.apply(console, args);
+
+    }
+
 }
 
+/**
+ * 
+ */
 export const XLogger = new XLoggerEngine()
 export default XLogger

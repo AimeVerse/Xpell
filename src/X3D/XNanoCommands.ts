@@ -14,6 +14,60 @@
  import XData from "../XData";
  import * as _XU from "../XUtils"
  
+
+
+const get_param = (pos, name, cmd) => {
+    return (cmd.params[name]) ? cmd.params[name] : cmd.params[pos]
+}
+
+
+/**
+ * change axis value
+ * @param {axis root/parent} root -> this._position / this._rotation / this._scale
+ * @param {JSON} scmd - spell command 
+ * 
+ * spell command parameters: 
+ * - axis -> the axis to change (x/y/z)
+ * - dir -> change direction (up/down)
+ * - step -> step to move
+ */
+const change_axis = (root, scmd) => {
+    const axis = get_param(0, "axis", scmd) // (scmd.params.axis) ? scmd.params.axis : scmd.params[0]
+    const direction = get_param(1, "dir", scmd).toLowerCase()
+    const step = parseFloat(get_param(2, "step", scmd))
+    if (direction == "up") {
+        root[axis] += step
+    } else if (direction == "down") {
+        root[axis] -= step
+    }
+}
+
+
+
+const set_axis = (root, axis, param) => {
+
+    if (param) {
+        if (param.startsWith("++")) {
+            param = param.substring(1)
+            // console.log("changing ++",param)
+            root[axis] += parseFloat(param)
+        } else if (param.startsWith("--")) {
+
+            param = param.substring(1)
+            // console.log("changing --",param)
+            root[axis] -= parseFloat(param) * (-1)
+        } else {
+            // console.log("no changing")
+            root[axis] = parseFloat(param)
+        }
+
+    }
+
+}
+
+
+
+
  
  export const xNanoCommands = {
      "move": (ns_cmd) => {
@@ -21,41 +75,41 @@
          // axis x,y,z
          // direction up (+) / down (-)
          // step 1-100
-         _XU.change_axis(ns_cmd.s3d_object._position, ns_cmd)
+         change_axis(ns_cmd.s3d_object._position, ns_cmd)
      },
      "position": (ns_cmd) => {
          //position x:0.01 y:++0.01 z:--0.01
-         _XU.set_axis(ns_cmd.s3d_object._position, "x", _XU.get_param(0, "x", ns_cmd))
-         _XU.set_axis(ns_cmd.s3d_object._position, "y", _XU.get_param(1, "y", ns_cmd))
-         _XU.set_axis(ns_cmd.s3d_object._position, "z", _XU.get_param(2, "z", ns_cmd))
+         set_axis(ns_cmd.s3d_object._position, "x", get_param(0, "x", ns_cmd))
+         set_axis(ns_cmd.s3d_object._position, "y", get_param(1, "y", ns_cmd))
+         set_axis(ns_cmd.s3d_object._position, "z", get_param(2, "z", ns_cmd))
      },
      "scale": (ns_cmd) => {
          //scale x:0.01 y:++0.01 z:--0.01
-         _XU.set_axis(ns_cmd.s3d_object._scale, "x", _XU.get_param(0, "x", ns_cmd))
-         _XU.set_axis(ns_cmd.s3d_object._scale, "y", _XU.get_param(1, "y", ns_cmd))
-         _XU.set_axis(ns_cmd.s3d_object._scale, "z", _XU.get_param(2, "z", ns_cmd))
+         set_axis(ns_cmd.s3d_object._scale, "x", get_param(0, "x", ns_cmd))
+         set_axis(ns_cmd.s3d_object._scale, "y", get_param(1, "y", ns_cmd))
+         set_axis(ns_cmd.s3d_object._scale, "z", get_param(2, "z", ns_cmd))
          console.log("scale");
      },
      "rotation": (ns_cmd) => {
          //rotation x:0.01 y:++0.01 z:--0.01
-         const x = _XU.get_param(0, "x", ns_cmd)
+         const x = get_param(0, "x", ns_cmd)
  
-         if (x) { _XU.set_axis(ns_cmd.s3d_object._rotation, "x", x) }
+         if (x) { set_axis(ns_cmd.s3d_object._rotation, "x", x) }
  
-         const y = _XU.get_param(1, "y", ns_cmd)
-         if (y) { _XU.set_axis(ns_cmd.s3d_object._rotation, "y", y) }
+         const y = get_param(1, "y", ns_cmd)
+         if (y) { set_axis(ns_cmd.s3d_object._rotation, "y", y) }
  
-         const z = _XU.get_param(2, "z", ns_cmd)
-         _XU.set_axis(ns_cmd.s3d_object._rotation, "z", z)
+         const z = get_param(2, "z", ns_cmd)
+         set_axis(ns_cmd.s3d_object._rotation, "z", z)
      },
      "spin": (ns_cmd) => {
-         const x = _XU.get_param(0, "x", ns_cmd)
+         const x = get_param(0, "x", ns_cmd)
          const x_str = (x) ? "x:++" + x : ""
  
-         const y = _XU.get_param(0, "y", ns_cmd)
+         const y = get_param(0, "y", ns_cmd)
          const y_str = (y) ? "y:++" + y : ""
  
-         const z = _XU.get_param(0, "z", ns_cmd)
+         const z = get_param(0, "z", ns_cmd)
          const z_str = (z) ? "z:++" + z : ""
  
          ns_cmd.s3d_object.onframe = `rotation ${x_str} ${y_str} ${z_str}`
@@ -96,7 +150,7 @@
          console.log(ns_cmd);
  
          if (ns_cmd.s3d_object._animation_mixer) {
-             const clip = _XU.get_param(1, "clip", ns_cmd)
+             const clip = get_param(1, "clip", ns_cmd)
  
              if (clip) {
                  const anim = ns_cmd.s3d_object._animation_clips[clip]
@@ -124,22 +178,22 @@
              //   // move the player
              const angle = XData.variables["control-azimuth"]
              if (jm.forward > 0) {
-                 tempVector.set(0, 0, -jm.forward * power).applyAxisAngle(upVector, angle)
+                 tempVector.set(0, 0, -jm.forward * power).applyAxisAngle(upVector, <number>angle)
                  lvector.addScaledVector(tempVector, 1)
              }
  
              if (jm.backward > 0) {
-                 tempVector.set(0, 0, jm.backward * power).applyAxisAngle(upVector, angle)
+                 tempVector.set(0, 0, jm.backward * power).applyAxisAngle(upVector, <number>angle)
                  lvector.addScaledVector(tempVector, 1)
              }
  
              if (jm.left > 0) {
-                 tempVector.set(-jm.left * power, 0, 0).applyAxisAngle(upVector, angle)
+                 tempVector.set(-jm.left * power, 0, 0).applyAxisAngle(upVector,<number> angle)
                  lvector.addScaledVector(tempVector, 1)
              }
  
              if (jm.right > 0) {
-                 tempVector.set(jm.right * power, 0, 0).applyAxisAngle(upVector, angle)
+                 tempVector.set(jm.right * power, 0, 0).applyAxisAngle(upVector, <number>angle)
                  lvector.addScaledVector(tempVector, 1)
              }
  
@@ -218,9 +272,9 @@
      },
      //hover - hover up 0.1 and down 0.1 (y-axis) for 60 frames (1 sec)
      "hover": (ns_cmd) => {
-         const axis = _XU.get_param(0, "axis", ns_cmd)
-         const step = _XU.get_param(1, "step", ns_cmd)
-         const radius = _XU.get_param(2, "radius", ns_cmd)
+         const axis = get_param(0, "axis", ns_cmd)
+         const step = get_param(1, "step", ns_cmd)
+         const radius = get_param(2, "radius", ns_cmd)
          ns_cmd.params["dir"] = ns_cmd.s3d_object._hover_move_direction
          ns_cmd.params["axis"] = axis
          ns_cmd.params["step"] = step
@@ -234,7 +288,7 @@
              ns_cmd.s3d_object.onframe = `hover axis:${axis} dir:${ns_cmd.s3d_object._hover_move_direction} step:${step} radius:${radius}`
          }
          else {
-             _XU.change_axis(ns_cmd.s3d_object._position, ns_cmd)
+             change_axis(ns_cmd.s3d_object._position, ns_cmd)
              const diff = (ns_cmd.s3d_object._position[axis] - ns_cmd.s3d_object._hover_axis_start_value)
              if (Math.abs(diff) > radius) {
                  ns_cmd.s3d_object._hover_move_direction = (ns_cmd.s3d_object._hover_move_direction == "up") ? "down" : "up"

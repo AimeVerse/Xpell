@@ -1,45 +1,45 @@
 
 import XUtils from "./XUtils"
-import * as _XC from "./XConst"
+//import * as _XC from "./XConst"
 import XCommand from "./XCommand";
 
-const reserved_words = {  }
+export type wordsList = {
+    [k:string]:string
+}
+
+const reservedWords:wordsList = {_children:"child nodes"  }
 const xpell_object_html_fields_mapping = { "_id": "id", "css-class": "class", "animation": "xyz", "input-type": "type" };
 
 export interface IXObjectData{
+    [k:string]: any
     _id?:string | null
     id?:string | null
     name?:string
     _type?:string
-    _children:[]
+    _children:Array<XObject>
     
 }
 
-export class XObject {
-    
-    _id: string
-    id: string | null
-    name:string 
-    _ignore:{}
+export class XObject implements IXObjectData {
+    [k:string]: string | null | [] | undefined | Function | boolean | number | {}
+    _children:Array<XObject>
 
-    constructor(data:IXObjectData , defaults?:{} ) {
+    constructor(data:IXObjectData , defaults?:IXObjectData ) {
         if (defaults) {
             XUtils.mergeDefaultsWithData(data, defaults)
         }
         
         this._id = (data && data._id) ? data._id : "so-" + XUtils.guid();
-        reserved_words[_XC.NODES.children] = "child objects"
-        this[_XC.NODES.type] = null
-        this[_XC.NODES.children] = [];
-        this._ignore = reserved_words;
+        this._type = "object" //default type
+        this._children = [];
 
         
         if (data) {
             delete data._id
-            if (data.hasOwnProperty("_ignore")) {
-                this._ignore = XUtils.createIgnoreList(data["_ignore"],reserved_words)
-            }
-            this.parse(data, this._ignore);
+            // if (data.hasOwnProperty("_ignore")) {
+            //     this._ignore = reserved_words
+            // }
+            this.parse(data, reservedWords);
         }
     }
 
@@ -50,16 +50,16 @@ export class XObject {
      * occurs on Xpell.init
      * must override
      */
-    init() {
+    init():void {
         throw "init method not implemented"
     }
 
 
-    parse(data, ignore = reserved_words) {
+    parse(data:IXObjectData, ignore = reservedWords) {
         let cdata = Object.keys(data);
         cdata.forEach(field => {
             if (!ignore.hasOwnProperty(field) && data.hasOwnProperty(field)) {
-                this[field] = data[field];
+                this[field] = <string>data[field];
             }
         });
     }
@@ -90,7 +90,7 @@ export class XObject {
      */
     async onFrame(frameNumber:number){
         
-        this[_XC.NODES.children].forEach(child => {
+        this._children.forEach((child:XObject) => {
             if(child.onFrame && typeof child.onFrame === 'function') {
                 child.onFrame(frameNumber)
             }})

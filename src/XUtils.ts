@@ -1,16 +1,20 @@
+//import { performance } from "perf_hooks";
 
 
+// declare class performance{ 
+//     declare function now()
+// }
 
 export class XUtils {
     /**
      * create ignore list for parser to ignore spells words
      * @param list - list of reserved words (comma separated)
      */
-    static createIgnoreList(list,reserved_words) {
+    static createIgnoreList(list:string,reservedWords:{}) {
         let words = list.split(",");
-        let out_list = reserved_words;
-        words.forEach(word => out_list[word] = "");
-        return out_list;
+        let outList:{[k:string]:string} = reservedWords;
+        words.forEach(word => outList[word] = "");
+        return outList;
     }
 
 
@@ -28,10 +32,11 @@ export class XUtils {
         return uuid.join('');
     }
 
-    static mergeDefaultsWithData(data, defaults) {
+    static mergeDefaultsWithData(data:{[k:string]:string | null | [] | undefined | Function}, defaults:{[k:string]:string | null | [] | undefined | Function}) {
         if (data) {
-            if (!data._id && !data.id) {
-                defaults["_id"] = XUtils.guid();
+            if (!data["_id"]) {
+                if(!data["id"]) {defaults["_id"] = XUtils.guid()}
+                else {defaults["_id"] = data["id"]}
             }
             //selective assign
             let dkey = Object.keys(defaults);
@@ -49,39 +54,20 @@ export class XUtils {
     
 
 
-    static checkOverlappingRects(rect1, rect2, inside = false) {
-        if (!inside) {
-            return !(rect1.top > rect2.bottom || rect1.right < rect2.left || rect1.bottom < rect2.top || rect1.left > rect2.right);
-        }
-        else {
-            return (
-                ((rect2.top <= rect1.top) && (rect1.top <= rect2.bottom)) &&
-                ((rect2.top <= rect1.bottom) && (rect1.bottom <= rect2.bottom)) &&
-                ((rect2.left <= rect1.left) && (rect1.left <= rect2.right)) &&
-                ((rect2.left <= rect1.right) && (rect1.right <= rect2.right))
-            );
-        }
-    }
-
-    static deg2Rad(degrees) {
+    static deg2Rad(degrees:number) {
         const pi = Math.PI;
         return degrees * (pi / 180);
     }
 
-    static encode(str) {
+    static encode(str:string) {
         return btoa(encodeURIComponent(str));
     }
 
-    static decode( str ) {
+    static decode( str:string ) {
         return decodeURIComponent(atob(str));
     }
     
 
-}
-
-
-export const SpellDeg = {
-    "half" : Math.PI / 2
 }
 
 
@@ -95,6 +81,7 @@ export class FPSCalc  {
 
 
     calc() {
+        
         const now:number = performance.now();
         const diff:number = now-this.#lastTimestamp
         this.#lastTimestamp = now
@@ -105,58 +92,6 @@ export class FPSCalc  {
     }
 
 }
-
-
-export const get_param = (pos, name, cmd) => {
-    return (cmd.params[name]) ? cmd.params[name] : cmd.params[pos]
-}
-
-
-/**
- * change axis value
- * @param {axis root/parent} root -> this._position / this._rotation / this._scale
- * @param {JSON} scmd - spell command 
- * 
- * spell command parameters: 
- * - axis -> the axis to change (x/y/z)
- * - dir -> change direction (up/down)
- * - step -> step to move
- */
-export const change_axis = (root, scmd) => {
-    const axis = get_param(0, "axis", scmd) // (scmd.params.axis) ? scmd.params.axis : scmd.params[0]
-    const direction = get_param(1, "dir", scmd).toLowerCase()
-    const step = parseFloat(get_param(2, "step", scmd))
-    if (direction == "up") {
-        root[axis] += step
-    } else if (direction == "down") {
-        root[axis] -= step
-    }
-}
-
-
-
-export const set_axis = (root, axis, param) => {
-
-    if (param) {
-        if (param.startsWith("++")) {
-            param = param.substring(1)
-            // console.log("changing ++",param)
-            root[axis] += parseFloat(param)
-        } else if (param.startsWith("--")) {
-
-            param = param.substring(1)
-            // console.log("changing --",param)
-            root[axis] -= parseFloat(param) * (-1)
-        } else {
-            // console.log("no changing")
-            root[axis] = parseFloat(param)
-        }
-
-    }
-
-}
-
-
 
 
 export default XUtils

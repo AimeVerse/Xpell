@@ -18,7 +18,7 @@ export class XObjectManager {
 
     /**
      *
-     * @param xObjects - key value list -> {"view":XView,...}
+     * @param xObjects - key value list -> \{"view":XView,...\}
      */
     registerObjects(xObjects:XObjectPack):void {
         let names = Object.keys(xObjects)
@@ -56,7 +56,7 @@ export class XObjectManager {
     }
 
     // TO-DO - remove object
-    remove_object(xObjectId) {
+    removeObject(xObjectId) {
         this.xObjects[xObjectId] = null;
     }
 

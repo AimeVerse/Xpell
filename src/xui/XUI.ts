@@ -8,7 +8,7 @@
 
  import XUIObject from "./XUIObject"
  import XViewManager from "./XViewManager"
- import XModule from "../XModule"
+ import XModule, { ModuleData } from "../XModule"
  import {XEventManager,XEventList} from  "../XEventManager"
  import XUICoreObjects from "./XUICoreObjects"
 //  import SpellDashboardObjects from "./spell-dashboard"
@@ -19,9 +19,9 @@
  export class XUIModule extends XModule {
      vm: XViewManager
  
-     constructor(data) {
-         const defaults = {name:"xui"}
-         super(data,defaults)
+     constructor(data:ModuleData) {
+         
+         super(data)
          //this.engine = SpellUI
          this.vm = new XViewManager()
          //register default objects
@@ -66,11 +66,11 @@
          const xobj = this.create(data)
          
          const ctrl = xobj.getDOMObject()
-         const pe = (xobj._parent_element) ? xobj._parent_element : this.vm["spell_html_element"];
+         const pe = (xobj._parent_element) ? xobj._parent_element : this.vm["parentHTMLElement"];
          document.querySelector("#" + pe)?.append(ctrl)
-         if(xobj.onCreate && typeof xobj.onCreate === 'function') {
-             xobj.onCreate()
-         }
+        //  if(xobj.onCreate && typeof xobj.onCreate === 'function') {
+        //      xobj.onCreate()
+        //  }
          
          
      }
@@ -86,7 +86,7 @@
      }
  }
  
- export const XUI = new XUIModule({})
+ export const XUI = new XUIModule({name:"xui"})
  
  export default XUI
  export {

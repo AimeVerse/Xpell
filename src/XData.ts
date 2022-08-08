@@ -6,9 +6,9 @@
  */
 
 
- class XDataSource {
+export class XDataSource {
     objects: {}
-    variables: {}
+    variables: {[k:string]:string | number}
     constructor(){
         this.objects = {}
         this.variables = {}
@@ -17,7 +17,9 @@
 
 }
 
-//singletone
+/**
+ * @property 
+ */
 export const XData = new XDataSource()
 
 export default XData
