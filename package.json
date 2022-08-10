@@ -1,6 +1,6 @@
 {
   "name": "xpell",
-  "version": "1.0.29",
+  "version": "1.0.30",
   "description": "Xpell UI JS Framework",
   "files": [
     "dist",
@@ -17,7 +17,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "vite .",
-    "doc": "typedoc --options ./typedoc.json --tsconfig ./",
+    "docs": "typedoc --options ./typedoc.json --tsconfig ./",
     "build": "vite build",
     "pub": "vite build && npm publish"
   },

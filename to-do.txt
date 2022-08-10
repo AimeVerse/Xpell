@@ -1,0 +1,6 @@
+
+
+
+- add support for text with children (if the view has text the interpreter ignore the children tag)
+- add remove xpell object from object manager
+- add remove DomElement from Dom tree

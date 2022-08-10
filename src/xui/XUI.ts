@@ -15,6 +15,12 @@
 //  import SpellMoveControls  from "./sui-objects/spell-move-controls";
  import XParser  from "../XParser";
  
+
+ interface IXpellApp {
+    spell:{
+        version:number
+    }
+ }
  
  export class XUIModule extends XModule {
      vm: XViewManager
@@ -37,11 +43,15 @@
      
  
     
-     loadApp(xpellApp) {
+    /**
+     * Loads Xpell application object 
+     * @param xpellApp 
+     */
+    loadApp(xpellApp) {
          if(xpellApp.player && xpellApp.player.html_element) {
              this.vm["parentHTMLElement"] = xpellApp.player.html_element
          }
-         this.vm.addRawViews(xpellApp.views);
+         this.vm.addViewsMetadataObject(xpellApp.views);
          XEventManager.fire(XEventList.app_loaded)
      }
  

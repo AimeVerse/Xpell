@@ -14,53 +14,74 @@ _x.start()
 
 
 
-XData.variables["my-var"] = 10
+// XData.variables["my-var"] = 10
 
-const xobj = {
-    _type:"view",
-    _id:"my-label",
-    _data_source:"frame-number",
-    style:"font-size:40px"
-}
-
-
-const lbl =XUI.create(xobj)
-
-XUI.om.addObject(lbl)
-
-lbl.attach("player")
-
-//console.log(XData.variables["my-var"]);
-
-// const _app = {
-//     xpell: {
-//         version: 1
-//     },
-//     views: {
-//         "hello-view": {
-//             _type: "view",
-//             style:"",
-//             _id: "hello-view",
-//             animation: "fade"
-//         }
-//     },
-//     defaults: {
-//         view: "hello-view"
-//     },
-//     player: {
-//         html_element: "player"
-//     }
-
+// const xobj = {
+//     _type:"view",
+//     _id:"my-view",
+//     style:"font-size:40px"
 // }
 
 
+// const lbl =XUI.create(xobj)
+
+// XUI.om.addObject(lbl)
+
+// lbl.attach("player")
+
+//console.log(XData.variables["my-var"]);
+
+const _app = {
+    xpell: {
+        version: 1
+    },
+    views: {
+        "hello-view": {
+            _type: "view",
+            style:"display:block",
+            //text:"hi",
+            _id: "hello-view",
+            _children:[
+                {
+                    _type:"view",
+                    text:"hi"
+                }
+            ]
+        },
+        "hi-view": {
+            _type: "view",
+            style:"display:block",
+            //text:"hi",
+            _id: "hello-view",
+            _children:[
+                {
+                    _type:"view",
+                    text:"hello"
+                }
+            ]
+        }
+    },
+    defaults: {
+        view: "hello-view"
+    },
+    player: {
+        html_element: "player"
+    }
+
+}
 
 
 
 
-// // XUI.loadApp(_app)
 
-// // XUI.vm.showView("hello-view")
+
+XUI.loadApp(_app)
+
+XUI.vm.loadPage("hello-view")
+
+//XUI.vm.showPage("hi-view")
+
+
 
 
 // const xml = `<svg>

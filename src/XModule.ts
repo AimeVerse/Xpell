@@ -47,8 +47,7 @@ export  class XModule {
 
         let xObject;
         if (data.hasOwnProperty(_XC.NODES.type)) {
-            if (this.objectManger.hasObjectClass(data[_XC.NODES.type])) {
-
+            if (this.objectManger.hasObjectClass(data["_type"])) {
                 let xObjectClass = this.objectManger.getObjectClass(data[_XC.NODES.type]);
                 if (xObjectClass.hasOwnProperty("defaults")) {
                     XUtils.mergeDefaultsWithData(data, xObjectClass.defaults);

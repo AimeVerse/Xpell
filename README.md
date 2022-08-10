@@ -45,35 +45,27 @@ The way to communicate with Xpell engine is to send XCommand that will be analyz
      = on-event (event to run the command)
 ```
 
-XCommand can be send in several formats:
 
-- CLI style    
-  >   module-name op-name on-frame:"frame-number" param1:"param1-value" param2:"param2-value" ...
-- JSON 
-  > {
-    "module":"module-name",
-    "op":"op-name",
-    "on-frame":"frame-number"
-    params: {
-      "param1":"param1-value",
-      "param2":"param2-value",
-    }
-  }
+# XUI
+
+## View Manager
+The View Manager object handles the page view activities automatically for you.
+Attached to the XUI Module the View Manager is being initialized by the XUI.
 
 
-Creating Xpell Objects
------------------------
-Xpell objects can be created by calling the interpreter with create command, the parameters is the object meta json:
-{
-  _id:"object-id",
-  _type:"object-type",
-  style:"html style",
-}
+
+
+# Credits & License
+
+ ---
+
+ Author: Fridman Fridman <tamirf@yahoo.com>
+
+ License:  GPL-3 
+
+ First Release: 22/07/2022
+
+ Copyright Fridman Tamir 2022, all right reserved
 
  
- @description devices & browsers
- @author Fridman Fridman <tamirf@yahoo.com>
- @since  22/07/2022
- @Copyright Fridman Tamir 2022, all right reserved
  
- @license  GPL-3 

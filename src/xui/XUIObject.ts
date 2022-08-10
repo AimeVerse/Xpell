@@ -16,7 +16,7 @@ export class XUIObject extends XObject {
     private _dom_object: any 
     _type:string  //[_SC.NODES.type]
     _html: string | undefined
-    _base_display: string  = "block"
+    _base_display: string | undefined | null  
     text: string
     _data_source: string | null 
     _on_frame_skip_data_source: any
@@ -26,7 +26,6 @@ export class XUIObject extends XObject {
 
 
     constructor(data, defaults) {
-        
         super(data,defaults)
         reserved_words[_XC.NODES.children] = "child objects"
         this._html_tag = "div";
@@ -36,7 +35,7 @@ export class XUIObject extends XObject {
         this._html = "";
         this[_XC.NODES.children] = [];
         this._ignore = reserved_words;
-        this._base_display = "block"
+        //this._base_display = "block"
 
         if (data) {
             if (data.hasOwnProperty("_ignore")) {
@@ -59,6 +58,7 @@ export class XUIObject extends XObject {
     parse(data, ignore = reserved_words) {
         let cdata = Object.keys(data);
         cdata.forEach(field => {
+            
             if (!ignore.hasOwnProperty(field) && data.hasOwnProperty(field)) {
                 this[field] = data[field];
             }
@@ -96,6 +96,7 @@ export class XUIObject extends XObject {
             });
 
             if (this["text"] && this["text"].length > 0) {
+                
                 dom_object.textContent = this["text"];
             } else if (this._children.length > 0) {
                 this._children.forEach((child:XUIObject) => {
@@ -152,14 +153,19 @@ export class XUIObject extends XObject {
     }
 
     show() {
-        if(this._dom_object instanceof HTMLElement) {
-            this._dom_object.style.display = "show"
+        if(this._dom_object instanceof HTMLElement && this._base_display) {
+            this._dom_object.style.display = this._base_display
         }
     }
 
     hide() {
+        const cs = getComputedStyle(this._dom_object)
+        
+        
+        if(cs) {
+            this._base_display = cs.getPropertyValue("display")
+        }
         if(this._dom_object instanceof HTMLElement) {
-            this._base_display = this._dom_object.style.display
             this._dom_object.style.display = "none"
         }
     }
