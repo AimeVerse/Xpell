@@ -32,7 +32,7 @@ export class XUtils {
         return uuid.join('');
     }
 
-    static mergeDefaultsWithData(data:{[k:string]:string | null | [] | undefined | Function}, defaults:{[k:string]:string | null | [] | undefined | Function}) {
+    static mergeDefaultsWithData(data:{[k:string]:string | null | [] | undefined | Function}, defaults:{[k:string]:string | null | [] | undefined | Function | {}}) {
         if (data) {
             if (!data["_id"]) {
                 if(!data["id"]) {defaults["_id"] = XUtils.guid()}
@@ -42,12 +42,12 @@ export class XUtils {
             let dkey = Object.keys(defaults);
             dkey.forEach(key => {
                 if (!data.hasOwnProperty(key)) {
-                    data[key] = defaults[key];
+                    data[key] = <any>defaults[key];
                 }
             })
         }
         else {
-            data = defaults
+            data = <any>defaults
         }
     }
 

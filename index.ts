@@ -2,100 +2,111 @@
 import { IXObjectData, XObjectPack } from "./src/XObject"
 import {Xpell as _x} from "./src/Xpell"
 import {XData} from "./src/XData"
-import {XUI} from "./src/XUI/XUI"
+import {X3D} from "./src/X3D/X3D"
 import {XLabel} from "./src/XUI/XUICoreObjects"
 
 _x.info()
 
-_x.loadModule(XUI)
+_x.loadModule(X3D)
 
 
 _x.start()
 
 
 
-// XData.variables["my-var"] = 10
 
-// const xobj = {
-//     _type:"view",
-//     _id:"my-view",
-//     style:"font-size:40px"
-// }
-
-
-// const lbl =XUI.create(xobj)
-
-// XUI.om.addObject(lbl)
-
-// lbl.attach("player")
-
-//console.log(XData.variables["my-var"]);
-
-const _app = {
-    xpell: {
-        version: 1
-    },
-    views: {
-        "hello-view": {
-            _type: "view",
-            style:"display:block",
-            //text:"hi",
-            _id: "hello-view",
-            _children:[
-                {
-                    _type:"view",
-                    text:"hi"
-                }
-            ]
+const world = {
+    "html-wrapper": "x3d-player",
+    scene: {
+        "lights": {
+            "main": {
+            _type: "light",
+            _light: "ambient",
+            color: 0x444466
+            }
         },
-        "hi-view": {
-            _type: "view",
-            style:"display:block",
-            //text:"hi",
-            _id: "hello-view",
-            _children:[
-                {
-                    _type:"view",
-                    text:"hello"
+        cameras: {
+            "main-cam": {
+                _type: "perspective-camera",
+                fov: 20,
+                ratio: window.innerWidth / window.innerHeight,
+                _clipping: {
+                    far: 5000,
+                    close: 0.01
+                },
+                _position: { x: 0, y: 0, z: 0 },
+                _rotation: { x: 0, y: 0, z: 0 },
+                _disable_frame_3d_state: true
+            }
+        },
+        controls: {
+            "cam-control": {
+                _type: "orbit",
+                _active: true,
+                _params: {
+                    enableDamping: true,
+                    minPolarAngle: Math.PI / 2.5,
+                    maxPolarAngle: Math.PI / 1.5,
+                    minDistance: 2,
+                    maxDistance: 10,
+                    rotateSpeed: 0.3,
                 }
-            ]
+            }
         }
-    },
-    defaults: {
-        view: "hello-view"
-    },
-    player: {
-        html_element: "player"
+
     }
 
+    ,
+    html_binding: {
+        wrapper_elemnt: "x3d-player"
+    },
+    "spell3d-objects": {
+        "pointer": {
+            _type: "sphere",
+            _id: "pointer",
+            _geometry: {
+                _type: "sphere-geometry",
+                widthSegments: 8,
+                heightSegments: 8,
+                radius: 1
+            },
+            _material: {
+                _type: "basic-material",
+                color: 0xff99ff,
+                side: 2,
+                // roughness: 0.5,
+            },
+            _position: { x: 0, y: 1.75, z: 0 },
+            _rotation: { x: 0, y: 0, z: 0 },
+            castShadow: true,
+            onframe: `follow-joystick`
+        },
+        "boxy": {
+            name: "boxy",
+            _type: "box",
+            _id: "boxy",
+    
+            _geometry: {
+                _type: "box-geometry",
+                width: 2,
+                height: 0.01,
+                depth: 2,
+                widthSegments: 2,
+                heightSegments: 2,
+                depthSegments: 2
+            },
+            _material: {
+                _type: "standard-material",
+                color: 0x00ff00,
+                side: 2
+            },
+            _position: { x: 0, y: 0.1, z: 0 },
+            _rotation: { x: 0, y: 0, z: 0 },
+            _transform_controls: false,
+            _disable_frame_3d_state: true
+        }
+    }
 }
 
 
-
-
-
-
-XUI.loadApp(_app)
-
-XUI.vm.loadPage("hello-view")
-
-//XUI.vm.showPage("hi-view")
-
-
-
-
-// const xml = `<svg>
-// <circle cx="40" cy="40" r="36" stroke="#707073" fill="none"  stroke-width="1px"></circle>
-// </svg>`
-
-// //XParser.addHtml2SpellMapItem("sub","xhtml")
-// const spltxt = XParser.xmlString2Xpell(xml)
-
-// if(spltxt) {
-//     const spl = XUI.create(spltxt)
-//     spl.attach("player")
-    
-// }
-
-
-
+X3D.loadWorld(world)

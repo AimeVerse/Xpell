@@ -4,8 +4,8 @@ import XData from "../XData"
 import XObject from "../XObject"
 import * as _XC from "../XConst"
 
-const reserved_words = {  }
-const xpell_object_html_fields_mapping = { "_id": "id", "css-class": "class", "animation": "xyz", "input-type": "type" };
+const reservedWords = { _children:"child objects" }
+const xpellObjectHtmlFieldsMapping = { "_id": "id", "css-class": "class", "animation": "xyz", "input-type": "type" };
 
 
 
@@ -21,25 +21,24 @@ export class XUIObject extends XObject {
     _data_source: string | null 
     _on_frame_skip_data_source: any
     _format: string | null
-    _ignore: {}
+    _ignore: {[k:string]:string}
     
 
 
     constructor(data, defaults) {
         super(data,defaults)
-        reserved_words[_XC.NODES.children] = "child objects"
         this._html_tag = "div";
         this._html_ns = null
         this._dom_object = null;
-        this[_XC.NODES.type] = "view";
+        this._type = "view";
         this._html = "";
-        this[_XC.NODES.children] = [];
-        this._ignore = reserved_words;
+        this._children = [];
+        this._ignore = reservedWords;
         //this._base_display = "block"
 
         if (data) {
             if (data.hasOwnProperty("_ignore")) {
-                this._ignore = XUtils.createIgnoreList(data["_ignore"],reserved_words)
+                this._ignore = XUtils.createIgnoreList(data["_ignore"],reservedWords)
             }
             this.parse(data, this._ignore);
         }
@@ -55,15 +54,15 @@ export class XUIObject extends XObject {
     }
 
 
-    parse(data, ignore = reserved_words) {
-        let cdata = Object.keys(data);
-        cdata.forEach(field => {
+    // parse(data, ignore:{[k:string]:string} = reservedWords) {
+    //     let cdata = Object.keys(data);
+    //     cdata.forEach(field => {
             
-            if (!ignore.hasOwnProperty(field) && data.hasOwnProperty(field)) {
-                this[field] = data[field];
-            }
-        });
-    }
+    //         if (!ignore.hasOwnProperty(field) && data.hasOwnProperty(field)) {
+    //             this[field] = data[field];
+    //         }
+    //     });
+    // }
 
     log() {
         let keys = Object.keys(this);
@@ -86,8 +85,8 @@ export class XUIObject extends XObject {
             fields.forEach(field => {
                 if (this[field] && this.hasOwnProperty(field)) {
                     let f_out = field;
-                    if (xpell_object_html_fields_mapping.hasOwnProperty(field)) {
-                        f_out = xpell_object_html_fields_mapping[field];
+                    if (xpellObjectHtmlFieldsMapping.hasOwnProperty(field)) {
+                        f_out = xpellObjectHtmlFieldsMapping[field];
                     }
                     if (!f_out.startsWith("_") && f_out !== "text") {
                         dom_object.setAttribute(f_out, <string>this[field]);

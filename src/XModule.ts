@@ -34,7 +34,7 @@ export  class XModule {
     }
 
     load() {
-        _xl.log("module " + this.name + " loaded")
+        _xl.log("Module " + this.name + " loaded")
     }
 
     /**

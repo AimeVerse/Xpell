@@ -56,9 +56,7 @@ export class XpellEngine {
 
     #modules = {}
     parser: typeof XParser
-    fps_mavg: number
-    ts: number
-
+   
     constructor() {
         this.version = "0.0.1"
         this.engineId = XUtils.guid()
@@ -75,7 +73,7 @@ export class XpellEngine {
 
     loadModule(xModule:XModule):void {
         if (this.#modules.hasOwnProperty(xModule.name)) {
-            _xlog.log("module " + xModule.name + " already loaded")
+            _xlog.log("Module " + xModule.name + " already loaded")
         } else {
             this.#modules[xModule.name] = xModule;
             xModule.load()
@@ -94,7 +92,7 @@ export class XpellEngine {
     }
 
     info(){
-        _xlog.log("Xpell version " + this.version)   
+        _xlog.log("Xpell information:\n- Engine Id: "  + this.engineId + "\n- Version " + this.version)   
     }
 
 
