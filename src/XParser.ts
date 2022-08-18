@@ -16,6 +16,7 @@ export class XParser {
                 h1: "xhtml",h2: "xhtml",h3: "xhtml",h4: "xhtml",h5: "xhtml",p: "xhtml",small:"xhtml",aside:"xhtml",span:"xhtml",
                 table:"xhtml",th:"xhtml",td:"xhtml",tr:"xhtml",thead:"xhtml",tbody:"xhtml",
                 ul:"xhtml",li:"xhtml",ol:"xhtml",
+                canvas:"xhtml",
                 img: "image",
             },
             attributes:{

@@ -105,3 +105,6 @@ dist
 
 #TypeDocs files
 .docs/
+
+#Xpell
+public/

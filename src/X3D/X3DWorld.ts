@@ -157,9 +157,9 @@ class X3DWorld {
         }
 
 
-        //get spell3d-objects
-        Object.keys(xworld["spell3d-objects"]).forEach(async s3dobj => {
-            let ob = xworld["spell3d-objects"][s3dobj]
+        //get x3d-objects
+        Object.keys(xworld["x3d-objects"]).forEach(async s3dobj => {
+            let ob = xworld["x3d-objects"][s3dobj]
             ob.name = s3dobj
             let obj = X3D.create(ob)
             await this.addX3DObject(obj)
@@ -241,7 +241,7 @@ class X3DWorld {
             // }
 
 
-            console.log(tobj);
+            //console.log(tobj);
             
             this.scene.add(tobj)
 

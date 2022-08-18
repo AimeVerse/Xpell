@@ -32,16 +32,17 @@ export class XUtils {
         return uuid.join('');
     }
 
-    static mergeDefaultsWithData(data:{[k:string]:string | null | [] | undefined | Function}, defaults:{[k:string]:string | null | [] | undefined | Function | {}}) {
+    static mergeDefaultsWithData(data:{[k:string]:string | null | [] | undefined | Function}, defaults:{[k:string]:string | null | [] | undefined | Function | {}},force?:boolean) {
         if (data) {
             if (!data["_id"]) {
                 if(!data["id"]) {defaults["_id"] = XUtils.guid()}
                 else {defaults["_id"] = data["id"]}
             }
             //selective assign
+            
             let dkey = Object.keys(defaults);
             dkey.forEach(key => {
-                if (!data.hasOwnProperty(key)) {
+                if (!data.hasOwnProperty(key) || force) {
                     data[key] = <any>defaults[key];
                 }
             })
@@ -75,7 +76,7 @@ export class XUtils {
 
 export class FPSCalc  {
     #accumulatedFPS:number = 0  //accumulated FPS
-    #his_mavg:number = 0//history moving average
+    #historyMovingAvg:number = 0//history moving average
     #lastTimestamp:number  = 0//timestamp
 
 
@@ -86,8 +87,8 @@ export class FPSCalc  {
         const diff:number = now-this.#lastTimestamp
         this.#lastTimestamp = now
         
-        this.#his_mavg = .9 * this.#his_mavg + .1 * diff //#stable FPS with moving avarage
-        this.#accumulatedFPS = Math.floor((1 / this.#his_mavg)*1000)
+        this.#historyMovingAvg = .9 * this.#historyMovingAvg + .1 * diff //#stable FPS with moving avarage
+        this.#accumulatedFPS = Math.floor((1 / this.#historyMovingAvg)*1000)
         return this.#accumulatedFPS
     }
 

@@ -101,8 +101,11 @@ export  class XModule {
         }
     }
 
+
+
+
     /**
-     * Run xpell command - CLI mode
+     * execute xpell command - CLI mode
      * @param {XCommand} XCommand input (JSON)
      * @returns command execution result
      */
@@ -123,7 +126,9 @@ export  class XModule {
         // }
         else if (this.objectManger) //direct xpell injection to specific module
         {
+            
             const o = this.objectManger.getObjectByName(xCommand.op)
+            console.log(o);
             if (o) { o.execute(xCommand) }
             else { throw "Xpell Module cant find op:" + xCommand.op }
         }
@@ -151,7 +156,6 @@ export  class XModule {
     //getter for om (object manager) instance
     get om() { return this.objectManger }
 
-    get object_manager() { return this.objectManger } //alias
     /**
      * Imports external objects to the engine
      * The object class should be like XObjects with static implementation of getObjects() method

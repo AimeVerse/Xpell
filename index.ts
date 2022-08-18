@@ -2,8 +2,9 @@
 import { IXObjectData, XObjectPack } from "./src/XObject"
 import {Xpell as _x} from "./src/Xpell"
 import {XData} from "./src/XData"
-import {X3D} from "./src/X3D/X3D"
+import {X3D, X3DObject} from "./src/X3D/X3D"
 import {XLabel} from "./src/XUI/XUICoreObjects"
+import {XGLTFLoader as _gltf,GLTFEvents} from "./src/X3D/XGLTFLoader"
 
 _x.info()
 
@@ -23,6 +24,45 @@ const world = {
             _type: "light",
             _light: "ambient",
             color: 0x444466
+            },
+            "p1": {
+                _type: "light",
+                _light: "directional",
+                _helper: true,
+                color: "hsl(180, 0%, 60%)",
+                intensity: 1,
+                _position: { x: 5, y: 10, z: -30 },
+        
+            },
+            "p2": {
+                _type: "light",
+                _light: "directional",
+                color: "hsl(180, 0%, 60%)",
+                intensity: 1,
+                _position: { x: 5, y: 5, z: 30 },
+        
+            },
+            "p3": {
+                _type: "light",
+                _light: "directional",
+                color: "hsl(180, 0%, 60%)",
+                intensity: 1,
+                _position: { x: -20, y: 5, z: 0 }
+        
+            },
+            "p4": {
+                _type: "light",
+                _light: "directional",
+                color: "hsl(180, 0%, 60%)",
+                intensity: 1,
+                _position: { x: 20, y: 5, z: 0 }
+            },
+            "top-light": {
+                _type: "light",
+                _light: "directional",
+                color: "hsl(180, 0%, 80%)",
+                intensity: 1,
+                _position: { x: -0.3, y: 16, z: 0 }
             }
         },
         cameras: {
@@ -60,7 +100,7 @@ const world = {
     html_binding: {
         wrapper_elemnt: "x3d-player"
     },
-    "spell3d-objects": {
+    "x3d-objects": {
         "pointer": {
             _type: "sphere",
             _id: "pointer",
@@ -68,7 +108,7 @@ const world = {
                 _type: "sphere-geometry",
                 widthSegments: 8,
                 heightSegments: 8,
-                radius: 1
+                radius: 0.01
             },
             _material: {
                 _type: "basic-material",
@@ -76,37 +116,30 @@ const world = {
                 side: 2,
                 // roughness: 0.5,
             },
-            _position: { x: 0, y: 1.75, z: 0 },
+            _position: { x: 0, y: 0, z: 0 },
             _rotation: { x: 0, y: 0, z: 0 },
             castShadow: true,
             onframe: `follow-joystick`
-        },
-        "boxy": {
-            name: "boxy",
-            _type: "box",
-            _id: "boxy",
-    
-            _geometry: {
-                _type: "box-geometry",
-                width: 2,
-                height: 0.01,
-                depth: 2,
-                widthSegments: 2,
-                heightSegments: 2,
-                depthSegments: 2
-            },
-            _material: {
-                _type: "standard-material",
-                color: 0x00ff00,
-                side: 2
-            },
-            _position: { x: 0, y: 0.1, z: 0 },
-            _rotation: { x: 0, y: 0, z: 0 },
-            _transform_controls: false,
-            _disable_frame_3d_state: true
         }
     }
 }
 
 
 X3D.loadWorld(world)
+
+_gltf.load("/Drummer.glb",{_id:"bot",name:"bot",_scale:{x:0.1,y:0.1,z:0.1}},()=>{
+    console.log("loaded calback")
+
+})
+
+document.addEventListener("bot-loaded",(e) => {
+    // document.removeEventListener("bot-loaded")
+    console.log("loaded")
+    _gltf.load("/DrumsKit.glb",{_scale:{x:0.1,y:0.1,z:0.1},})
+    const bot:X3DObject = X3D.om.getObject("bot")
+    //bot.playAnimation("Idle")
+    //X3D.run(`bot play:"Idle"`)
+})
+
+
+

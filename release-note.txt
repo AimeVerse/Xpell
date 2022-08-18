@@ -1,4 +1,10 @@
-
+1.0.4
+-------
+- Xpell 3D (X3D) 
+- XWorld
+- X3DCoreObjects
+- X3DPrimitives
+- XNanoCommands
 
 1.0.3
 -------

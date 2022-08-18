@@ -40,7 +40,7 @@ class X3DObject extends XObject {
     _cache_jcmd: any
     private _disable_frame_3d_state: any
     private _3d_set_once: any
-    private _current_action: THREE.AnimationMixer
+    private _current_action: string
     xNanoCommands: { move: (ns_cmd: any) => void; position: (ns_cmd: any) => void; scale: (ns_cmd: any) => void; rotation: (ns_cmd: any) => void; spin: (ns_cmd: any) => void; "stop-spin": (ns_cmd: any) => void; log: (ns_cmd: any) => void; rotate: (ns_cmd: any) => void; "rotate-toward": (ns_cmd: any) => void; play: (ns_cmd: any) => void; "follow-joystick": (ns_cmd: any) => void; "follow-keypoint": (ns_cmd: any) => void; "follow-path": (ns_cmd: any) => void; hover: (ns_cmd: any) => void }
 
     static getXData(threeObj:THREE.Object3D, defaults) {
@@ -55,14 +55,18 @@ class X3DObject extends XObject {
             _scale: threeObj.scale,
         }
         if (defaults) {
-            _XU.mergeDefaultsWithData(<IXObjectData>_xdata, defaults)
+            // console.log("merging",defaults);
+            
+            _XU.mergeDefaultsWithData(<IXObjectData>_xdata, defaults,true)
+            // console.log(_xdata);
+            
         }
         return _xdata
     }
 
-    static get_from_three_object(three_obj, defaults) {
-        let _spell_data:any = X3DObject.getXData(three_obj, defaults)
-        return new X3DObject(_spell_data)
+    static getFromThreeObject(three_obj, defaults) {
+        let _xdata:any = X3DObject.getXData(three_obj, defaults)
+        return new X3DObject(_xdata)
     }
 
     static descriptor() {
@@ -197,7 +201,7 @@ class X3DObject extends XObject {
 
 
     /**
-     * onFrame function for spell3d-object
+     * onFrame function for x3d-object
      * - parse textual command to SpellCommand and cache
      * - set 3d-state (position, rotation & scale) if Spell in control
      * - update animation mixer if exists
@@ -260,7 +264,8 @@ class X3DObject extends XObject {
 
 
 
-
+        console.log(jcmd);
+        
 
         if (this.xNanoCommands[jcmd.op]) {
             jcmd.s3d_object = this
@@ -268,14 +273,31 @@ class X3DObject extends XObject {
         } else throw this.name + " has no op name " + jcmd.op
     }
 
-    append(spell3d_object) {
-        this._children.push(spell3d_object);
+    append(x3dObject) {
+        this._children.push(x3dObject);
     }
 
 
     show() { this._visible = true }
 
     hide() { this._visible = false }
+
+    playAnimation(clipName:string){
+ 
+             if (clipName) {
+                 const anim = this._animation_clips[clipName]
+                 if (anim) {
+                     if (this._current_action) {
+                         this._animation_clips[<any>this._current_action].fadeOut(this._fade_duration)
+                         anim.reset().fadeIn(this._fade_duration).play();
+                     } else {
+                         anim.play()
+                     }
+                     //ns_cmd.s3d_object._disable_frame_3d_state = true
+                     this._current_action = clipName
+                 }
+             }
+    }
 }
 
 export default X3DObject

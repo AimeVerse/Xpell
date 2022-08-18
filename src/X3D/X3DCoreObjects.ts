@@ -180,22 +180,29 @@ export class XMaterial extends X3DObject {
 
 export class XMesh extends X3DObject {
 
-    static get_from_three_object(three_obj) {
-        let mesh_spell = {
-            _id: three_obj.name,
-            _type: "mesh",
-            _three_obj: three_obj,
-            name: three_obj.name,
-            _position: three_obj.position,
-            _rotation: three_obj.rotation,
-            _geometry: three_obj.geometry,
-            _material: three_obj.material,
-        }
+    static getFromThreeObject(threeObject,defaults) {
+        // let mesh_spell = {
+        //     _id: threeObject.name,
+        //     _type: "mesh",
+        //     _three_obj: threeObject,
+        //     name: threeObject.name,
+        //     _position: threeObject.position,
+        //     _rotation: threeObject.rotation,
+        //     _geometry: threeObject.geometry,
+        //     _material: threeObject.material,
+        // }
          //load animations
-        if(mesh_spell._three_obj?.animations.length>0){
-            console.log(mesh_spell._three_obj.animations);
-        }
-        return new XMesh(mesh_spell)
+        // if(mesh_spell._three_obj?.animations.length>0){
+        //     console.log(mesh_spell._three_obj.animations);
+        // }
+        if(!defaults) {
+            defaults = {}
+        }        
+        defaults["_type"] = "mesh"
+        defaults["_geometry"] = threeObject.geometry
+        defaults["_material"] = threeObject.material
+        let _xdata:any = X3DObject.getXData(threeObject, defaults)
+        return new XMesh(_xdata)
     }
 
     _geometry:XGeometry
@@ -226,21 +233,14 @@ export class XMesh extends X3DObject {
 
 export class XGroup extends X3DObject {
 
-    static get_from_three_object(three_obj) {
-        const mesh_spell = {
-            _id: three_obj.name,
-            _type: "group",
-            _three_obj: three_obj,
-            name: three_obj.name,
-            _position: three_obj.position,
-            _rotation: three_obj.rotation,
-        }
-
-         //load animations
-         if(mesh_spell._three_obj?.animations){
-            console.log(mesh_spell._three_obj.animations);
-        }
-        return new XGroup(mesh_spell)
+    static getFromThreeObject(threeObject,defaults:any) {
+        if(!defaults) {
+            defaults = {}
+        }        
+        defaults["_type"] = "group"
+        
+        let _xdata:any = X3DObject.getXData(threeObject, defaults)
+        return new XGroup(_xdata)
     }
 
     constructor(data, defaults = {

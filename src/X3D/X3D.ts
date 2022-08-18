@@ -64,7 +64,7 @@ export class X3DModule extends XModule {
         }, false);
 
         if (autoRun) {
-            await this.run()
+            await this.start()
         }
     }
 
@@ -81,9 +81,9 @@ export class X3DModule extends XModule {
     }
 
     //get spell3d object
-    add(spell3d_object) {
-        this.world.add_spell3d_object(spell3d_object)
-        this.om.addObject(spell3d_object)
+    add(x3dObject) {
+        this.world.addX3DObject(x3dObject)
+        this.om.addObject(x3dObject)
     }
 
 
@@ -92,7 +92,7 @@ export class X3DModule extends XModule {
         this.world.onWindowResize()
     }
 
-    async run() {
+    async start() {
         console.log("Running 3d engine");
         this.status = X3DEngineStatus.Running
         await this.world.run()
