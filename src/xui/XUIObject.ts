@@ -1,7 +1,7 @@
 
 import XUtils from "../XUtils"
 import XData from "../XData"
-import XObject from "../XObject"
+import XObject, { IXObjectData } from "../XObject"
 import * as _XC from "../XConst"
 
 const reservedWords = { _children:"child objects" }
@@ -130,7 +130,7 @@ export class XUIObject extends XObject {
         return document.getElementById(<string>this._id)
     }
 
-    append(xObject:XUIObject) {
+    append(xObject:XUIObject | IXObjectData | any) {
         this._children.push(<XObject>xObject)
         if (this._dom_object) {
             this.DOMElementFromHTML?.appendChild(xObject.getDOMObject())

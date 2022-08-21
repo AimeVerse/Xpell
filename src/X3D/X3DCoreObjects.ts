@@ -102,8 +102,8 @@ export class XGeometry extends X3DObject {
         super(data, defaults)
     }
 
-    async get_three() {
-        return super.get_three()
+    async getThreeObject() {
+        return super.getThreeObject()
     }
 }
 
@@ -180,6 +180,7 @@ export class XMaterial extends X3DObject {
 
 export class XMesh extends X3DObject {
 
+
     static getFromThreeObject(threeObject,defaults) {
         // let mesh_spell = {
         //     _id: threeObject.name,
@@ -212,7 +213,8 @@ export class XMesh extends X3DObject {
         _three_class: THREE.Mesh,
         _three_obj:null,
         _geometry: null,
-        _material: null
+        _material: null,
+        _positional_audio_source:null
     }) {
         super(data, defaults)
         if(!this._three_obj) {
@@ -222,11 +224,15 @@ export class XMesh extends X3DObject {
 
     }
 
-    async get_three() {
+    async getThreeObject() {
         if(!this._three_obj) {
-            this._threes_class_args = [await this._geometry.get_three(), await this._material.get_three()]
+            this._threes_class_args = [await this._geometry.getThreeObject(), await this._material.getThreeObject()]
         }
-        return super.get_three()
+        const tobj = await super.getThreeObject()
+        
+        
+
+        return tobj
     }
 }
 

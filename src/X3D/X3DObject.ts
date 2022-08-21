@@ -1,28 +1,29 @@
-import {XUtils as _XU} from "../XUtils"
+import { XUtils as _XU } from "../XUtils"
 import XParser from "../XParser"
 import * as _XC from "../XConst"
 import * as THREE from 'three'
 import XObject, { IXObjectData } from "../XObject"
 import xNanoCommands from './XNanoCommands'
+import X3D from "./X3D"
 
 
 
 
-const reservedWords = { _children:"child objects" }
+const reservedWords = { _children: "child objects" }
 const xpell_object_html_fields_mapping = {
     "_id": "id",
-};    
+};
 
 /**
  * @interface IX3DObjectData
  */
 interface IX3DObjectData extends IXObjectData {
-    _three_obj: THREE.Object3D 
+    _three_obj: THREE.Object3D
 }
 
 class X3DObject extends XObject {
     _three_class: any
-    _three_obj:THREE.Object3D | null
+    _three_obj: THREE.Object3D | null
     _position: THREE.Vector3
     _rotation: THREE.Vector3
     private _scale: THREE.Vector3
@@ -41,31 +42,34 @@ class X3DObject extends XObject {
     private _disable_frame_3d_state: any
     private _3d_set_once: any
     private _current_action: string
+    private _positional_audio: THREE.PositionalAudio
+    private _positional_audio_source:string
     xNanoCommands: { move: (ns_cmd: any) => void; position: (ns_cmd: any) => void; scale: (ns_cmd: any) => void; rotation: (ns_cmd: any) => void; spin: (ns_cmd: any) => void; "stop-spin": (ns_cmd: any) => void; log: (ns_cmd: any) => void; rotate: (ns_cmd: any) => void; "rotate-toward": (ns_cmd: any) => void; play: (ns_cmd: any) => void; "follow-joystick": (ns_cmd: any) => void; "follow-keypoint": (ns_cmd: any) => void; "follow-path": (ns_cmd: any) => void; hover: (ns_cmd: any) => void }
 
-    static getXData(threeObj:THREE.Object3D, defaults) {
+    static getXData(threeObj: THREE.Object3D, defaults) {
         let _xdata = {
             _id: threeObj.name,
             _type: "x3d-object",
-            _children:[],
+            _children: [],
             _three_obj: threeObj,
             name: threeObj.name,
             _position: threeObj.position,
             _rotation: threeObj.rotation,
-            _scale: threeObj.scale,
+            _scale: threeObj.scale
         }
         if (defaults) {
             // console.log("merging",defaults);
+
+            _XU.mergeDefaultsWithData(<IXObjectData>_xdata, defaults, true)
             
-            _XU.mergeDefaultsWithData(<IXObjectData>_xdata, defaults,true)
             // console.log(_xdata);
-            
+
         }
         return _xdata
     }
 
     static getFromThreeObject(three_obj, defaults) {
-        let _xdata:any = X3DObject.getXData(three_obj, defaults)
+        let _xdata: any = X3DObject.getXData(three_obj, defaults)
         return new X3DObject(_xdata)
     }
 
@@ -77,9 +81,9 @@ class X3DObject extends XObject {
 
     }
 
-    constructor(data:IX3DObjectData, defaults?:any) {
-        super(data,defaults)
-        
+    constructor(data: IX3DObjectData, defaults?: any) {
+        super(data, defaults)
+
         this._three_class = null
         this._three_obj = null
         this._position = new THREE.Vector3(0, 0, 0) //x,y,z
@@ -102,6 +106,9 @@ class X3DObject extends XObject {
             this.parse(data, this._ignore);
         }
 
+        if(this._positional_audio_source) {
+            this.setPositionalAudioSource()
+        }
 
         this.xNanoCommands = xNanoCommands
     }
@@ -112,7 +119,7 @@ class X3DObject extends XObject {
      * @override 
      */
     init() {
-        
+
     }
 
 
@@ -143,8 +150,8 @@ class X3DObject extends XObject {
 
 
     async loadAnimations() {
-        
-        if(this._three_obj && this._three_obj.animations.length>0) {
+
+        if (this._three_obj && this._three_obj.animations.length > 0) {
             const anim = this._three_obj.animations
             this._animation_mixer = new THREE.AnimationMixer(this._three_obj)
             anim.forEach(__anim => {
@@ -152,44 +159,46 @@ class X3DObject extends XObject {
                 console.log("animation " + __anim.name + " loaded");
             })
         }
-        
+
     }
 
     /**
      * @override
      */
-    async get_three() {
+    async getThreeObject() {
 
         if (!this._three_obj && this._three_class) {
-            
-            this._three_obj = new this._three_class(...this._threes_class_args)
-            if(this._three_obj){
-            this._three_obj.name = <string>this.name
-            this._clock.start()
-            
-            this.onCreate()
-            const keys = Object.keys(this)
 
-            const s2t_props = [""]
-            keys.forEach(key => {
-                if (!key.startsWith("_")) {
-                    if(this._three_obj){
-                        if (key == "color") {
-                            this._three_obj[key] = new THREE.Color(<string>this[key]);
-                        } else {
+            this._three_obj = new this._three_class(...this._threes_class_args)
+            if (this._three_obj) {
+                this._three_obj.name = <string>this.name
+                this._clock.start()
+
+                this.onCreate()
+                const keys = Object.keys(this)
+
+                const s2t_props = [""]
+                keys.forEach(key => {
+                    if (!key.startsWith("_")) {
+                        if (this._three_obj) {
+                            if (key == "color") {
+                                this._three_obj[key] = new THREE.Color(<string>this[key]);
+                            } else {
+                                this._three_obj[key] = this[key]
+                            }
+                        }
+                        /* FIELD Checker - debug only unmark and add fields
+                        const flds = ["name","height","width","visible","side","roughness"]
+                        if(this[key] && flds.includes(key)){
                             this._three_obj[key] = this[key]
                         }
+                        */
                     }
-                    /* FIELD Checker - debug only unmark and add fields
-                    const flds = ["name","height","width","visible","side","roughness"]
-                    if(this[key] && flds.includes(key)){
-                        this._three_obj[key] = this[key]
-                    }
-                    */
-                }
-            })
+                })
+
+                
             }
-            
+
         }
 
 
@@ -199,6 +208,24 @@ class X3DObject extends XObject {
     }
 
 
+    getPoistionalAudio(source){
+        const sound = new THREE.PositionalAudio( X3D.world.audioListener );
+
+        // load a sound and set it as the PositionalAudio object's buffer
+        const audioLoader = new THREE.AudioLoader();
+        audioLoader.load( this._positional_audio_source, function( buffer ) {
+            sound.setBuffer( buffer );
+            sound.setRefDistance( 20 );
+            sound.play()
+        })
+        return sound
+    }
+
+    setPositionalAudioSource() {
+        this._positional_audio = this.getPoistionalAudio(this._positional_audio_source)
+        this._three_obj.add(this._positional_audio)
+
+    }
 
     /**
      * onFrame function for x3d-object
@@ -264,8 +291,7 @@ class X3DObject extends XObject {
 
 
 
-        
-        
+
         if (this.xNanoCommands[jcmd.op]) {
             jcmd.s3d_object = this
             this.xNanoCommands[jcmd.op](jcmd)
@@ -281,21 +307,21 @@ class X3DObject extends XObject {
 
     hide() { this._visible = false }
 
-    playAnimation(clipName:string){
- 
-             if (clipName) {
-                 const anim = this._animation_clips[clipName]
-                 if (anim) {
-                     if (this._current_action) {
-                         this._animation_clips[<any>this._current_action].fadeOut(this._fade_duration)
-                         anim.reset().fadeIn(this._fade_duration).play();
-                     } else {
-                         anim.play()
-                     }
-                     //ns_cmd.s3d_object._disable_frame_3d_state = true
-                     this._current_action = clipName
-                 }
-             }
+    playAnimation(clipName: string) {
+
+        if (clipName) {
+            const anim = this._animation_clips[clipName]
+            if (anim) {
+                if (this._current_action) {
+                    this._animation_clips[<any>this._current_action].fadeOut(this._fade_duration)
+                    anim.reset().fadeIn(this._fade_duration).play();
+                } else {
+                    anim.play()
+                }
+                //ns_cmd.s3d_object._disable_frame_3d_state = true
+                this._current_action = clipName
+            }
+        }
     }
 }
 

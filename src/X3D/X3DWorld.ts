@@ -75,6 +75,7 @@ class X3DWorld {
     defaultCamera: any;
     controls: OrbitControls | PointerLockControls | FirstPersonControls;
     frameProcessTime: number;
+    audioListener:THREE.AudioListener
 
     constructor(xworld) {
 
@@ -91,8 +92,8 @@ class X3DWorld {
         this.renderer.setClearColor(0x000000, 1); // the default color
         this.frameNumber = 0
         this.raycaster = new THREE.Raycaster()
-        
-        
+         
+        this.audioListener = new THREE.AudioListener()
         this.lights = {}
         this.x3dObjects = {}
         this.defaultCamera = null
@@ -129,6 +130,9 @@ class X3DWorld {
 
 
                 this.defaultCamera = await this.addX3DObject(cam)
+                if(camera["_add_audio_listener"]) {
+                    this.defaultCamera.add(this.audioListener)
+                }
 
 
 
@@ -234,7 +238,7 @@ class X3DWorld {
             //if(!obj._is_light) {console.log("SpellWorld adding ", obj)}
 
             this.x3dObjects[obj.name] = obj
-            const tobj = await obj.get_three()
+            const tobj = await obj.getThreeObject()
 
             // if (tobj.name == "cube") {
             //     this.create_transform_controls(tobj)

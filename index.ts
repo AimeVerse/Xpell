@@ -82,7 +82,8 @@ const world = {
                 },
                 _position: { x: 0, y: 1.75, z: -40 },
                 _rotation: { x: 0, y: 0, z: 0 },
-                _disable_frame_3d_state: true
+                _disable_frame_3d_state: true,
+                _add_audio_listener:true
             }
         },
         controls: {
@@ -102,24 +103,46 @@ const world = {
 
     },
     "x3d-objects": {
-        "pointer": {
+        "sound-1": {
             _type: "sphere",
-            _id: "pointer",
+            _id: "sound-1",
             _geometry: {
                 _type: "sphere-geometry",
                 widthSegments: 8,
                 heightSegments: 8,
-                radius: 0.1
+                radius: 0.5
             },
             _material: {
-                _type: "basic-material",
+                _type: "standard-material",
                 color: 0xff99ff,
                 side: 2,
                 // roughness: 0.5,
             },
-            _position: { x: 0, y: 1, z: -1 },
+            _position: { x: 6, y: 1, z: 10 },
             _rotation: { x: 0, y: 0, z: 0 },
-            castShadow: true
+            castShadow: true,
+            
+            
+        },
+        "sound-2": {
+            _type: "sphere",
+            _id: "sound-2",
+            _geometry: {
+                _type: "sphere-geometry",
+                widthSegments: 8,
+                heightSegments: 8,
+                radius: 0.5
+            },
+            _material: {
+                _type: "standard-material",
+                color: 0xff99ff,
+                side: 2,
+                // roughness: 0.5,
+            },
+            _position: { x: -6, y: 1, z: 10 },
+            _rotation: { x: 0, y: 0, z: 0 },
+            castShadow: true,
+            //_on_frame: `rotation y:++0.01 `,
             
         }
     }
@@ -128,126 +151,20 @@ const world = {
 
 X3D.loadWorld(world)
 
-_gltf.load("/Drummer.glb",{_id:"bot",name:"bot",_position:{x:0,y:0,z:0},_on_frame: `rotation y:++0.01 `},()=>{
-    // const bot:X3DObject = X3D.om.getObject("bot")
-    // bot.playAnimation("Sitting")
+_gltf.load("/Drummer.glb",{_id:"drummer",name:"drummer",_position:{x:0,y:0,z:0},_on_frame: ``,_positional_audio_source:"drum-roll-with-cymbal-crash-at-end.mp3"},()=>{
+    const drummer:X3DObject = X3D.om.getObject("drummer")
+    drummer.playAnimation("Sitting")
+    const jcmd = {
+        op:"play-sound"
+    }
+    drummer.execute(jcmd)
+    
 })
 
-// _gltf.load("/DrumsChair.glb",{_id:"chair"})
+_gltf.load("/DrumsChair.glb",{_id:"chair",_position:{x:0,y:0,z:0}})
 // _gltf.load("/Drums.glb",{_id:"drums",name:"drums"})
 
 
-
-
-
-class InfoBar extends XUIObject  {   
-    constructor(data) {
-        
-        const defaults = {
-            _type:"info-bar",
-            _html_tag:"div",
-            _user_name:"unknown"
-        }
-        super(data,defaults)
-
-        this._frameLable = XUI.create({
-            _id:"name-label",
-            _type:"label",
-            _data_source:"frame-number",
-            _format:"Frame: _$"
-        })
-        
-        this.append(this._frameLable)
-
-        this.fpsLabel = XUI.create({
-            _id:"fps-label",
-            _type:"label",
-            _data_source:"fps",
-            _format:"FPS: _$",
-            style:"margin-left:20px"
-        })
-        
-        this.append(this.fpsLabel)
-
-        this.userName = XUI.create({
-            _id:"username-label",
-            _type:"label",
-            text:"User :" + this._user_name,
-            style:"margin-left:20px"
-        })
-        
-        this.append(this.userName)
-        
-        this.animateButton = XUI.create({
-            _id:"animateButton",
-            _type:"button",
-            style:"margin-left:20px",
-            text:"Animate",
-            onclick:"document.dispatchEvent(new CustomEvent('clickme'))",
-            _pos:0
-        })
-        
-        this.append(this.animateButton)
-
-
-        
-
-        
-
-        document.addEventListener("clickme",(e) => {
-            const anims = ["Sitting","Drumming","Angry","Clapping"]
-            const bot:X3DObject = X3D.om.getObject("bot")
-            const but:XUIObject = XUI.om.getObject("animateButton")
-            bot.playAnimation(anims[but._pos++])
-            if(but._pos == anims.length) but._pos = 0
-
-        })
-        
-    }
-}
-
-
-
-
-
-
-class InfoObjects {
-    
-    static getObjects() {
-        return  {
-            "info-bar":InfoBar
-        }
-    }
-}
-
-XUI.importObjects(InfoObjects)
-
-const _app = {
-    xpell: {version: 1},
-    "html-tag-id":"player",
-    views: {
-        "hello-view": {
-            _type: "info-bar",
-            style:"display:block",
-            _id: "hello-view",
-            _user_name:"Tamir"
-            
-        }
-    },
-    defaults: {
-        view: "hello-view"
-    }        
-
-}
-
-
-
-
-//load Xpell application
-XUI.loadApp(_app)
-
-//load "hello-view" view into the page
-XUI.vm.loadPage("hello-view")
 
 
 

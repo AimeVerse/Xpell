@@ -134,13 +134,15 @@ export class XSphere extends XMesh {
                 _three_obj: null,
                 _geometry: null,
                 _material: null
+                
             }
         }
         data._geometry._threes_class_args = [data._geometry.radius, data._geometry.widthSegments, data._geometry.heightSegments]
 
         super(data, defaults)
-
     }
+
+
 }
 
 export class XCylinder extends XMesh {
@@ -329,7 +331,7 @@ export class XFloor extends X3DObject {
 
     }
 
-    async get_three() {
+    async getThreeObject() {
 
         const plane = {
             _type: "plane",
@@ -360,7 +362,7 @@ export class XFloor extends X3DObject {
         //         aoMap: sandAmbientOcclusion
         //     })
 
-        let basic_floor = await (new XPlane(plane)).get_three()
+        let basic_floor = await (new XPlane(plane)).getThreeObject()
 
         this._three_obj = new this._three_class()
 
@@ -378,7 +380,7 @@ export class XFloor extends X3DObject {
             }
         }
 
-        return await super.get_three()
+        return await super.getThreeObject()
     }
 
 
