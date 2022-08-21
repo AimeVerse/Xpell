@@ -224,7 +224,6 @@ XUI.importObjects(InfoObjects)
 
 const _app = {
     xpell: {version: 1},
-    "html-tag-id":"player",
     views: {
         "hello-view": {
             _type: "info-bar",
@@ -236,7 +235,8 @@ const _app = {
     },
     defaults: {
         view: "hello-view"
-    }        
+    },
+    "html-tag-id":"player"
 
 }
 

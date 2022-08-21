@@ -103,16 +103,19 @@ const set_axis = (root, axis, param) => {
          set_axis(ns_cmd.s3d_object._rotation, "z", z)
      },
      "spin": (ns_cmd) => {
+         
          const x = get_param(0, "x", ns_cmd)
          const x_str = (x) ? "x:++" + x : ""
- 
+         
          const y = get_param(0, "y", ns_cmd)
          const y_str = (y) ? "y:++" + y : ""
- 
+         
          const z = get_param(0, "z", ns_cmd)
          const z_str = (z) ? "z:++" + z : ""
- 
-         ns_cmd.s3d_object.onframe = `rotation ${x_str} ${y_str} ${z_str}`
+         const sstr = `rotation ${x_str} ${y_str} ${z_str}`
+         
+         console.log(sstr);
+         ns_cmd.s3d_object.onframe = sstr
      },
      "stop-spin": (ns_cmd) => {
          ns_cmd.s3d_object.onframe = ""
@@ -147,7 +150,6 @@ const set_axis = (root, axis, param) => {
  
      },
      "play": (ns_cmd) => {
-         console.log(ns_cmd);
  
          if (ns_cmd.s3d_object._animation_mixer) {
              const clip = get_param(1, "clip", ns_cmd)

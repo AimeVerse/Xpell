@@ -264,9 +264,8 @@ class X3DObject extends XObject {
 
 
 
-        console.log(jcmd);
         
-
+        
         if (this.xNanoCommands[jcmd.op]) {
             jcmd.s3d_object = this
             this.xNanoCommands[jcmd.op](jcmd)

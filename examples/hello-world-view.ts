@@ -32,10 +32,7 @@ const _app = {
     defaults: {
         view: "hello-view"
     },
-    player: {
-        html_element: "player"
-    }
-
+    "html-tag-id":"player"
 }
 
 

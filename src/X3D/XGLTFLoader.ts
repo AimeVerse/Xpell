@@ -18,7 +18,6 @@ class XGLTFLoader {
         const _onload = (gltf) => {
 
             //to-do fix group loading position
-            
             gltf.scene.children.forEach(child => {
                 let xobject;
                 child.animations = gltf.animations

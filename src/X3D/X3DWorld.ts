@@ -30,7 +30,7 @@ const XWorldStatus = {
 
 
 const xWorldDefaults = {
-    "html-wrapper": "body",
+    "html-tag-id": "body",
     renderer: {
         _type: "webgl",
         settings: { antialias: true, alpha: true }
@@ -166,7 +166,7 @@ class X3DWorld {
         })
 
         //console.log(xworld)
-        document.getElementById(xworld["html-wrapper"]).appendChild(this.renderer["domElement"]);
+        document.getElementById(xworld["html-tag-id"]).appendChild(this.renderer["domElement"]);
 
         //this.gui = new dat.GUI();
 

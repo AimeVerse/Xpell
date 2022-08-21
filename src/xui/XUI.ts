@@ -48,8 +48,8 @@
      * @param xpellApp 
      */
     loadApp(xpellApp) {
-         if(xpellApp.player && xpellApp.player.html_element) {
-             this.vm["parentHTMLElement"] = xpellApp.player.html_element
+         if(xpellApp["html-tag-id"]) {
+             this.vm["parentHTMLElement"] = xpellApp["html-tag-id"]
          }
          this.vm.addViewsMetadataObject(xpellApp.views);
          XEventManager.fire(XEventList.app_loaded)
