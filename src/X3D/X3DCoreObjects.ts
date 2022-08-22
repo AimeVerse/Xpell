@@ -28,7 +28,8 @@ const threeGeometries = {
 const threeMaterials = {
     "standard-material": THREE.MeshPhysicalMaterial,
     "basic-material": THREE.MeshBasicMaterial,
-    "shader-material": THREE.ShaderMaterial
+    "shader-material": THREE.ShaderMaterial,
+    "phong-material":THREE.MeshPhongMaterial
 
 }
 
