@@ -196,12 +196,14 @@ class X3DObject extends XObject {
                     }
                 })
 
-                
+                if(this._positional_audio) {
+                    this._three_obj.add(this._positional_audio)
+                }
             }
 
         }
 
-
+        
 
 
         return this._three_obj
@@ -223,8 +225,8 @@ class X3DObject extends XObject {
 
     setPositionalAudioSource() {
         this._positional_audio = this.getPoistionalAudio(this._positional_audio_source)
-        this._three_obj.add(this._positional_audio)
-
+        if(this._three_obj) this._three_obj.add(this._positional_audio)
+        
     }
 
     /**

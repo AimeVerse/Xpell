@@ -1,6 +1,6 @@
 {
   "name": "xpell",
-  "version": "1.0.30",
+  "version": "1.0.31",
   "description": "Xpell UI JS Framework",
   "files": [
     "dist",

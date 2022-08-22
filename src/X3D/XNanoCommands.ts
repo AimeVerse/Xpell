@@ -150,8 +150,8 @@ const set_axis = (root, axis, param) => {
  
      },
      "play-sound":(ns_cmd) => {
-        console.log(ns_cmd.s3d_object._positional_audio)
-        ns_cmd.s3d_object._positional_audio.pause()
+        // console.log(ns_cmd.s3d_object._positional_audio)
+        // ns_cmd.s3d_object._positional_audio.pause()
 
      },
      "play": (ns_cmd) => {

@@ -228,11 +228,8 @@ export class XMesh extends X3DObject {
         if(!this._three_obj) {
             this._threes_class_args = [await this._geometry.getThreeObject(), await this._material.getThreeObject()]
         }
-        const tobj = await super.getThreeObject()
-        
-        
+        return  await super.getThreeObject()
 
-        return tobj
     }
 }
 

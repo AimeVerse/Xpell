@@ -110,7 +110,7 @@ const world = {
                 _type: "sphere-geometry",
                 widthSegments: 8,
                 heightSegments: 8,
-                radius: 0.5
+                radius: 0.1
             },
             _material: {
                 _type: "standard-material",
@@ -121,7 +121,7 @@ const world = {
             _position: { x: 6, y: 1, z: 10 },
             _rotation: { x: 0, y: 0, z: 0 },
             castShadow: true,
-            
+            _positional_audio_source:"drum-roll-with-cymbal-crash-at-end.mp3"  
             
         },
         "sound-2": {
@@ -131,7 +131,7 @@ const world = {
                 _type: "sphere-geometry",
                 widthSegments: 8,
                 heightSegments: 8,
-                radius: 0.5
+                radius: 0.1
             },
             _material: {
                 _type: "standard-material",
@@ -143,7 +143,7 @@ const world = {
             _rotation: { x: 0, y: 0, z: 0 },
             castShadow: true,
             //_on_frame: `rotation y:++0.01 `,
-            
+            _positional_audio_source:"bass-drum-roll-2.mp3"
         }
     }
 }
@@ -151,18 +151,20 @@ const world = {
 
 X3D.loadWorld(world)
 
-_gltf.load("/Drummer.glb",{_id:"drummer",name:"drummer",_position:{x:0,y:0,z:0},_on_frame: ``,_positional_audio_source:"drum-roll-with-cymbal-crash-at-end.mp3"},()=>{
+_gltf.load("/Drummer.glb",{_id:"drummer",name:"drummer",_position:{x:0,y:0,z:0},_rotation:{x:0,y:3,z:0},_on_frame: ``},()=>{
     const drummer:X3DObject = X3D.om.getObject("drummer")
-    drummer.playAnimation("Sitting")
-    const jcmd = {
-        op:"play-sound"
-    }
-    drummer.execute(jcmd)
+    drummer.playAnimation("Drumming")
+    // const jcmd = {
+    //     op:"play-sound"
+    // }
+    // drummer.execute(jcmd)
     
 })
 
-_gltf.load("/DrumsChair.glb",{_id:"chair",_position:{x:0,y:0,z:0}})
-// _gltf.load("/Drums.glb",{_id:"drums",name:"drums"})
+_gltf.load("/DrumsChair.glb",{_id:"chair",_position:{x:0,y:0,z:0},_rotation:{x:0,y:3,z:0}})
+_gltf.load("/Drums.glb",{_id:"drums",name:"drums",_position:{x:0,y:0,z:-0.8},_rotation:{x:3,y:0,z:0}})
+_gltf.load("/Halilit01.gltf",{_id:"speaker1",name:"speaker1",_position:{x: -9, y: 1, z: 10},_rotation:{x:3,y:0,z:0},_scale:{x:3.8,y:3.8,z:3.8}})
+_gltf.load("/Halilit01.gltf",{_id:"speaker2",name:"speaker2",_position:{x: 9, y: 1, z: 10},_rotation:{x:3,y:0,z:0},_scale:{x:3.8,y:3.8,z:3.8}})
 
 
 
