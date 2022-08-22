@@ -57,9 +57,9 @@ export class XBox extends XMesh {
     //         name: "Box",
     //         desc: "Spell Box",
     //         defaults: {
-    //             [_SC.NODES.type]: "box",
+    //             _type: "box",
     //             _geometry: {
-    //                 [_SC.NODES.type]: "box-geometry",
+    //                 _type: "box-geometry",
     //                 width: 0.2,
     //                 height: 0.2,
     //                 depth: 0.2,
@@ -68,7 +68,7 @@ export class XBox extends XMesh {
     //                 depthSegments: 50
     //             },
     //             _material: {
-    //                 [_SC.NODES.type]: "standard-material",
+    //                 _type: "standard-material",
     //                 color: 0xff00ff,
     //                 side: 2
     //             },
