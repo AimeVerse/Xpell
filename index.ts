@@ -136,9 +136,10 @@ const world = {
                 depthSegments: 50
             },
             _material: {
-                _type: "phong-material",
+                _type: "standard-material",
                 color: 0xff00ff,
                 side: 2,
+                _normal_map:"keren.jpeg"
             },
             _position: { x: 0, y: 0.1, z: 0 },
             _rotation: { x: 90, y: 0, z: 0 },

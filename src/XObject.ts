@@ -10,7 +10,7 @@ export type wordsList = {
 const reservedWords:wordsList = {_children:"child nodes"  }
 const xpell_object_html_fields_mapping = { "_id": "id", "css-class": "class", "animation": "xyz", "input-type": "type" };
 
-export interface IXObjectData{
+interface IXObjectData{
     [k:string]: any
     _id?:string | null
     id?:string | null

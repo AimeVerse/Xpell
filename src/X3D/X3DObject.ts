@@ -17,11 +17,11 @@ const xpell_object_html_fields_mapping = {
 /**
  * @interface IX3DObjectData
  */
-interface IX3DObjectData extends IXObjectData {
+export interface IX3DObjectData extends IXObjectData {
     _three_obj: THREE.Object3D
 }
 
-class X3DObject extends XObject {
+export class X3DObject extends XObject {
     _three_class: any
     _three_obj: THREE.Object3D | null
     _position: THREE.Vector3
