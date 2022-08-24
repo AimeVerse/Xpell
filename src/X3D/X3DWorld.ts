@@ -21,7 +21,7 @@ import X3D from "./X3D"
  */
 
 
-const XWorldStatus = {
+export const XWorldStatus = {
     New: 0,
     Running: 1,
     Paused: 2
@@ -61,7 +61,7 @@ const xWorldDefaults = {
 
 
 
-class X3DWorld {
+export class X3DWorld {
     status: number;
     worldRowData: any;
     scene: THREE.Scene;

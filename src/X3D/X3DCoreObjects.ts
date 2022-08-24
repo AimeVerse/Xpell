@@ -135,17 +135,21 @@ export class XMaterial extends X3DObject {
             // roughness: this.roughness
         }
 
-        const addMap = (spell_name) => {
-            const lmap = data[spell_name]
+        const addMap = (name) => {
+            const lmap = data[name]
+            
             if (lmap /*check file*/ ) {
                 const keys = Object.keys(lmap)
+
                 keys.forEach(key => {
+                    
+                    
                     if (key == "texture") {
                         try {
                             //console.log("loading texture " + lmap.texture)
-                            tca_params[s2t[spell_name]] = new THREE.TextureLoader().load(lmap.texture);
+                            tca_params[s2t[name]] = new THREE.TextureLoader().load(lmap.texture);
                         } catch (e) {
-                            console.error("SpellMaterial unable to load texture for " + spell_name + " reason:" + e)
+                            console.error("XMaterial unable to load texture for " + name + " reason:" + e)
                         }
                     } else {
                         if (typeof lmap[key] == "string" && lmap[key].startsWith("$")) { // spell value

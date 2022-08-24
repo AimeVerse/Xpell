@@ -220,7 +220,7 @@ class InfoObjects {
     }
 }
 
-XUI.importObjects(InfoObjects)
+XUI.importObjectPack(InfoObjects)
 
 const _app = {
     xpell: {version: 1},

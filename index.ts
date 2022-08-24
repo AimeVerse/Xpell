@@ -1,116 +1,105 @@
 
-import { Xpell as _x } from "./src/XPell"
-import {XUI} from "./src/xui/XUI"
+import {Xpell as _x} from "./src/Xpell"
+import { IXObjectData, XObjectPack } from "./src/XObject"
+import {XData} from "./src/XData"
+import {XLabel,XView,XButton} from "./src/XUI/XUICoreObjects"
+import { XUI } from "./src/XUI/XUI"
+import { XUIObject } from "./src/XUI/XUIObject"
+import {XLogger as _xlog} from "./src/XLogger"
+import { time } from "console"
 
 //display Xpell engine info
 _x.info()
 
 //load Xpell UI (XUI) Module
 _x.loadModule(XUI)
+// _x.loadModule(X3D)
 
-//start Xpell frame engine
 _x.start()
 
+_xlog.log("hey :)")
 
-//define Xpell Application
+const vStyle =  `position:absolute;top:0;left:0;width:100vw;height:20px;text-align:left;padding:10px;color:white;background-color:black`
 
-const _app = {
-    xpell: {version: 1},
-    views: {
-        "hello-view": {
-            _type: "view",
-            style:"display:block",
-            //text:"hi",
-            _id: "hello-view",
-            _children:[
-                {
-                    _type:"view",
-                    text:"Welcome! - login page",
-                    style:"font-family:monospace; font-size:30px; "
-                },
-                {
-                    _type:"label",
-                    text:"Usrename: ",
-                    for:"uname",
-                    style:"color:black"
-                },
-                {
-                    _type:"input",
-                    name:"uname",
-                    type:"text",
-                    placeholder:"Your username here"
-                },
-                {
-                    // <br>
-                    _type:"view",
-                    text:" "
-                },
-                {
-                    _type:"label",
-                    text:"Password: ",
-                    for:"pass"
-                },
-                {
-                    _type:"input",
-                    name:"pass",
-                    type:"text",
-                    placeholder:"Your password here"
-                },
-                {
-                    // <br>
-                    _type:"view",
-                    text:" "
-                },
-                {
-                    _type:"link",
-                    text:"Login!",
-                    style:"color: coral; font-family: 'Times New Roman'; border: 1px solid coral; border-radius: 13%",
-                    href:"https://web.whatsapp.com/",
-                    target:"_blank"
-                },
-                {
-                    _type:"textarea",
-                    text:"hello"
-                },
-                {
-                    _type:"video",
-                    width:"300px",
-                    height:"220px",
-                    controls:"controls",
-                    source:{
-                        src:"https://www.youtube.com/watch?v=FilQhY2Pjq0&list=RDMM&index=6&ab_channel=%D7%9E%D7%A9%D7%99%D7%A0%D7%94",
-                        type:"video/mp4"
-                    },
-                    text:"Your computer doesn't support in this video."
-                }
-            ]
-        },
-        "welcome": {
-            _type: "view",
-            style:"display:block",
-            _id: "welcome",
-            _children:[
-                {
-                    _type:"view",
-                    text:"Welcome! - login page",
-                    style:"color:black"
-                }
-            ]
+
+
+export class TopBar extends XUIObject {    
+    constructor(data) {
+        const defaults = {
+            _type:"login",
+            _html_tag:"div",
+            style:vStyle,
         }
-    },
-    
-    "html-tag-id":"player"
+        super(data,defaults);
+
+
+        const myLabel = XUI.create({
+            _type:"label",
+            _id:"my-label",
+            text:"Welcome to Xpell"
+        })
+        this.append(myLabel)
+
+        const fpsLabel = XUI.create({
+            _type:"label",
+            _id:"fps-label",
+            _data_source:"fps",
+            _format:"FPS _$",
+            style:"display:inline;margin-left:20px"
+        })
+        this.append(fpsLabel)
+
+        const frameLabel = XUI.create({
+            _type:"label",
+            _id:"frame-label",
+            _data_source:"frame-number",
+            _format:"Frame _$",
+            style:"display:inline;margin-left:20px"
+        })
+        this.append(frameLabel)
+
+        const timeLabel = XUI.create({
+            _type:"label",
+            _id:"time-label",
+            _data_source:"sys-time",
+            style:"display:inline;margin-left:20px",
+        })
+        this.append(timeLabel)
+
+        
+    }
+
+
+    /**
+     * sample override onFrame to add the time to XData
+     * @param frameNumber 
+     */
+    async onFrame (frameNumber:number) {
+        //console.log(per(frameNumber)
+        const d=new Date()
+        const getTime = () => d.getHours() + ':' + d.getMinutes() + ':' + d.getSeconds() + "." + d.getMilliseconds()
+        XData.variables["sys-time"] =getTime()
+        super.onFrame(frameNumber)
+    }
+
 }
 
 
-//load Xpell application
-XUI.loadApp(_app)
+XUI.importObject("login",TopBar)
 
-//load "hello-view" view into the page
-XUI.vm.loadPage("hello-view")
-XUI.vm.loadPage("welcome")
-
-
+const enterView = XUI.create({
+    _type:"login",
+    _id:"enter-view"
+})
 
 
+enterView.attach("player")
 
+
+
+
+
+document.getElementById("go")?.addEventListener('click',(e) => {
+
+    alert("click")
+})

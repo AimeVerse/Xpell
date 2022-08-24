@@ -87,7 +87,7 @@ export class FPSCalc  {
         const diff:number = now-this.#lastTimestamp
         this.#lastTimestamp = now
         
-        this.#historyMovingAvg = .9 * this.#historyMovingAvg + .1 * diff //#stable FPS with moving avarage
+        this.#historyMovingAvg = .98 * this.#historyMovingAvg + .02 * diff //#stable FPS with moving avarage
         this.#accumulatedFPS = Math.floor((1 / this.#historyMovingAvg)*1000)
         return this.#accumulatedFPS
     }
