@@ -1,19 +1,20 @@
-x-red
-y-green
-z-blue
+---------
+X3D
+---------
 
--Adding line 12 on index.ts
--- test all primitives
-
--Plane
-
--Sphere
-
-
--Cylinder
-If the cylinder and the sphere are on the same place, part of the color of the cylinder will be the color of the  sphere 
-
-
--Torus
+- Torus
 there is no arc like in three.js
--Floor
+
+- Floor 
+not working at all
+
+
+----------
+
+
+XUI
+
+-----------
+
+
+- fix onclick
