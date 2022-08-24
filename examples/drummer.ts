@@ -126,12 +126,12 @@ const world = {
 }
 
 
-X3D.loadWorld(world)
+// X3D.loadWorld(world)
 
-_gltf.load("/Drummer.glb",{_id:"bot",name:"bot",_position:{x:0,y:0,z:0},_on_frame: `rotation y:++0.01 `},()=>{
-    // const bot:X3DObject = X3D.om.getObject("bot")
-    // bot.playAnimation("Sitting")
-})
+// _gltf.load("/Drummer.glb",{_id:"bot",name:"bot",_position:{x:0,y:0,z:0},_on_frame: `rotation y:++0.01 `},()=>{
+//     // const bot:X3DObject = X3D.om.getObject("bot")
+//     // bot.playAnimation("Sitting")
+// })
 
 // _gltf.load("/DrumsChair.glb",{_id:"chair"})
 // _gltf.load("/Drums.glb",{_id:"drums",name:"drums"})

@@ -2,7 +2,7 @@ import { XUtils as _XU } from "../XUtils"
 import XParser from "../XParser"
 import * as _XC from "../XConst"
 import * as THREE from 'three'
-import XObject, { IXObjectData } from "../XObject"
+import {XObject ,IXObjectData } from "../XObject"
 import xNanoCommands from './XNanoCommands'
 import X3D from "./X3D"
 

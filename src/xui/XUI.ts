@@ -31,9 +31,7 @@
          //this.engine = SpellUI
          this.vm = new XViewManager()
          //register default objects
-         this.importObjects(XUICoreObjects)
-         //this.importObjects(SpellDashboardObjects)
-         //this.importObjects(SpellMoveControls)
+         this.importObjectPack(XUICoreObjects)
  
          XEventManager.fire("xui-loaded")
  

@@ -42,7 +42,7 @@ export class X3DModule extends XModule {
     
     constructor() {
         super({ name: "x3d" })
-        this.importObjects(X3DPrimitives)
+        this.importObjectPack(X3DPrimitives)
 
         //SpellObjects.load(this)
         XData.objects["x3d-om"] = this.om

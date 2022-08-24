@@ -6,7 +6,7 @@ import {XLabel,XView,XButton} from "./src/XUI/XUICoreObjects"
 import { XUI } from "./src/XUI/XUI"
 import { XUIObject } from "./src/XUI/XUIObject"
 import {XLogger as _xlog} from "./src/XLogger"
-import { time } from "console"
+
 
 //display Xpell engine info
 _x.info()

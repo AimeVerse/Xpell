@@ -157,15 +157,31 @@ export  class XModule {
     get om() { return this.objectManger }
 
     /**
+     * Imports external object pack to the engine
+     * The object class should be like XObjects with static implementation of getObjects() method
+     * @param {XObjects} xObjectPack 
+     */
+    importObjectPack(xObjectPack:XObjectPack | any) {
+        this.objectManger.registerObjects(xObjectPack.getObjects())
+    }
+
+    /**
+     * Imports external object pack to the engine
+     * @deprecated - use importObjectPack instead
+     * @param xObjectPack 
+     */
+    importObjects(xObjectPack:XObjectPack | any) {
+        this.importObjectPack(xObjectPack)
+    }
+
+    /**
      * Imports external objects to the engine
      * The object class should be like XObjects with static implementation of getObjects() method
      * @param {XObjects} xObjectPack 
      */
-    importObjects(xObjectPack:XObjectPack | any) {
-        this.objectManger.registerObjects(xObjectPack.getObjects())
+     importObject(xObjectName,xObject) {
+        this.objectManger.registerObject(xObjectName,xObject)
     }
-
-    
 
 }
 

@@ -100,4 +100,4 @@ class CardObjects {
     }
 }
 
-XUI.importObjects(CardObjects)
+XUI.importObjectPack(CardObjects)
