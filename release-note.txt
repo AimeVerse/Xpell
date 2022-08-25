@@ -6,6 +6,8 @@
 - X3DPrimitives
 - XNanoCommands
 - Positional Audio
+- XJoystick
+- XDashboard
 
 1.0.3
 -------

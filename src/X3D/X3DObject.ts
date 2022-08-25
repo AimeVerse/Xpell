@@ -123,8 +123,12 @@ export class X3DObject extends XObject {
     }
 
 
-    set_3d_state() {
-        if (this._three_obj) {
+    /**
+     * This method sets the 3D State of the object (position, rotation & scale).
+     */
+    set3DState() {
+        if (this._three_obj  ) {
+            
             this._three_obj.position.set(this._position.x, this._position.y, this._position.z)
             this._three_obj.rotation.set(this._rotation.x, this._rotation.y, this._rotation.z)
             this._three_obj.scale.set(this._scale.x, this._scale.y, this._scale.z)
@@ -254,13 +258,15 @@ export class X3DObject extends XObject {
         //check if _disable_frame_3d_state is in the Spell object
         // _disable_frame_3d_state disables onFrame positioning by Spell (for external controllers like Orbit Controls)
         if (!this._disable_frame_3d_state) {
-            this.set_3d_state()
+            this.set3DState()
         } else {
             //set 3d state once for inital poistion/rotation
             // to override this set "_3d_set_once":false on Spell object input data
-            if (!this._3d_set_once) {
-                this.set_3d_state()
-                this._3d_set_once = true
+            if (this._3d_set_once) {
+                
+                this.set3DState()
+
+                this._3d_set_once = false
             }
         }
 

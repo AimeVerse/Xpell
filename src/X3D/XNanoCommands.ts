@@ -9,7 +9,8 @@
  
 
 
- import * as THREE from 'three'
+ import { log } from 'console';
+import * as THREE from 'three'
  
  import XData from "../XData";
  import * as _XU from "../XUtils"
@@ -177,6 +178,7 @@ const set_axis = (root, axis, param) => {
      "follow-joystick": (ns_cmd) => {
          const jm = XData.objects["joy-move"]
          if (jm) {
+             
  
              let power = 0.25
              let lvector = ns_cmd.s3d_object._three_obj.position
@@ -200,7 +202,17 @@ const set_axis = (root, axis, param) => {
              }
  
              if (jm.right > 0) {
-                 tempVector.set(jm.right * power, 0, 0).applyAxisAngle(upVector, <number>angle)
+                tempVector.set(jm.right * power, 0, 0).applyAxisAngle(upVector, <number>angle)
+                 lvector.addScaledVector(tempVector, 1)
+             }
+
+             if (jm.up > 0) {
+                tempVector.set(0, jm.up * power, 0).applyAxisAngle(upVector, <number>angle)
+                 lvector.addScaledVector(tempVector, 1)
+             }
+
+             if (jm.down > 0) {
+                tempVector.set(0,-jm.down * power, 0).applyAxisAngle(upVector, <number>angle)
                  lvector.addScaledVector(tempVector, 1)
              }
  
@@ -213,7 +225,7 @@ const set_axis = (root, axis, param) => {
              //console.log("ct")
              XData.objects["control-target"] = lvector
              XData.objects["joystick-vector"] = lvector
-             XData.variables["joystick-position"] = `x:${lvector.x} y:${lvector.y} z:${lvector.z}`
+             XData.variables["joystick-position"] = `x:${lvector.x.toFixed(2)} y:${lvector.y.toFixed(2)} z:${lvector.z.toFixed(2)}`
              //console.log(SpellData.variables["joystick-position"])
              //   //controls.target.set( mesh.position.x, mesh.position.y, mesh.position.z );
              //   // reposition camera

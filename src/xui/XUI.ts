@@ -76,9 +76,9 @@
          const ctrl = xobj.getDOMObject()
          const pe = (xobj._parent_element) ? xobj._parent_element : this.vm["parentHTMLElement"];
          document.querySelector("#" + pe)?.append(ctrl)
-        //  if(xobj.onCreate && typeof xobj.onCreate === 'function') {
-        //      xobj.onCreate()
-        //  }
+         if(xobj.onMount && typeof xobj.onMount === 'function') {
+             xobj.onMount()
+         }
          
          
      }

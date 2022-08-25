@@ -6,3 +6,13 @@
 - object manager : remove object (add new method)
 - remove xpell object from object manager
 - remove DomElement from Dom tree
+
+
+
+-- today:
+
+
+-- fix arena
+-- add drummer
+-- add music
+

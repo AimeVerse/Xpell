@@ -34,6 +34,7 @@
     "vite": "^3.0.2"
   },
   "dependencies": {
+    "nipplejs": "^0.9.1",
     "three": "^0.143.0"
   }
 }
