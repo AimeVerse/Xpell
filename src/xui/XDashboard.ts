@@ -2,7 +2,7 @@ import { XUI } from "./XUI"
 import XUIObject from "./XUIObject"
 import XData from "../XData"
 
-const vStyle =  `position:static;top:0;left:0;width:100vw;height:20px;text-align:left;padding:10px;color:white;background-color:black`
+const vStyle =  `position:absolute;top:0;left:0;width:100vw;height:20px;text-align:left;padding:10px;color:white;background-color:black`
 
 export class TopBar extends XUIObject {    
     constructor(data) {

@@ -129,80 +129,24 @@ const world = {
             _rotation: { x: 0, y: 0, z: 0 },
             castShadow: true,
             _on_frame: `follow-joystick`
-        },
-        // "sound-2": {
-        //     _type: "sphere",
-        //     _id: "sound-2",
-        //     _geometry: {
-        //         _type: "sphere-geometry",
-        //         widthSegments: 8,
-        //         heightSegments: 8,
-        //         radius: 1
-        //     }, 
-        //     _material: {
-        //         _type: "standard-material",
-        //         color: 0x009900, 
-        //         side: 2, 
-        //         // roughness: 0.5,
-        //     },
-        //     _position: { x: -2, y: 2, z: 0 },
-        //     _rotation: { x: 0, y: 0, z: 0 },
-        //     castShadow: true,
-        //     _on_frame: `rotation y:++0.01 `,
-        //     _positional_audio_source:"happy-days.mp3"
-        // }
+        }
     }
 }
 
 
 X3D.loadWorld(world)
 
-const stage = {
-    x:0,
-    y:1.5,
-    z:0,
-}
-
-// _loader.loadGLTF("/Drummer.glb",{_id:"drummer",name:"drummer",_position:{x:0,y:stage.y,z:-0.6},_scale:{x:2,y:2,z:2},_on_frame: ``},()=>{
-//     const drummer:X3DObject = X3D.om.getObject("drummer")
-//     drummer.playAnimation("Drumming")
-// })
-
-
-// _gltf.load("/DrumsChair.glb",{_id:"chair",_position:{x:0,y:stage.y,z:-0.6},_scale:{x:0.3,y:0.3,z:0.3}})
-// _gltf.load("/Drums.glb",{_id:"drums",name:"drums",_position:{x:0,y:stage.y+0.1,z:1},_scale:{x:0.25,y:0.25,z:0.25}})
-
-
-
-// _gltf.load("/dancing_penguin.glb",{_id:"ping",name:"ping",_position:{x:3,y:stage.y+0.2,z:-3},_scale:{x:0.01,y:0.01,z:0.01}},()=>{
-//     const drummer:X3DObject = X3D.om.getObject("ping")
-//     drummer.playAnimation("Scene")
-// })
-
-
-
-// _gltf.load("/flute_player.glb",{_id:"flute",name:"flute",_position:{x:-3,y:stage.y+0.2,z:3}},()=>{
-//     const drummer:X3DObject = X3D.om.getObject("flute")
-//     drummer.playAnimation("Scene")
-// })
-// // _gltf.load("/HalilitAMP.glb",{_id:"speaker2",name:"speaker2",_position:{x: -3, y: 0, z: -2},_rotation:{x:1.5,y:0,z:3.2}})
 
 _loader.loadGLTF("/aime-avatar.glb",{
     _id:"aime",name:"aime",_position:{x: 0, y: 0, z: 0},
     // _on_frame:"rotation y:++0.01"
-},(aimeModel:X3DObject)=>{
+},(aimeModel)=>{
     _loader.loadFBXAnimation("anim.fbx",aimeModel,()=>{
         aimeModel.playAnimation("mixamo.com")
         
     })
-    aimeModel.setPositionalAudioSource("/happy-days.mp3",{autoplay:true,loop:true})
-    //aimeModel.playAudio()
 })
 
-
-// })
-
-// _gltf.load("/arena.glb",{_id:"arena",name:"arena",_position:{x: 0, y: 0, z: 0},_rotation:{x:0,y:0,z:0}},() => {console.log(X3D.world)})
 
 
 XUI.loadControl({
@@ -235,16 +179,3 @@ const topBar = XUI.create({
 topBar.attach("player")
 
 
-
-
-// const  adminNav = (e) => {
-//     console.log(e)
-//     if(e.key == " ") {
-//         const pointer = X3D.om.getObject("pointer")
-//         console.log(pointer._position);
-//         pointer._position.y -= 0.01
-        
-//     }
-// }
-
-// document.addEventListener('keypress',adminNav)

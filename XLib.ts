@@ -32,14 +32,17 @@ export {XEventManager,XEvent,XEventList} from "./src/XEventManager"
 export {XUI} from "./src/XUI/XUI"
 export {XUIObject} from "./src/XUI/XUIObject"
 export {XUIObjects,XView,XButton,XForm,XHeader,XImage,XLabel,XLink,XList,XNavBar,XTextArea,XTextField,XVideo,XWebcam,XHTML,XInput,XSVG} from "./src/XUI/XUICoreObjects"
+export {TopBar} from "./src/XUI/XDashboard"
+export {XJoystick} from "./src/XUI/XJoystick"
 export {XViewManager} from "./src/XUI/XViewManager"
 export {X3D} from "./src/X3D/X3D"
 import IX3DObjectData from "./src/X3D/X3DObject"
+import { TopBar } from "./src/XUI/XDashboard"
 export {IX3DObjectData}
 export {X3DObject} from "./src/X3D/X3DObject"
 export {XCamera,XGeometry,XGroup,XLight,XMaterial,XMesh} from "./src/X3D/X3DCoreObjects"
 export {X3DPrimitives,XBox,XCone,XCylinder,XFloor,XPlane,XSkeleton,XSphere,XTorus} from "./src/X3D/X3DPrivitives"
 export {X3DWorld,XWorldStatus} from "./src/X3D/X3DWorld"
-export {XGLTFLoader,GLTFEvents} from "./src/X3D/XGLTFLoader"
+export {X3DLoader} from "./src/X3D/X3DLoader"
 
 

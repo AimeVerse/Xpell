@@ -1,6 +1,6 @@
 {
   "name": "xpell",
-  "version": "1.0.32",
+  "version": "1.0.36",
   "description": "Xpell UI JS Framework",
   "files": [
     "dist",
@@ -21,7 +21,7 @@
     "build": "vite build",
     "pub": "vite build && npm publish"
   },
-  "author": "Tamir Fridman",
+  "author": "Tamir Fridman <fridman.tamir@gmail.com> (https://github.com/fridman-tamir)",
   "license": "GPL-3",
   "repository": {
     "type": "git",
