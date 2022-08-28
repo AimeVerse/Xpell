@@ -36,7 +36,6 @@ const world = {
             "p1": {
                 _type: "light",
                 _light: "directional",
-                _helper: true,
                 color: "hsl(200, 100%, 50%)",
                 intensity: 1,
                 _position: { x: -6, y: 10, z: -24 },
@@ -54,18 +53,18 @@ const world = {
                 _type: "light",
                 _light: "directional",
                 color: "hsl(100, 100%, 50%)",
-                _helper:true,
                 intensity: 1,
                 _position: { x: 21, y: 10, z: 16 }
         
             },
-            // "p4": {
-            //     _type: "light",
-            //     _light: "directional",
-            //     color: "hsl(180, 0%, 60%)",
-            //     intensity: 1,
-            //     _position: { x: 20, y: 5, z: 0 }
-            // },
+            "p4": {
+                _type: "light",
+                _light: "spotlight",
+                color: "hsl(250, 100%, 50%)",
+                _helper:true,
+                intensity: 1,
+                _position: { x: 12, y: 12, z: 22 }
+            },
             // "top-light": {
             //     _type: "light",
             //     _light: "directional",
@@ -123,7 +122,7 @@ const world = {
                 side: 2,
                 // roughness: 0.5,
             },
-            _position: { x: 5, y: 10, z: -30 },
+            _position: { x: 12, y: 12, z: 22 },
             _rotation: { x: 0, y: 0, z: 0 },
             castShadow: true,
             _on_frame: `follow-joystick`
@@ -135,19 +134,19 @@ const world = {
                 _type: "sphere-geometry",
                 widthSegments: 8,
                 heightSegments: 8,
-                radius: 0.1
-            },
+                radius: 1
+            }, 
             _material: {
                 _type: "standard-material",
-                color: 0x009900,
-                side: 2,
+                color: 0x009900, 
+                side: 2, 
                 // roughness: 0.5,
             },
-            _position: { x: -2, y: 1, z: 0 },
+            _position: { x: -2, y: 2, z: 0 },
             _rotation: { x: 0, y: 0, z: 0 },
             castShadow: true,
-            //_on_frame: `rotation y:++0.01 `,
-           // _positional_audio_source:"bass-drum-roll-2.mp3"
+            _on_frame: `rotation y:++0.01 `,
+            _positional_audio_source:"happy-days.mp3"
         }
     }
 }
@@ -161,13 +160,36 @@ const stage = {
     z:0,
 }
 
-_gltf.load("/Drummer.glb",{_id:"drummer",name:"drummer",_position:{x:0,y:stage.y,z:-0.2},_on_frame: ``},()=>{
+_gltf.load("/Drummer.glb",{_id:"drummer",name:"drummer",_position:{x:0,y:stage.y,z:-0.6},_scale:{x:2,y:2,z:2},_on_frame: ``},()=>{
     const drummer:X3DObject = X3D.om.getObject("drummer")
-    drummer.playAnimation("Clapping")
+    drummer.playAnimation("Drumming")
 })
 
-_gltf.load("/DrumsChair.glb",{_id:"chair",_position:{x:0,y:stage.y,z:-0.2}})
-_gltf.load("/Drums.glb",{_id:"drums",name:"drums",_position:{x:0,y:stage.y+0.1,z:0.8}})
+_gltf.load("/DrumsChair.glb",{_id:"chair",_position:{x:0,y:stage.y,z:-0.6},_scale:{x:0.3,y:0.3,z:0.3}})
+_gltf.load("/Drums.glb",{_id:"drums",name:"drums",_position:{x:0,y:stage.y+0.1,z:1},_scale:{x:0.25,y:0.25,z:0.25}})
+
+_gltf.load("/gplayer.glb",{_id:"gitar_player",name:"gitar_player",_position:{x:6,y:stage.y+0.2,z:0.8}},()=>{
+    const drummer:X3DObject = X3D.om.getObject("gitar_player")
+    drummer.playAnimation("Animation")
+}) 
+_gltf.load("/Pianist.glb",{_id:"piano-player",name:"piano-player",_position:{x:-6,y:stage.y+0.2,z:0.8},_scale:{x:0.5,y:0.5,z:0.5}},()=>{
+    const drummer:X3DObject = X3D.om.getObject("piano-player")
+    drummer.playAnimation("Anim1")
+})
+_gltf.load("/dancing_penguin.glb",{_id:"ping",name:"ping",_position:{x:3,y:stage.y+0.2,z:-3},_scale:{x:0.01,y:0.01,z:0.01}},()=>{
+    const drummer:X3DObject = X3D.om.getObject("ping")
+    drummer.playAnimation("Scene")
+})
+
+_gltf.load("/gerl_cartoon_rumba_dancing.glb",{_id:"girl",name:"girl",_position:{x:-3,y:stage.y+0.2,z:-3},_scale:{x:0.002,y:0.002,z:0.002}},()=>{
+    const drummer:X3DObject = X3D.om.getObject("girl")
+    drummer.playAnimation("mixamo.com")
+})
+
+_gltf.load("/flute_player.glb",{_id:"flute",name:"flute",_position:{x:-3,y:stage.y+0.2,z:3}},()=>{
+    const drummer:X3DObject = X3D.om.getObject("flute")
+    drummer.playAnimation("Scene")
+})
 // _gltf.load("/HalilitAMP.glb",{_id:"speaker2",name:"speaker2",_position:{x: -3, y: 0, z: -2},_rotation:{x:1.5,y:0,z:3.2}})
 // _gltf.load("/HalilitAMP.glb",{_id:"speaker1",name:"speaker1",_position:{x: 3, y: 0, z: -2},_rotation:{x:1.5,y:0,z:3.2}})
 

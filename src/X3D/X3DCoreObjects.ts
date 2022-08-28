@@ -7,7 +7,8 @@ const threeCameras = {
 
 const threeLights = {
     "ambient": THREE.AmbientLight,
-    "directional": THREE.DirectionalLight
+    "directional": THREE.DirectionalLight,
+    "spotlight":THREE.SpotLight
 }
 
 const threeGeometries = {

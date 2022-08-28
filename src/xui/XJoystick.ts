@@ -92,7 +92,7 @@ export class XJoystick extends XUIObject {
                 if(lkey == 'a') joy_move.left = pwr
                 if(lkey == 'd') joy_move.right = pwr
                 if(lkey == ' ') joy_move.up = pwr
-                if(lkey == '.') joy_move.down = pwr
+                if(lkey == 'x') joy_move.down = pwr
 
 
 
