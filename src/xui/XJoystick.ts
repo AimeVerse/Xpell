@@ -56,20 +56,22 @@ export class XJoystick extends XUIObject {
                 const turn = data.vector.x
 
                 const joy_move = {forward: 0,backward: 0,left: 0,right: 0,up:0,down:0}
+                const vel = 0.2
+                
 
                 if (forward > 0) {
-                    joy_move.forward = Math.abs(forward)
+                    joy_move.forward = Math.abs(forward * vel)
                     joy_move.backward = 0
                 } else if (forward < 0) {
                     joy_move.forward = 0
-                    joy_move.backward = Math.abs(forward)
+                    joy_move.backward = Math.abs(forward * vel)
                 }
 
                 if (turn > 0) {
                     joy_move.left = 0
-                    joy_move.right = Math.abs(turn)
+                    joy_move.right = Math.abs(turn * vel)
                 } else if (turn < 0) {
-                    joy_move.left = Math.abs(turn)
+                    joy_move.left = Math.abs(turn * vel)
                     joy_move.right = 0
                 }
                 XData.objects["joy-move"] = joy_move
