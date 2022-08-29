@@ -151,40 +151,43 @@ export class X3DModule extends XModule {
         }
     }
 
-    // To Move
-    // Add environment_map
-    add_environment_map(path, images) {
-        document.addEventListener('keydown', (event) => {
-            // const world = this.world;
 
-            switch (event.code) {
-                case 'KeyG':
-                    this.world.widgetControlls.setMode('translate')
-                    break
-                case 'KeyR':
-                    this.world.widgetControlls.setMode('rotate')
-                    break
-                case 'KeyS':
-                    this.world.widgetControlls.setMode('scale')
-                    break
-            }
-        })
+ // document.addEventListener('keydown', (event) => {
+        //     // const world = this.world;
+
+        //     switch (event.code) {
+        //         case 'KeyG':
+        //             this.world.widgetControlls.setMode('translate')
+        //             break
+        //         case 'KeyR':
+        //             this.world.widgetControlls.setMode('rotate')
+        //             break
+        //         case 'KeyS':
+        //             this.world.widgetControlls.setMode('scale')
+        //             break
+        //     }
+        // })
 
 
+    /**
+     * Add sky map (background to the world scene)
+     * @param path - path to skymap
+     * @param images - optional images array like ["px.jpg","nx.jpg","py.jpg","ny.jpg","pz.jpg","nz.jpg"]
+     */
+    addEnvironmentMap(path, images?) {
+       
+
+        if(!images) images = ["px.jpg","nx.jpg","py.jpg","ny.jpg","pz.jpg","nz.jpg"]
 
 
+        console.log(path);
+        
         const loader = new THREE.CubeTextureLoader();
         const environmentMap = loader
             .setPath(path)
             .load(images)
 
-        // Add Fog
-        // const color = 0xeeaaaa;
-        // const near = 10;
-        // const far = 100;
-        // this.world.scene.fog = new THREE.Fog(color, near, far);
-
-        this.world.scene.background = environmentMap;
+        this.world.addBackground(environmentMap)
     }
 
     set_camera_path(data) {

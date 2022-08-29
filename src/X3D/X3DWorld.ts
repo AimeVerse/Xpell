@@ -316,6 +316,15 @@ export class X3DWorld {
         }
     }
 
+
+    /**
+     * Adds background to the scene
+     * @param {THREE.Texture}environmentMap scene background
+     */
+    addBackground(environmentMap:THREE.Texture) {
+        this.scene.background = environmentMap
+    }
+
     //draw screen
     render() {
         if (this.defaultCamera) {

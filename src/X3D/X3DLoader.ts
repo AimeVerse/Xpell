@@ -7,6 +7,7 @@ import X3D from "./X3D"
 import XEventManager from '../XEventManager';
 import XObject from '../XObject';
 import {XLogger as _xlog} from '../XLogger'
+import XUtils from '../XUtils';
 
 
 
@@ -21,11 +22,13 @@ class X3DLoader {
 
             let firstObj = null
             //to-do fix group loading position
-            gltf.scene.children.forEach(child => {
+            
+            //gltf.scene.children.forEach(child => {
+                const child = gltf.scene
+
                 let xobject;
                 child.animations = gltf.animations
 
-                // console.log("tye:" + child.type);
 
                 if (child.type == "Mesh") {
                     xobject = XMesh.getFromThreeObject(child, data)
@@ -36,16 +39,28 @@ class X3DLoader {
                 else if (child.type == "Object3D") {
                     xobject = X3DObject.getFromThreeObject(child, data)
                 }
+                
+                
+                child.traverse((child2) => {
+                    child2.frustumCulled = false
+                    /** add more */
+                })
+                
                 xobject.loadAnimations()
                 // console.log(xobject);
 
-                X3D.add(xobject)
-                if(!firstObj) firstObj=xobject
 
-            })
+
+                X3D.add(xobject)
+                // if(!firstObj) {
+                //     firstObj=xobject
+                //     data._id = XUtils.guid()
+                // }
+
+            //})
 
             if (data["_id"]) XEventManager.fire(data["_id"] + "-loaded", {})
-            if (onLoadCallBack) onLoadCallBack(firstObj)
+            if (onLoadCallBack) onLoadCallBack(xobject)
         }
 
         const _onprogress = (data) => {

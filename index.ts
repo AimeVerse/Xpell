@@ -187,15 +187,13 @@ const stage = {
 // })
 // // _gltf.load("/HalilitAMP.glb",{_id:"speaker2",name:"speaker2",_position:{x: -3, y: 0, z: -2},_rotation:{x:1.5,y:0,z:3.2}})
 
-_loader.loadGLTF("/aime-avatar.glb",{
+_loader.loadGLTF("/arena.glb",{
     _id:"aime",name:"aime",_position:{x: 0, y: 0, z: 0},
     // _on_frame:"rotation y:++0.01"
-},(aimeModel:X3DObject)=>{
-    _loader.loadFBXAnimation("anim.fbx",aimeModel,()=>{
-        aimeModel.playAnimation("mixamo.com")
-        
-    })
-    aimeModel.setPositionalAudioSource("/happy-days.mp3",{autoplay:true,loop:true})
+},(arena:X3DObject)=>{
+    console.log(arena);
+    
+    arena.playAnimation("Armature.001Action")
     //aimeModel.playAudio()
 })
 
@@ -235,7 +233,7 @@ const topBar = XUI.create({
 topBar.attach("player")
 
 
-
+X3D.addEnvironmentMap("/public/sky/")
 
 // const  adminNav = (e) => {
 //     console.log(e)
