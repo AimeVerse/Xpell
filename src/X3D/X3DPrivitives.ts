@@ -1,8 +1,8 @@
 import X3DObject from './X3DObject'
 import { XObjectPack } from '../XObject'
-import {XCamera,XGeometry,XLight,XMaterial,XMesh,XGroup} from './X3DCoreObjects'
+import { XCamera, XGeometry, XLight, XMaterial, XMesh, XGroup } from './X3DCoreObjects'
 import * as THREE from 'three'
-
+import * as CANNON from 'cannon-es'
 
 
 export class XPlane extends XMesh {
@@ -12,16 +12,16 @@ export class XPlane extends XMesh {
     //         name: "Plane",
     //         desc: "Plane Object",
     //         defaults: {
-    //             [_SC.NODES.type]: "plane",
+    //             _type: "plane",
     //             _geometry: {
-    //                 [_SC.NODES.type]: "plane-geometry",
+    //                 _type: "plane-geometry",
     //                 width: 2,
     //                 height: 2,
     //                 widthSegments: 500,
     //                 heightSegments: 500
     //             },
     //             _material: {
-    //                 [_SC.NODES.type]: "standard-material",
+    //                 _type: "standard-material",
     //                 color: 0x0e0e0e,
     //                 side: 2
     //             },
@@ -46,43 +46,47 @@ export class XPlane extends XMesh {
         }
         data._geometry._threes_class_args = [data._geometry.width, data._geometry.height, data._geometry.widthSegments, data._geometry.heightSegments]
         super(data, defaults)
+        this._cannon_shape = new CANNON.Box(new CANNON.Vec3(data._geometry.width/2, data._geometry.height/2, 0.01))
+
+        // var slipperyMat = new CANNON.Material();
+        // var friction = 0.0;
+        // var restitution = 0.2;
+        // var slipperyContact = new CANNON.ContactMaterial(slipperyMat, slipperyMat, friction, restitution);
+        // world.addContactMaterial(slipperyContact);
     }
 
 }
 
 
+/**
+ * 3D Box 
+ * @example {
+            _id: "box-id",
+            _type: "box",
+            _geometry: {
+                _type: "box-geometry",
+                width: 10,
+                height: 10,
+                depth: 0.3,
+                widthSegments: 50,
+                heightSegments: 50,
+                depthSegments: 50
+            },
+            _material: {
+                _type: "standard-material",
+                color: 0xff00ff,
+                side: 2
+            },
+            _position: { x: 0, y: 1.5, z: 0 },
+            _rotation: { x: Math.PI / 2, y: 0, z: 0 },
+            _enable_physics: true,
+            _mass: 0,
+        }
+ */
+
 export class XBox extends XMesh {
-    // static descriptor() {
-    //     return {
-    //         name: "Box",
-    //         desc: "Spell Box",
-    //         defaults: {
-    //             _type: "box",
-    //             _geometry: {
-    //                 _type: "box-geometry",
-    //                 width: 0.2,
-    //                 height: 0.2,
-    //                 depth: 0.2,
-    //                 widthSegments: 50,
-    //                 heightSegments: 50,
-    //                 depthSegments: 50
-    //             },
-    //             _material: {
-    //                 _type: "standard-material",
-    //                 color: 0xff00ff,
-    //                 side: 2
-    //             },
-    //             _position: {x: THREE.MathUtils.randFloat(-0.5,0.5),y: 0.1,z: THREE.MathUtils.randInt(0,2)},
-    //             _rotation: {x: 90,y: 0,z: 0},
-    //             //"onframe":"hover axis:z step:0.01 radius:2"
-    //         }
-    //     }
-    // }
 
     constructor(data, defaults) {
-
-
-
         if (!defaults) {
             defaults = {
                 _type: "box",
@@ -93,8 +97,8 @@ export class XBox extends XMesh {
             }
         }
         data._geometry._threes_class_args = [data._geometry.width, data._geometry.height, data._geometry.depth, data._geometry.widthSegments, data._geometry.heightSegments, data._geometry.depthSegments]
-
         super(data, defaults)
+        this._cannon_shape = new CANNON.Box(new CANNON.Vec3(data._geometry.width/2, data._geometry.height/2, data._geometry.depth/2))
     }
 }
 
@@ -134,14 +138,24 @@ export class XSphere extends XMesh {
                 _three_obj: null,
                 _geometry: null,
                 _material: null
-                
+
             }
         }
         data._geometry._threes_class_args = [data._geometry.radius, data._geometry.widthSegments, data._geometry.heightSegments]
 
         super(data, defaults)
+        if(this._enable_physics) {
+            this._cannon_shape = new CANNON.Sphere(data._geometry.radius)
+        }
+
     }
 
+    getThreeObject(){
+        const obj = super.getThreeObject()
+        console.log("mat ", obj);
+        
+        return obj
+    }
 
 }
 
@@ -194,6 +208,9 @@ export class XCylinder extends XMesh {
         data._geometry._threes_class_args = [data._geometry.radiusTop, data._geometry.radiusBottom, data._geometry.height, data._geometry.radialSegments]
 
         super(data, defaults)
+        if(this._enable_physics) {
+            this._cannon_shape = new CANNON.Cylinder(data._geometry.radiusTop, data._geometry.radiusBottom, data._geometry.height, data._geometry.radialSegments)
+        }
     }
 
 }
@@ -282,7 +299,7 @@ export class XCone extends XMesh {
     //         }
     //     }
     // }
-    
+
     constructor(data, defaults) {
         if (!defaults) {
             defaults = {
@@ -302,10 +319,10 @@ export class XCone extends XMesh {
 
 export class XFloor extends X3DObject {
 
-    _geometry:XGeometry
-    _material:XMaterial
-    _num_of_blocks_x:number
-    _num_of_blocks_z : number
+    _geometry: XGeometry
+    _material: XMaterial
+    _num_of_blocks_x: number
+    _num_of_blocks_z: number
     constructor(data) {
         const defaults = {
             _three_class: THREE.Group,
@@ -331,7 +348,7 @@ export class XFloor extends X3DObject {
 
     }
 
-    async getThreeObject() {
+    getThreeObject() {
 
         const plane = {
             _type: "plane",
@@ -362,7 +379,7 @@ export class XFloor extends X3DObject {
         //         aoMap: sandAmbientOcclusion
         //     })
 
-        let basic_floor = await (new XPlane(plane)).getThreeObject()
+        let basic_floor = (new XPlane(plane)).getThreeObject()
 
         this._three_obj = new this._three_class()
 
@@ -380,7 +397,7 @@ export class XFloor extends X3DObject {
             }
         }
 
-        return await super.getThreeObject()
+        return super.getThreeObject()
     }
 
 
@@ -391,40 +408,38 @@ export class XFloor extends X3DObject {
 export class XSkeleton extends X3DObject {
 
 
-    _bones:Array<THREE.Bone>
+    _bones: Array<THREE.Bone>
 
     constructor(data, defaults = {
         _type: "bone",
         _three_class: THREE.SkinnedMesh,
-        _three_obj:null,
+        _three_obj: null,
         _geometry: null,
         _material: null
-    }) 
-    
-    {
+    }) {
         super(data, defaults)
-        
+
         this._bones = [];
 
         const shoulder = new THREE.Bone();
         const elbow = new THREE.Bone();
         const hand = new THREE.Bone();
 
-        shoulder.add( elbow );
-        elbow.add( hand );
+        shoulder.add(elbow);
+        elbow.add(hand);
 
-        this._bones.push( shoulder );
-        this._bones.push( elbow );
-        this._bones.push( hand );
+        this._bones.push(shoulder);
+        this._bones.push(elbow);
+        this._bones.push(hand);
 
         shoulder.position.y = -5;
         elbow.position.y = 0;
         hand.position.y = 5;
         this._skeleton = new THREE.Skeleton(this._bones)
-        
 
 
-        if(!this._three_obj) {
+
+        if (!this._three_obj) {
             this._geometry = new XGeometry(data._geometry)
             this._material = new XMaterial(data._material)
         }
@@ -434,25 +449,25 @@ export class XSkeleton extends X3DObject {
 
     }
 
-     /**
-    * this method triggered after the THREE 3d object has been created
-    * override to implement
-    */
+    /**
+   * this method triggered after the THREE 3d object has been created
+   * override to implement
+   */
     async onCreate() {
         //console.log("skeleton created");
         //this.
     }
-    
+
 }
 
 
-export class X3DPrimitives extends XObjectPack{
+export class X3DPrimitives extends XObjectPack {
     static getObjects() {
         return {
             "material": XMaterial,
             "geometry": XGeometry,
             "mesh": XMesh,
-            "group":XGroup,
+            "group": XGroup,
             "plane": XPlane,
             "box": XBox,
             "sphere": XSphere,
@@ -462,7 +477,7 @@ export class X3DPrimitives extends XObjectPack{
             "floor": XFloor,
             "perspective-camera": XCamera,
             "light": XLight,
-            "skeleton":XSkeleton
+            "skeleton": XSkeleton
         }
     }
 }

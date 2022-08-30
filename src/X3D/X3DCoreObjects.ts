@@ -35,6 +35,10 @@ const threeMaterials = {
 }
 
 
+
+
+
+
 export class XCamera extends X3DObject {
     _clipping : {
         close:number,
@@ -105,7 +109,7 @@ export class XGeometry extends X3DObject {
         super(data, defaults)
     }
 
-    async getThreeObject() {
+    getThreeObject() {
         return super.getThreeObject()
     }
 }
@@ -148,7 +152,7 @@ export class XMaterial extends X3DObject {
                     
                     if (key == "texture") {
                         try {
-                            //console.log("loading texture " + lmap.texture)
+                            console.log("loading texture " + lmap.texture)
                             tca_params[s2t[name]] = new THREE.TextureLoader().load(lmap.texture);
                         } catch (e) {
                             console.error("XMaterial unable to load texture for " + name + " reason:" + e)
@@ -176,7 +180,7 @@ export class XMaterial extends X3DObject {
         addMap("_texture_map")
 
         //dp_map
-
+        //console.log(tca_params)
         this._threes_class_args = [tca_params]
 
     }
@@ -231,11 +235,11 @@ export class XMesh extends X3DObject {
 
     }
 
-    async getThreeObject() {
+    getThreeObject() {
         if(!this._three_obj) {
-            this._threes_class_args = [await this._geometry.getThreeObject(), await this._material.getThreeObject()]
+            this._threes_class_args = [this._geometry.getThreeObject(), this._material.getThreeObject()]
         }
-        return  await super.getThreeObject()
+        return  super.getThreeObject()
 
     }
 }

@@ -29,6 +29,8 @@ class X3DLoader {
                 let xobject;
                 child.animations = gltf.animations
 
+                console.log(child.type);
+                
 
                 if (child.type == "Mesh") {
                     xobject = XMesh.getFromThreeObject(child, data)
