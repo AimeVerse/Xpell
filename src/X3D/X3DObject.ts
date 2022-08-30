@@ -3,6 +3,7 @@ import XParser from "../XParser"
 import * as _XC from "../XConst"
 import * as THREE from 'three'
 import * as CANNON from 'cannon-es'
+import { threeToCannon, ShapeType } from 'three-to-cannon';
 import {XObject ,IXObjectData } from "../XObject"
 import xNanoCommands from './XNanoCommands'
 import X3D from "./X3D"
@@ -228,8 +229,11 @@ export class X3DObject extends XObject {
     }
     
     getCannonObject():CANNON.Body  {
-        if(!this._cannon_obj && this._enable_physics && this._cannon_shape){
-            
+        if(!this._cannon_obj && this._enable_physics){
+            if(!this._cannon_shape) {
+                //using HULL instead of Mesh because Cannon.Trimesh does not support collisions
+                this._cannon_shape = threeToCannon(this._three_obj, {type: ShapeType.HULL}).shape
+            }
             const rigidBody = new CANNON.Body({ mass: this._mass, material: new CANNON.Material('physics') })
             rigidBody.addShape(this._cannon_shape)
             rigidBody.position.set(this._position.x,this._position.y,this._position.z)
