@@ -2,6 +2,7 @@ import { XUtils as _XU } from "../XUtils"
 import XParser from "../XParser"
 import * as _XC from "../XConst"
 import * as THREE from 'three'
+import * as CANNON from 'cannon-es'
 import {XObject ,IXObjectData } from "../XObject"
 import xNanoCommands from './XNanoCommands'
 import X3D from "./X3D"
@@ -24,8 +25,12 @@ export interface IX3DObjectData extends IXObjectData {
 export class X3DObject extends XObject {
     _three_class: any
     _three_obj: THREE.Object3D | null
-    _position: THREE.Vector3
-    _rotation: THREE.Vector3
+    _cannon_obj: CANNON.Body  | undefined
+    _cannon_shape:CANNON.Shape | undefined
+    _mass:number = 0
+    _enable_physics:boolean
+    _position: {x:number,y:number,z:number}
+    _rotation: {x:number,y:number,z:number}
     private _scale: THREE.Vector3
     private _visible: boolean
     private _animation: boolean
@@ -55,7 +60,8 @@ export class X3DObject extends XObject {
             name: threeObj.name,
             _position: threeObj.position,
             _rotation: threeObj.rotation,
-            _scale: threeObj.scale
+            _scale: threeObj.scale,
+            _enable_physics:false
         }
         if (defaults) {
 
@@ -98,7 +104,7 @@ export class X3DObject extends XObject {
         this._fraction = 0
         this._threes_class_args = []
         this._ignore = reservedWords
-
+        this._enable_physics = false
 
         if (data) {
             this.parse(data, this._ignore);
@@ -179,7 +185,7 @@ export class X3DObject extends XObject {
     /**
      * @override
      */
-    async getThreeObject() {
+    getThreeObject() {
 
         if (!this._three_obj && this._three_class) {
 
@@ -216,15 +222,25 @@ export class X3DObject extends XObject {
             }
 
         }
-
-        
-
-
         return this._three_obj
+    }
+    
+    getCannonObject():CANNON.Body  {
+        if(!this._cannon_obj && this._enable_physics && this._cannon_shape){
+            
+            const rigidBody = new CANNON.Body({ mass: this._mass, material: new CANNON.Material('physics') })
+            console.log(this._cannon_shape)
+            rigidBody.addShape(this._cannon_shape)
+            rigidBody.position.set(this._position.x,this._position.y,this._position.z)
+            rigidBody.quaternion.setFromEuler(this._rotation.x,this._rotation.y,this._rotation.z)
+            rigidBody.linearDamping = 0.9
+            this._cannon_obj = rigidBody
+        }
+        return this._cannon_obj
     }
 
 
-    getPoistionalAudio(source,data?){
+    getPositionalAudio(source,data?){
         const sound = new THREE.PositionalAudio( X3D.world.audioListener );
         this._sound = sound
         // load a sound and set it as the PositionalAudio object's buffer
@@ -253,7 +269,7 @@ export class X3DObject extends XObject {
 
     setPositionalAudioSource(source?:string,data?) {
         const src = (source) ? source : this._positional_audio_source
-        this._positional_audio = this.getPoistionalAudio(src,data)
+        this._positional_audio = this.getPositionalAudio(src,data)
         if(this._three_obj) this._three_obj.add(this._positional_audio)
         
     }
@@ -302,7 +318,14 @@ export class X3DObject extends XObject {
             const diff = this._clock.getDelta()
             this._animation_mixer.update(diff)
         }
-
+        
+        if(this._cannon_obj && this._enable_physics) {
+            const cp = this._cannon_obj.position
+            const cq = this._cannon_obj.quaternion
+            this._position = {x:cp.x,y:cp.y,z:cp.z} 
+            this._three_obj.quaternion.copy(<any>cq)
+            // console.log(this._cannon_obj.position)
+        }
     }
 
 
@@ -321,9 +344,6 @@ export class X3DObject extends XObject {
     async execute(jcmd) {
 
         //limited xpell 
-
-
-
 
         if (this.xNanoCommands[jcmd.op]) {
             jcmd.s3d_object = this

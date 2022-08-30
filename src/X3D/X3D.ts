@@ -178,10 +178,6 @@ export class X3DModule extends XModule {
        
 
         if(!images) images = ["px.jpg","nx.jpg","py.jpg","ny.jpg","pz.jpg","nz.jpg"]
-
-
-        console.log(path);
-        
         const loader = new THREE.CubeTextureLoader();
         const environmentMap = loader
             .setPath(path)

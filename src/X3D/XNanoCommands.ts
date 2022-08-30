@@ -290,6 +290,7 @@ const set_axis = (root, axis, param) => {
          }
      },
      //hover - hover up 0.1 and down 0.1 (y-axis) for 60 frames (1 sec)
+     //  "onframe":"hover axis:z step:0.01 radius:2"
      "hover": (ns_cmd) => {
          const axis = get_param(0, "axis", ns_cmd)
          const step = get_param(1, "step", ns_cmd)
