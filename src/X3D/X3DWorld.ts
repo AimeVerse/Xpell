@@ -276,7 +276,6 @@ export class X3DWorld {
             if(this.enablePhysics ) {
                 
                 const cannonObject = x3dObject.getCannonObject()
-                console.log("physics "+ x3dObject._id,cannonObject);
                 if(cannonObject) {
                     this.cWorld.addBody(cannonObject)
                 }

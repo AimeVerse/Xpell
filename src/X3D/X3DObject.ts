@@ -189,6 +189,8 @@ export class X3DObject extends XObject {
 
         if (!this._three_obj && this._three_class) {
 
+            
+            
             this._three_obj = new this._three_class(...this._threes_class_args)
             if (this._three_obj) {
                 this._three_obj.name = <string>this.name
@@ -229,7 +231,6 @@ export class X3DObject extends XObject {
         if(!this._cannon_obj && this._enable_physics && this._cannon_shape){
             
             const rigidBody = new CANNON.Body({ mass: this._mass, material: new CANNON.Material('physics') })
-            console.log(this._cannon_shape)
             rigidBody.addShape(this._cannon_shape)
             rigidBody.position.set(this._position.x,this._position.y,this._position.z)
             rigidBody.quaternion.setFromEuler(this._rotation.x,this._rotation.y,this._rotation.z)

@@ -132,47 +132,50 @@ const world = {
             castShadow: true,
             _on_frame: `follow-joystick`
         },
-        // "spr": {
-        //     _type: "sphere",
-        //     _id: "spr",
-        //     _geometry: {
-        //         _type: "sphere-geometry",
-        //         widthSegments: 16,
-        //         heightSegments: 16,
-        //         radius: 1
-        //     },
-        //     _material: {
-        //         _type: "basic-material",
-        //         color: 0x00bb00,
-        //         side: 2,
-        //         // roughness: 0.5,
-        //     },
-        //     _position: { x: 0, y: 4, z: -1 },
-        //     _rotation: { x: 0, y: 0, z: 0 },
-        //     _enable_physics: true,
-        //     _mass: 0.5
-        // },
+        "spr": {
+            _type: "sphere",
+            _id: "spr",
+            _geometry: {
+                _type: "sphere-geometry",
+                widthSegments: 16,
+                heightSegments: 16,
+                radius: 1
+            },
+            _material: {
+                _type: "basic-material",
+                color: 0x00bb00,
+                side: 2,
+                _normal_map:{
+                    texture:"/normal-map.gif"
+                },
+                // roughness: 0.5,
+            },
+            _position: { x: 0, y: 4, z: -1 },
+            _rotation: { x: 0, y: 0, z: 0 },
+            _enable_physics: true,
+            _mass: 0.5
+        },
 
-        // "spr2": {
-        //     _type: "sphere",
-        //     _id: "spr2",
-        //     _geometry: {
-        //         _type: "sphere-geometry",
-        //         widthSegments: 16,
-        //         heightSegments: 16,
-        //         radius: 1
-        //     },
-        //     _material: {
-        //         _type: "basic-material",
-        //         color: 0x00bbbb,
-        //         side: 2,
-        //         // roughness: 0.5,
-        //     },
-        //     _position: { x: 0, y: 20, z: -1.1 },
-        //     _rotation: { x: 0, y: 0, z: 0 },
-        //     _enable_physics: true,
-        //     _mass: 5
-        // },
+        "spr2": {
+            _type: "sphere",
+            _id: "spr2",
+            _geometry: {
+                _type: "sphere-geometry",
+                widthSegments: 16,
+                heightSegments: 16,
+                radius: 1
+            },
+            _material: {
+                _type: "basic-material",
+                color: 0x00bbbb,
+                side: 2,
+                // roughness: 0.5,
+            },
+            _position: { x: 0, y: 20, z: -1.1 },
+            _rotation: { x: 0, y: 0, z: 0 },
+            _enable_physics: true,
+            _mass: 5
+        },
         "floor": {
             _id: "floor",
 
@@ -212,16 +215,16 @@ const stage = {
 console.log(X3D.world)
 
 
-_loader.loadGLTF("/avatarit.glb",{
-    _id:"drummer",
-    name:"drummer",
-    _position:{x:0,y:stage.y+2,z:-0.6}
-    ,_scale:{x:2,y:2,z:2},
-    _enable_physics:true,
-    _mass:50
-    },(obj)=>{
+// _loader.loadGLTF("/avatarit.glb",{
+//     _id:"drummer",
+//     name:"drummer",
+//     _position:{x:0,y:stage.y+2,z:-0.6}
+//     ,_scale:{x:2,y:2,z:2},
+//     _enable_physics:true,
+//     _mass:50
+//     },(obj)=>{
     
-})
+// })
 
 
 

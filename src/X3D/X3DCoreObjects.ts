@@ -152,7 +152,7 @@ export class XMaterial extends X3DObject {
                     
                     if (key == "texture") {
                         try {
-                            //console.log("loading texture " + lmap.texture)
+                            console.log("loading texture " + lmap.texture)
                             tca_params[s2t[name]] = new THREE.TextureLoader().load(lmap.texture);
                         } catch (e) {
                             console.error("XMaterial unable to load texture for " + name + " reason:" + e)
@@ -180,7 +180,7 @@ export class XMaterial extends X3DObject {
         addMap("_texture_map")
 
         //dp_map
-
+        //console.log(tca_params)
         this._threes_class_args = [tca_params]
 
     }
