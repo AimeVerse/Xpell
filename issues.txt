@@ -26,3 +26,5 @@ Center an image if the display is block under style
 
 - Svg
 Can't add children to svg object
+
+- fix normal map
