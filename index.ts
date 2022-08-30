@@ -31,6 +31,10 @@ const world = {
     helper: {
         axes: 5
     },
+    physics:{
+        engine:"cannon.js",
+        _active:true
+    },
     scene: {
         "lights": {
             "main": {
@@ -212,10 +216,7 @@ const stage = {
 }
 
 
-console.log(X3D.world)
-
-
-_loader.loadGLTF("/avatarit.glb",{
+_loader.loadGLTF("/aime-avatar.glb",{
     _id:"drummer",
     name:"drummer",
     _position:{x:0,y:stage.y+2,z:-0.6}
@@ -228,15 +229,15 @@ _loader.loadGLTF("/avatarit.glb",{
 
 
 
-// _loader.loadGLTF("/arena.glb",{
-//     _id:"aime",name:"aime",_position:{x: 0, y: 0, z: 0},
-//     // _on_frame:"rotation y:++0.01"
-// },(arena:X3DObject)=>{
-//     // console.log(arena);
+_loader.loadGLTF("/arena.glb",{
+    _id:"aime",name:"aime",_position:{x: 0, y: 0, z: 0},
+    // _on_frame:"rotation y:++0.01"
+},(arena:X3DObject)=>{
+    // console.log(arena);
 
-//     // arena.playAnimation("Armature.001Action")
-//     //aimeModel.playAudio()
-// })
+    // arena.playAnimation("Armature.001Action")
+    //aimeModel.playAudio()
+})
 
 
 

@@ -150,13 +150,6 @@ export class XSphere extends XMesh {
 
     }
 
-    getThreeObject(){
-        const obj = super.getThreeObject()
-        console.log("mat ", obj);
-        
-        return obj
-    }
-
 }
 
 export class XCylinder extends XMesh {

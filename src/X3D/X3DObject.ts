@@ -230,12 +230,15 @@ export class X3DObject extends XObject {
     
     getCannonObject():CANNON.Body  {
         if(!this._cannon_obj && this._enable_physics){
+            let offset = new CANNON.Vec3(0,0,0)
             if(!this._cannon_shape) {
-                //using HULL instead of Mesh because Cannon.Trimesh does not support collisions
-                this._cannon_shape = threeToCannon(this._three_obj, {type: ShapeType.HULL}).shape
+                //using BoundingBox because CovexHull is FPS consuming and Mesh (Cannon.Trimesh) does not support collisions
+                const ttcResult = threeToCannon(this._three_obj/*, {type: ShapeType.BOX}*/)
+                this._cannon_shape = ttcResult.shape
+                offset = ttcResult.offset
             }
             const rigidBody = new CANNON.Body({ mass: this._mass, material: new CANNON.Material('physics') })
-            rigidBody.addShape(this._cannon_shape)
+            rigidBody.addShape(this._cannon_shape,offset)
             rigidBody.position.set(this._position.x,this._position.y,this._position.z)
             rigidBody.quaternion.setFromEuler(this._rotation.x,this._rotation.y,this._rotation.z)
             rigidBody.linearDamping = 0.9
