@@ -65,10 +65,14 @@ export class XpellEngine {
         this.parser = XParser
         this.#modules = {}
         XEM.fire(XEventList.ENGINE_INIT)
+        _xlog.enabled = false
         //this.load()
     }
 
 
+    verbose(){
+        _xlog.enabled=true
+    }
    
 
     loadModule(xModule:XModule):void {

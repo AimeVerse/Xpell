@@ -6,7 +6,9 @@
 - X3DPrimitives
 - XNanoCommands
 - Positional Audio
-
+- XJoystick
+- XDashboard
+- Scene Background (X3D.addEnvironmentMap)
 1.0.3
 -------
 - Full TS compatibility

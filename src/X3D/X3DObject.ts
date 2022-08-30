@@ -5,7 +5,7 @@ import * as THREE from 'three'
 import {XObject ,IXObjectData } from "../XObject"
 import xNanoCommands from './XNanoCommands'
 import X3D from "./X3D"
-
+import {XLogger as _xlog} from '../XLogger'
 
 
 
@@ -58,11 +58,9 @@ export class X3DObject extends XObject {
             _scale: threeObj.scale
         }
         if (defaults) {
-            // console.log("merging",defaults);
 
             _XU.mergeDefaultsWithData(<IXObjectData>_xdata, defaults, true)
             
-            // console.log(_xdata);
 
         }
         return _xdata
@@ -123,8 +121,12 @@ export class X3DObject extends XObject {
     }
 
 
-    set_3d_state() {
-        if (this._three_obj) {
+    /**
+     * This method sets the 3D State of the object (position, rotation & scale).
+     */
+    set3DState() {
+        if (this._three_obj  ) {
+            
             this._three_obj.position.set(this._position.x, this._position.y, this._position.z)
             this._three_obj.rotation.set(this._rotation.x, this._rotation.y, this._rotation.z)
             this._three_obj.scale.set(this._scale.x, this._scale.y, this._scale.z)
@@ -148,6 +150,18 @@ export class X3DObject extends XObject {
     load() { }
 
 
+    async importAnimations(threeObj:THREE.Object3D){
+        this._animation_mixer = new THREE.AnimationMixer(this._three_obj)
+        threeObj.animations.forEach((anim)=> {
+            const a2 = anim.clone()
+            this._three_obj.animations.push(a2)
+            a2.optimize()
+            this._animation_clips[a2.name] = this._animation_mixer.clipAction(a2)
+            _xlog.log("Animation " + a2.name + " loaded on object " + this._id);
+        }) 
+    
+    }
+
 
     async loadAnimations() {
 
@@ -156,7 +170,7 @@ export class X3DObject extends XObject {
             this._animation_mixer = new THREE.AnimationMixer(this._three_obj)
             anim.forEach(__anim => {
                 this._animation_clips[__anim.name] = this._animation_mixer.clipAction(__anim)
-                console.log("animation " + __anim.name + " loaded");
+                _xlog.log("Animation " + __anim.name + " loaded on object " + this._id);
             })
         }
 
@@ -210,21 +224,36 @@ export class X3DObject extends XObject {
     }
 
 
-    getPoistionalAudio(source){
+    getPoistionalAudio(source,data?){
         const sound = new THREE.PositionalAudio( X3D.world.audioListener );
-
+        this._sound = sound
         // load a sound and set it as the PositionalAudio object's buffer
         const audioLoader = new THREE.AudioLoader();
-        audioLoader.load( this._positional_audio_source, function( buffer ) {
+        audioLoader.load( source, function( buffer ) {
             sound.setBuffer( buffer );
             sound.setRefDistance( 20 );
-            sound.play()
+            sound.autoplay  = false
+            if(data) {
+                if(data["autoplay"]) sound.play()
+                if(data["loop"]) sound.setLoop(true)
+
+            }
         })
         return sound
     }
 
-    setPositionalAudioSource() {
-        this._positional_audio = this.getPoistionalAudio(this._positional_audio_source)
+
+    playAudio(loop?){
+        const snd = <THREE.PositionalAudio>this._sound
+        if(snd && !snd.isPlaying) {
+            if(loop) snd.setLoop(true)
+            snd.play()
+        }
+    }
+
+    setPositionalAudioSource(source?:string,data?) {
+        const src = (source) ? source : this._positional_audio_source
+        this._positional_audio = this.getPoistionalAudio(src,data)
         if(this._three_obj) this._three_obj.add(this._positional_audio)
         
     }
@@ -254,13 +283,15 @@ export class X3DObject extends XObject {
         //check if _disable_frame_3d_state is in the Spell object
         // _disable_frame_3d_state disables onFrame positioning by Spell (for external controllers like Orbit Controls)
         if (!this._disable_frame_3d_state) {
-            this.set_3d_state()
+            this.set3DState()
         } else {
-            //set 3d state once for inital poistion/rotation
+            //set 3d state once for initial position/rotation
             // to override this set "_3d_set_once":false on Spell object input data
-            if (!this._3d_set_once) {
-                this.set_3d_state()
-                this._3d_set_once = true
+            if (this._3d_set_once) {
+                
+                this.set3DState()
+
+                this._3d_set_once = false
             }
         }
 

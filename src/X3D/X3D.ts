@@ -20,6 +20,7 @@ import X3DPrimitives from "./X3DPrivitives"
 // import SpellGLTFLoader from "./s3d-objects/spell-gltf"
 import XData from "../XData";
 import X3DWorld from './X3DWorld'
+import {XLogger as _xlog} from '../XLogger'
 
 const X3DEngineStatus = {
     New: 0,
@@ -93,7 +94,7 @@ export class X3DModule extends XModule {
     }
 
     async start() {
-        console.log("Running 3d engine");
+        _xlog.log("Running 3d engine");
         this.status = X3DEngineStatus.Running
         await this.world.run()
         XEventManager.fire("spell3d-world-load")
@@ -106,7 +107,6 @@ export class X3DModule extends XModule {
 
         shapes_list = obj_names.filter((el) => !rejected_words.includes(el));
         return shapes_list
-        // console.log(shapes_list);
     }
 
 
@@ -145,60 +145,56 @@ export class X3DModule extends XModule {
     set_world_control_target(cameraTarget) {
 
         if (this.world.controls) {
-            //console.log('lock')
             //const cameraTarget = new THREE.Vector3(0.2,0.2,0)
             //this.world.controls.target = cameraTarget
             this.world.default_camera.position.set(cameraTarget.x, cameraTarget.y + 0.5, cameraTarget.z + 3)
         }
     }
 
-    // To Move
-    // Add environment_map
-    add_environment_map(path, images) {
-        document.addEventListener('keydown', (event) => {
-            // const world = this.world;
 
-            switch (event.code) {
-                case 'KeyG':
-                    this.world.widgetControlls.setMode('translate')
-                    console.log("trans");
-                    break
-                case 'KeyR':
-                    this.world.widgetControlls.setMode('rotate')
-                    console.log("rota");
-                    break
-                case 'KeyS':
-                    this.world.widgetControlls.setMode('scale')
-                    console.log("scale");
-                    break
-            }
-        })
+ // document.addEventListener('keydown', (event) => {
+        //     // const world = this.world;
+
+        //     switch (event.code) {
+        //         case 'KeyG':
+        //             this.world.widgetControlls.setMode('translate')
+        //             break
+        //         case 'KeyR':
+        //             this.world.widgetControlls.setMode('rotate')
+        //             break
+        //         case 'KeyS':
+        //             this.world.widgetControlls.setMode('scale')
+        //             break
+        //     }
+        // })
 
 
+    /**
+     * Add sky map (background to the world scene)
+     * @param path - path to skymap
+     * @param images - optional images array like ["px.jpg","nx.jpg","py.jpg","ny.jpg","pz.jpg","nz.jpg"]
+     */
+    addEnvironmentMap(path, images?) {
+       
+
+        if(!images) images = ["px.jpg","nx.jpg","py.jpg","ny.jpg","pz.jpg","nz.jpg"]
 
 
+        console.log(path);
+        
         const loader = new THREE.CubeTextureLoader();
         const environmentMap = loader
             .setPath(path)
             .load(images)
-        // console.log(environmentMap);
 
-        // Add Fog
-        // const color = 0xeeaaaa;
-        // const near = 10;
-        // const far = 100;
-        // this.world.scene.fog = new THREE.Fog(color, near, far);
-
-        this.world.scene.background = environmentMap;
+        this.world.addBackground(environmentMap)
     }
 
     set_camera_path(data) {
-        console.log("building path");
 
 
 
         const pointsPath = new THREE.CatmullRomCurve3(this.world.cam_path, true);
-        console.log(pointsPath);
 
 
         const material = new THREE.MeshBasicMaterial({
@@ -213,7 +209,6 @@ export class X3DModule extends XModule {
         this.world.scene.add(path_line)
 
         XData.objects["cam-path"] = pointsPath
-        //console.log(path_line);
 
     }
 
@@ -233,7 +228,6 @@ export class X3DModule extends XModule {
     //     const oparams = scmd.params
     //     const so = this._create(oparams)
     //     this.engine.world.add_spell3d_object(so)
-    //     //console.log(so)
     //   }
 
     //   _move(scmd) {
@@ -252,7 +246,6 @@ export class X3DModule extends XModule {
     //   _world_lock_controls(scmd) {
     //     const world = this.engine.world;
     //     if (world.controls) {
-    //       //console.log('lock')
     //       world.controls.lock()
     //     }
     //   }
@@ -260,26 +253,22 @@ export class X3DModule extends XModule {
     //   _world_control_set_target(scmd) {
     //     const world = this.engine.world;
     //     if (world.controls) {
-    //       //console.log('lock')
     //       const cameraTarget = new THREE.Vector3(0.2, 0.2, 0)
     //       world.controls.target = cameraTarget
     //     }
     //   }
 
     //   _load_gltf(scmd) {
-    //     //console.log(scmd.params.file)
     //     SpellGLTFLoader.load(scmd.params.file)
     //   }
 
 
     async onFrame(frameNumber) {
         if (this.status == X3DEngineStatus.Running) {
-            //console.log("running frame " + this.frame_number);
             this.world.onFrame(frameNumber)
         }
 
         super.onFrame(frameNumber) //bubble event to all the active objects in the object manager (om)
-        //console.log("frame " + frame_number)
     }
 
 

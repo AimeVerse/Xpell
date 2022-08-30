@@ -7,7 +7,8 @@ const threeCameras = {
 
 const threeLights = {
     "ambient": THREE.AmbientLight,
-    "directional": THREE.DirectionalLight
+    "directional": THREE.DirectionalLight,
+    "spotlight":THREE.SpotLight
 }
 
 const threeGeometries = {
@@ -58,6 +59,7 @@ export class XCamera extends X3DObject {
         }
         super(data, defaults)
         this._threes_class_args = [this.fov, this.ratio, this._clipping.close, this._clipping.far]
+        
     }
 
 

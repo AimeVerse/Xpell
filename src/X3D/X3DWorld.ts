@@ -12,6 +12,7 @@ import { TransformControls } from 'three/examples/jsm/controls/TransformControls
 
 import XUtils from '../XUtils';
 import XData from '../XData';
+import {XLogger as _xlog} from '../XLogger'
 import X3D from "./X3D"
 
 
@@ -108,7 +109,7 @@ export class X3DWorld {
 
 
     async run() {
-        console.log("Running 3d World")
+        _xlog.log("Running 3d World")
         this.status = XWorldStatus.Running
 
         const xworld = this.worldRowData
@@ -126,10 +127,12 @@ export class X3DWorld {
             for (let i = 0; i < keys.length; ++i) {
                 const camera = xworld.scene.cameras[keys[i]]
                 camera.name = keys[i]
+
                 let cam = X3D.create(camera)
 
-
+                
                 this.defaultCamera = await this.addX3DObject(cam)
+                
                 if(camera["_add_audio_listener"]) {
                     this.defaultCamera.add(this.audioListener)
                 }
@@ -138,26 +141,27 @@ export class X3DWorld {
 
             }
         } else {
-            console.log("Spell3d world -> no Cameras defined")
+            _xlog.log("XWorld -> no Cameras defined")
         }
 
         //get lights
         if (xworld.scene.lights) {
             Object.keys(xworld.scene.lights).forEach(light_name => {
                 const lgt = xworld.scene.lights[light_name]
-                let light = X3D.create(lgt)//get_light(spell_world.scene.lights[light_name])
+                let light = X3D.create(lgt)
                 light.name = light_name
-                this.addX3DObject(light)
-                // if (spell_world.scene.lights[light_name]._helper && light.type == "DirectionalLight") {
-                //     const helper = new THREE.DirectionalLightHelper(light)
-                //     this.scene.add(helper)
-                // }
-                // else {
-                //     this.scene.add(light);
-                // }
+                
+                if (lgt._helper && lgt._light == "directional") {
+                    
+                    const helper = new THREE.DirectionalLightHelper(light)
+                    this.scene.add(helper)
+                }
+                else {
+                    this.addX3DObject(light)
+                }
             })
         } else {
-            console.log("X3d world -> no Lights defined")
+            _xlog.log("X3d world -> no Lights defined")
         }
 
 
@@ -169,13 +173,12 @@ export class X3DWorld {
             await this.addX3DObject(obj)
         })
 
-        //console.log(xworld)
         document.getElementById(xworld["html-tag-id"]).appendChild(this.renderer["domElement"]);
 
         //this.gui = new dat.GUI();
 
         // Helpers
-        this.scene.add(new THREE.AxesHelper(5))
+        //this.scene.add(new THREE.AxesHelper(5))
 
 
         if (xworld.scene.controls) {
@@ -235,17 +238,12 @@ export class X3DWorld {
     async addX3DObject(obj) {
 
         if (obj && !obj._ignore_world) {
-            //if(!obj._is_light) {console.log("SpellWorld adding ", obj)}
+            if(!obj._is_light) {_xlog.log("World adding ", obj._id)}
 
             this.x3dObjects[obj.name] = obj
             const tobj = await obj.getThreeObject()
 
-            // if (tobj.name == "cube") {
-            //     this.create_transform_controls(tobj)
-            // }
-
-
-            //console.log(tobj);
+            
             
             this.scene.add(tobj)
 
@@ -283,13 +281,14 @@ export class X3DWorld {
             //update object move
             this.render()
             if (this.controls && this.controls["update"]) {
+                
                 this.controls["update"](this.clock.getDelta());
                 XData.variables["control-azimuth"] = this.controls["getAzimuthalAngle"]()
+                
                 const tv = XData.objects["control-target"]
                 const cp = XData.objects["cam-path-pos"]
 
                 if (tv) {
-                    //console.log(tv)
                     //this.controls.target.set(tv)
                     this.defaultCamera.position.sub(this.controls["target"])
                     this.controls["target"].copy(tv)
@@ -298,12 +297,9 @@ export class X3DWorld {
                 }
                 else if (cp) {
                     //const tv = SpellData.objects["control-target"] 
-                    // console.log(this.controls.target)
                     // this.default_camera.position.sub(this.controls.target)
-                    // //console.log(cp);
                     // this.controls.target.copy(cp)
                     this.defaultCamera.position.add(cp)
-                    // console.log(SpellData.objects["cam-path-rotation"]);
                     this.defaultCamera.lookAt(new THREE.Vector3(0,0,0))
                     // this.default_camera.rotation.set(SpellData.objects["cam-path-rotation"])
                 }
@@ -315,10 +311,18 @@ export class X3DWorld {
             this.clock.stop()
             this.frameProcessTime = this.clock.getElapsedTime()
 
-            //console.log(this.frame_process_time)
 
 
         }
+    }
+
+
+    /**
+     * Adds background to the scene
+     * @param {THREE.Texture}environmentMap scene background
+     */
+    addBackground(environmentMap:THREE.Texture) {
+        this.scene.background = environmentMap
     }
 
     //draw screen
