@@ -132,53 +132,52 @@ const world = {
             castShadow: true,
             _on_frame: `follow-joystick`
         },
-        "spr": {
-            _type: "sphere",
-            _id: "spr",
-            _geometry: {
-                _type: "sphere-geometry",
-                widthSegments: 16,
-                heightSegments: 16,
-                radius: 1
-            },
-            _material: {
-                _type: "basic-material",
-                color: 0x00bb00,
-                side: 2,
-                _normal_map:{
-                    texture:"/normal-map.gif"
-                },
-                // roughness: 0.5,
-            },
-            _position: { x: 0, y: 4, z: -1 },
-            _rotation: { x: 0, y: 0, z: 0 },
-            _enable_physics: true,
-            _mass: 0.5
-        },
+        // "spr": {
+        //     _type: "sphere",
+        //     _id: "spr",
+        //     _geometry: {
+        //         _type: "sphere-geometry",
+        //         widthSegments: 16,
+        //         heightSegments: 16,
+        //         radius: 1
+        //     },
+        //     _material: {
+        //         _type: "basic-material",
+        //         color: 0x00bb00,
+        //         side: 2,
+        //         _normal_map:{
+        //             texture:"/normal-map.gif"
+        //         },
+        //         // roughness: 0.5,
+        //     },
+        //     _position: { x: 0, y: 4, z: -1 },
+        //     _rotation: { x: 0, y: 0, z: 0 },
+        //     _enable_physics: true,
+        //     _mass: 0.5
+        // },
 
-        "spr2": {
-            _type: "sphere",
-            _id: "spr2",
-            _geometry: {
-                _type: "sphere-geometry",
-                widthSegments: 16,
-                heightSegments: 16,
-                radius: 1
-            },
-            _material: {
-                _type: "basic-material",
-                color: 0x00bbbb,
-                side: 2,
-                // roughness: 0.5,
-            },
-            _position: { x: 0, y: 20, z: -1.1 },
-            _rotation: { x: 0, y: 0, z: 0 },
-            _enable_physics: true,
-            _mass: 5
-        },
+        // "spr2": {
+        //     _type: "sphere",
+        //     _id: "spr2",
+        //     _geometry: {
+        //         _type: "sphere-geometry",
+        //         widthSegments: 16,
+        //         heightSegments: 16,
+        //         radius: 1
+        //     },
+        //     _material: {
+        //         _type: "basic-material",
+        //         color: 0x00bbbb,
+        //         side: 2,
+        //         // roughness: 0.5,
+        //     },
+        //     _position: { x: 0, y: 20, z: -1.1 },
+        //     _rotation: { x: 0, y: 0, z: 0 },
+        //     _enable_physics: true,
+        //     _mass: 5
+        // },
         "floor": {
             _id: "floor",
-
             _type: "box",
             _geometry: {
                 _type: "box-geometry",
@@ -194,14 +193,91 @@ const world = {
                 color: 0xff00ff,
                 side: 2
             },
-            _position: { x: 0, y: 1.5, z: 0 },
+            _position: { x: 0, y: 1, z: 0 },
             _rotation: { x: Math.PI / 2, y: 0, z: 0 },
             _enable_physics: true,
             _mass: 0,
-        }
+        },
+        "cylinder-1": {
+            name: "cylinder-1",
+            _id: "cylinder-1",
+            _type: "cylinder",
+            _geometry: {
+                _type: "cylinder-geometry",
+                radiusTop: 0.01,
+                radiusBottom: 0.5,
+                height: 1,
+                radialSegments: 50
+            },
+            _material: {
+                _type: "phong-material",
+                color: 0x51CAA5,
+                side: 2
+            },
+            _position: { x: 0, y: 4, z: 0 },
+            _rotation: { x: 80, y: 0, z: 0 },
+            _enable_physics: true,
+            _mass: 3
+        },
+        // "torus-1": {
+        //     name: "torus-1",
+        //     _id: "torus-1",
+        //     _type: "torus",
+        //     _geometry: {
+        //         _type: "torus-geometry",
+        //         radius: 0.7,
+        //         tubeRadius: 0.11,
+        //         radialSegments: 40,
+        //         tubularSegments: 32,
+        //         arc:90
+        //     },
+        //     _material: {
+        //         _type: "basic-material",
+        //         color: 0x36B612,
+        //         side: 1
+        //     },
+        //     _position: { x: 0, y: 5, z: 3 },
+        //     _rotation: { x: 80, y: 0, z: 0 },
+        //     _enable_physics: true,
+        //     _mass: 7
+        //     //"_on_frame": "rotation x:--0.03 y:++0.01 z:++0.004"
+        // },
+        "plane-1": {
+            _id: "plane-1",
+            name: "plane-1",
+            _type: "plane",
+            _geometry: {
+                _type: "plane-geometry",
+                width: 0.5,
+                height: 2,
+                widthSegments: 50,
+                heightSegments: 50
+            },
+            _material: {
+                _type: "basic-material",
+                color: 0x8d5524,
+                side: 2,
+            },
+            _position: { x: 3, y: 8, z: 0 },
+            _rotation: { x: 0, y: 0, z: -7 },
+            _enable_physics: true,
+            _mass: 10,
+            // _on_frame:"rotation x:++0.02"
+        },
+
     }
 }
 
+// _loader.loadGLTF("/public/SmallBand/Guitarist.glb",{_id:"guitarist",name:"guitarist",_position:{x:0,y:0,z:0},_scale:{x:1,y:1,z:1},_on_frame:'rotation y:++0.005'},(obj) =>{
+//     obj.playAnimation("Anim1")
+// })
+
+// _loader.loadGLTF("/public/SmallBand/Pianist.glb",{_id:"pianist",name:"pianist",_position:{x:0,y:0,z:0},_scale:{x:1,y:1,z:1},_on_frame:'rotation y:++0.005'}, (obj) => {
+//     obj.playAnimation("Anim1")
+// })
+
+// _loader.loadGLTF("/public/SmallBand/Trumpetist.glb",{_id:"trumpetist",name:"trumpetist",_position:{x:0,y:0,z:0},_scale:{x:1,y:1,z:1},_on_frame:'rotation y:--0.01'})
+// _loader.loadGLTF("/public/SmallBand/drummist.glb",{_id:"drummist",name:"drummist",_position:{x:0,y:0,z:0},_scale:{x:1,y:1,z:1},_on_frame:'rotation y:--0.01'})
 
 X3D.loadWorld(world)
 
