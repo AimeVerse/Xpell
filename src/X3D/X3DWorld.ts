@@ -102,7 +102,11 @@ export class X3DWorld {
         this.lights = {}
         this.x3dObjects = {}
         this.defaultCamera = null
+        
+        
+        this.enablePhysics = (xworld.physics) ? xworld.physics._active : false
         if(this.enablePhysics) {
+            _xlog.log("Physics engine is active")
             this.cWorld = new CANNON.World()
             
             // Tweak contact properties.
@@ -122,8 +126,8 @@ export class X3DWorld {
             this.cWorld.gravity.set(0, -9.83, 0)
             
             this.cWorld.broadphase = new CANNON.NaiveBroadphase();
-            
-            
+        } else {
+            _xlog.log("Physics engine is NOT Active")
         }
 
 

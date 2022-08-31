@@ -31,6 +31,10 @@ const world = {
     helper: {
         axes: 5
     },
+    physics:{
+        engine:"cannon.js",
+        _active:true
+    },
     scene: {
         "lights": {
             "main": {
@@ -288,36 +292,30 @@ const stage = {
 }
 
 
-console.log(X3D.world)
-
-
-// _loader.loadGLTF("/avatarit.glb",{
-//     _id:"drummer",
-//     name:"drummer",
-//     _position:{x:0,y:stage.y+2,z:-0.6}
-//     ,_scale:{x:2,y:2,z:2},
-//     _enable_physics:true,
-//     _mass:50
-//     },(obj)=>{
+_loader.loadGLTF("/aime-avatar.glb",{
+    _id:"drummer",
+    name:"drummer",
+    _position:{x:0,y:stage.y+2,z:-0.6}
+    ,_scale:{x:2,y:2,z:2},
+    _enable_physics:true,
+    _mass:50
+    },(obj)=>{
     
-// })
+})
 
 
 
-// _loader.loadGLTF("/arena.glb",{
-//     _id:"aime",name:"aime",_position:{x: 0, y: 0, z: 0},
-//     // _on_frame:"rotation y:++0.01"
-// },(arena:X3DObject)=>{
-//     // console.log(arena);
+_loader.loadGLTF("/arena.glb",{
+    _id:"aime",name:"aime",_position:{x: 0, y: 0, z: 0},
+    // _on_frame:"rotation y:++0.01"
+},(arena:X3DObject)=>{
+    // console.log(arena);
 
-//     // arena.playAnimation("Armature.001Action")
-//     //aimeModel.playAudio()
-// })
+    // arena.playAnimation("Armature.001Action")
+    //aimeModel.playAudio()
+})
 
 
-// })
-
-// _gltf.load("/arena.glb",{_id:"arena",name:"arena",_position:{x: 0, y: 0, z: 0},_rotation:{x:0,y:0,z:0}},() => {console.log(X3D.world)})
 
 
 XUI.loadControl({
