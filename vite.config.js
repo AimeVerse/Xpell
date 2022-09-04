@@ -6,7 +6,7 @@ export default {
   },
   build: {
     lib: {
-      entry: resolve(__dirname, 'XLib.ts'),
+      entry: resolve(__dirname, 'index.ts'),
       name: 'xpell',
       // the proper extensions will be added
       fileName: format => `xpell.${format}.js`
