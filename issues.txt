@@ -15,3 +15,16 @@ XUI
 
 
 - fix onclick
+
+- If you add an element to a class (like br), you can append it once
+
+- List
+problem when adding items to a list
+
+- Image
+Center an image if the display is block under style
+
+- Svg
+Can't add children to svg object
+
+- fix normal map
