@@ -61,6 +61,7 @@ export class XCamera extends X3DObject {
 
             }
         }
+        
         super(data, defaults)
         this._threes_class_args = [this.fov, this.ratio, this._clipping.close, this._clipping.far]
         
@@ -107,11 +108,10 @@ export class XGeometry extends X3DObject {
             }
         }
         super(data, defaults)
+        
     }
-
-    getThreeObject() {
-        return super.getThreeObject()
-    }
+    
+    
 }
 
 
@@ -219,6 +219,8 @@ export class XMesh extends X3DObject {
 
     _geometry:XGeometry
     _material:XMaterial
+
+
     constructor(data, defaults = {
         _type: "mesh",
         _three_class: THREE.Mesh,

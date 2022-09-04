@@ -6,13 +6,8 @@
 - object manager : remove object (add new method)
 - remove xpell object from object manager
 - remove DomElement from Dom tree
+- remove object 3D from memory
+- add cam support + controls
 
 
-
--- today:
-
-
--- fix arena
--- add drummer
--- add music
 

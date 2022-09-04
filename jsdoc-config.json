@@ -1,6 +1,6 @@
 {
   "source": {
-    "include": ["package.json", "README.md","XLib.ts","index.ts","LICENSE","src"],
+    "include": ["package.json", "README.md","index.ts","test.ts","LICENSE","src"],
     "exclude": ["dist","docs","node_modules"],
     "includePattern": ".+\\.ts(doc|x)?$",
     "excludePattern": "(^|\\/|\\\\)_"

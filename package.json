@@ -1,11 +1,13 @@
 {
   "name": "xpell",
-  "version": "1.0.371",
+  "version": "1.0.372",
   "description": "Xpell UI JS Framework",
   "files": [
     "dist",
-    "src"
+    "src",
+    "types"
   ],
+  "types": "./types/index.d.ts",
   "main": "./dist/xpell.umd.js",
   "module": "./dist/xpell.es.js",
   "exports": {
@@ -18,6 +20,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "vite .",
     "docs": "typedoc --options ./typedoc.json --tsconfig ./",
+    "types": "npx -p typescript tsc index.ts --declaration --allowJs --emitDeclarationOnly --outDir types",
     "build": "vite build",
     "pub": "vite build && npm publish"
   },

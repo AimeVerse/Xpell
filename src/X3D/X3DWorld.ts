@@ -162,17 +162,22 @@ export class X3DWorld {
                 const camera = xworld.scene.cameras[keys[i]]
                 camera.name = keys[i]
 
+                
                 let cam = X3D.create(camera)
 
-                
-                this.defaultCamera = await this.addX3DObject(cam)
-                
+                if(camera._helper) {
+                    this.defaultCamera = cam.getThreeObject()
+                    const helper = new THREE.CameraHelper( this.defaultCamera );
+                    this.scene.add( helper );
+                }
+                else
+                {
+                    this.defaultCamera = await this.addX3DObject(cam)
+                    
+                }
                 if(camera["_add_audio_listener"]) {
                     this.defaultCamera.add(this.audioListener)
                 }
-
-
-
             }
         } else {
             _xlog.log("XWorld -> no Cameras defined")
@@ -187,7 +192,7 @@ export class X3DWorld {
                 
                 if (lgt._helper && lgt._light == "directional") {
                     
-                    const helper = new THREE.DirectionalLightHelper(light)
+                    const helper = new THREE.DirectionalLightHelper(light.getThreeObject())
                     this.scene.add(helper)
                 }
                 else {
@@ -220,16 +225,8 @@ export class X3DWorld {
                 let control = xworld.scene.controls[ctrl]
                 if (control._type == "orbit" && control._active) {
                     this.controls = new OrbitControls(this.defaultCamera, this.renderer["domElement"]);
-                    if (control._damp) {
-                        this.controls.enableDamping = true;
-
-                    }
-
-
                     if (control._params) {
-                        Object.keys(control._params).forEach(key => {
-                            this.controls[key] = control._params[key]
-                        })
+                        Object.keys(control._params).forEach(key => this.controls[key] = control._params[key])
                     }
                     // this.controls.minPolarAngle = Math.PI/2.5
                     // this.controls.maxPolarAngle = Math.PI/1.5
@@ -270,12 +267,13 @@ export class X3DWorld {
     }
 
     async addX3DObject(x3dObject) {
-
+        
         if (x3dObject && !x3dObject._ignore_world) {
             if(!x3dObject._is_light) {_xlog.log("World adding ", x3dObject._id)}
 
             this.x3dObjects[x3dObject.name] = x3dObject
             const tobj = x3dObject.getThreeObject()
+            
             this.scene.add(tobj)
             if(this.enablePhysics ) {
                 
@@ -323,18 +321,18 @@ export class X3DWorld {
                 this.controls["update"](this.clock.getDelta());
                 XData.variables["control-azimuth"] = this.controls["getAzimuthalAngle"]()
                 
-                const tv = XData.objects["control-target"]
+                const controlTarget = XData.objects["control-target"]
                 const cp = XData.objects["cam-path-pos"]
 
-                if (tv) {
-                    //this.controls.target.set(tv)
+                if (controlTarget) {
+                    // this.controls.target.set(tv)
                     this.defaultCamera.position.sub(this.controls["target"])
-                    this.controls["target"].copy(tv)
-                    this.defaultCamera.position.add(tv)
+                    this.controls["target"].copy(new THREE.Vector3(controlTarget.x,controlTarget.y,controlTarget.z))
+                    this.defaultCamera.position.add(new THREE.Vector3(controlTarget.x,controlTarget.y,controlTarget.z))
                     delete XData.objects["control-target"]
                 }
                 else if (cp) {
-                    //const tv = SpellData.objects["control-target"] 
+                    // const tv = SpellData.objects["control-target"] 
                     // this.default_camera.position.sub(this.controls.target)
                     // this.controls.target.copy(cp)
                     this.defaultCamera.position.add(cp)

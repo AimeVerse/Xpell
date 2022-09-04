@@ -141,14 +141,16 @@ export class XSphere extends XMesh {
 
             }
         }
+        
         data._geometry._threes_class_args = [data._geometry.radius, data._geometry.widthSegments, data._geometry.heightSegments]
-
         super(data, defaults)
         if(this._enable_physics) {
             this._cannon_shape = new CANNON.Sphere(data._geometry.radius)
         }
 
     }
+
+    
 
 }
 

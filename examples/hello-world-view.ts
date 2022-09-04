@@ -1,5 +1,5 @@
 
-import { Xpell as _x,XUI } from "../XLib"
+import { Xpell as _x,XUI } from "../index"
 
 //display Xpell engine info
 _x.info()

@@ -11,6 +11,7 @@ import {XLogger as _xlog} from '../XLogger'
 
 
 
+
 const reservedWords = { _children: "child objects" }
 const xpell_object_html_fields_mapping = {
     "_id": "id",
@@ -29,26 +30,26 @@ export class X3DObject extends XObject {
     _cannon_obj: CANNON.Body  | undefined
     _cannon_shape:CANNON.Shape | undefined
     _mass:number = 0
-    _enable_physics:boolean
-    _position: {x:number,y:number,z:number}
-    _rotation: {x:number,y:number,z:number}
+    _enable_physics:boolean = false
+    private _position: THREE.Vector3 
+    _rotation: THREE.Euler
     private _scale: THREE.Vector3
-    private _visible: boolean
-    private _animation: boolean
+    private _visible: boolean = true
+    private _animation: boolean = true
     private _animation_clips: {}
     private _fade_duration: number
     private _clock: THREE.Clock
     _fraction: number
     _threes_class_args: Array<any>
     _animation_mixer: THREE.AnimationMixer
-    private _frame_number: any
+    private _frame_number: number
     _on_frame: any
     private _cache_cmd_txt: string | null
-    _cache_jcmd: any
-    private _disable_frame_3d_state: any
-    private _3d_set_once: any
+    private _cache_jcmd: any
+    private _disable_frame_3d_state: boolean
+    private _3d_set_once: boolean
     private _current_action: string
-    private _positional_audio: THREE.PositionalAudio
+    private _positional_audio: THREE.PositionalAudio | undefined
     private _positional_audio_source:string
     xNanoCommands: { move: (ns_cmd: any) => void; position: (ns_cmd: any) => void; scale: (ns_cmd: any) => void; rotation: (ns_cmd: any) => void; spin: (ns_cmd: any) => void; "stop-spin": (ns_cmd: any) => void; log: (ns_cmd: any) => void; rotate: (ns_cmd: any) => void; "rotate-toward": (ns_cmd: any) => void; play: (ns_cmd: any) => void; "follow-joystick": (ns_cmd: any) => void; "follow-keypoint": (ns_cmd: any) => void; "follow-path": (ns_cmd: any) => void; hover: (ns_cmd: any) => void }
 
@@ -78,38 +79,19 @@ export class X3DObject extends XObject {
         return new X3DObject(_xdata)
     }
 
-    static descriptor() {
-        return {
-            name: null,
-            description: null
-        }
 
-    }
 
     constructor(data: IX3DObjectData, defaults?: any) {
         super(data, defaults)
 
-        this._three_class = null
-        this._three_obj = null
-        this._position = new THREE.Vector3(0, 0, 0) //x,y,z
-        this._rotation = new THREE.Vector3(0, 0, 0) //x,y,z
-        this._scale = new THREE.Vector3(1, 1, 1) //x,y,z
-        this._visible = true
-        this[_XC.NODES.type] = "x3d-object";
-        this[_XC.NODES.children] = [];
+        this._children = [];
         this._animation = true
         this._animation_clips = {}
         this._fade_duration = 0.2
         this._ignore = reservedWords
         this._clock = new THREE.Clock();
         this._fraction = 0
-        this._threes_class_args = []
-        this._ignore = reservedWords
-        this._enable_physics = false
-
-        if (data) {
-            this.parse(data, this._ignore);
-        }
+        //this._threes_class_args = []
 
         if(this._positional_audio_source) {
             this.setPositionalAudioSource()
@@ -119,12 +101,48 @@ export class X3DObject extends XObject {
     }
 
 
-    /**
-     * occurs on Spell.init
-     * @override 
-     */
-    init() {
+   
 
+    parse(data, ignore = reservedWords) {
+        this._position = new THREE.Vector3(0, 0, 0) //x,y,z
+        this._rotation = new THREE.Euler(0, 0, 0) //x,y,z
+        this._scale = new THREE.Vector3(1, 1, 1) //x,y,z
+        if(data._position) {
+            this.setPosition(data._position)
+        }
+        if(data._rotation) {
+            this.setRotation(data._rotation)
+        }
+
+        let cdata = Object.keys(data);
+
+        cdata.forEach(field => {
+            if (!ignore.hasOwnProperty(field) && data.hasOwnProperty(field)) {
+                this[field] = data[field];
+            }
+        });
+        if (!this.name) {
+            this.name = this._id
+        }
+        
+        
+    }
+
+    setPosition(positionObject: {x:number,y:number,z:number}){
+        this._position.set(positionObject.x,positionObject.y,positionObject.z) //incase Xpell engine controls the position
+        const srcObj = (this._cannon_obj) ? this._cannon_obj : this._three_obj 
+        srcObj?.position.set(positionObject.x,positionObject.y,positionObject.z) //in case that other engine (like physics) controls the position
+    }
+
+    setRotation(rotationObject: {x:number,y:number,z:number,w?:string}){
+        this._rotation.set(rotationObject.x,rotationObject.y,rotationObject.z,rotationObject.w) //incase Xpell engine controls the position
+        if(this._cannon_obj) {
+            this?._cannon_obj?.quaternion.setFromEuler(this._rotation.x,this._rotation.y,this._rotation.z)
+        } else if(this._three_obj){
+            this._three_obj?.rotation.set(rotationObject.x,rotationObject.y,rotationObject.z,rotationObject.w) //in case that other engine (like physics) controls the position
+        }
+
+        
     }
 
 
@@ -141,17 +159,6 @@ export class X3DObject extends XObject {
         }
     }
 
-    // parse(data, ignore = reservedWords) {
-    //     let cdata = Object.keys(data);
-    //     cdata.forEach(field => {
-    //         if (!ignore.hasOwnProperty(field) && data.hasOwnProperty(field)) {
-    //             this[field] = data[field];
-    //         }
-    //     });
-    //     if (!this.name) {
-    //         this.name = this._id
-    //     }
-    // }
 
 
     load() { }
@@ -187,11 +194,7 @@ export class X3DObject extends XObject {
      * @override
      */
     getThreeObject() {
-
         if (!this._three_obj && this._three_class) {
-
-            
-            
             this._three_obj = new this._three_class(...this._threes_class_args)
             if (this._three_obj) {
                 this._three_obj.name = <string>this.name
@@ -233,7 +236,7 @@ export class X3DObject extends XObject {
             let offset = new CANNON.Vec3(0,0,0)
             if(!this._cannon_shape) {
                 //using BoundingBox because CovexHull is FPS consuming and Mesh (Cannon.Trimesh) does not support collisions
-                const ttcResult = threeToCannon(this._three_obj/*, {type: ShapeType.BOX}*/)
+                const ttcResult = threeToCannon(this._three_obj, {type: ShapeType.BOX})
                 this._cannon_shape = ttcResult.shape
                 offset = ttcResult.offset
             }
@@ -330,7 +333,7 @@ export class X3DObject extends XObject {
         if(this._cannon_obj && this._enable_physics) {
             const cp = this._cannon_obj.position
             const cq = this._cannon_obj.quaternion
-            this._position = {x:cp.x,y:cp.y,z:cp.z} 
+            this._position.set(cp.x,cp.y,cp.z)
             this._three_obj.quaternion.copy(<any>cq)
             // console.log(this._cannon_obj.position)
         }

@@ -29,11 +29,6 @@ const X3DEngineStatus = {
     Stopped: 3
 }
 
-class X3DEngine {
-
-
-
-}
 
 
 export class X3DModule extends XModule {

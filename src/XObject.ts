@@ -64,15 +64,15 @@ export class XObject implements IXObjectData {
         });
     }
 
-    log() {
-        let keys = Object.keys(this);
-        keys.forEach(key => {
-            if (this[key]) {
-                console.log(key + ":" + this[key]);
-            }
-        });
-        console.log(this);
-    }
+    // log() {
+    //     let keys = Object.keys(this);
+    //     keys.forEach(key => {
+    //         if (this[key]) {
+    //             console.log(key + ":" + this[key]);
+    //         }
+    //     });
+    //     console.log(this);
+    // }
 
 
     // /**
