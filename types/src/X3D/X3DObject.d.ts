@@ -97,6 +97,7 @@ export declare class X3DObject extends XObject {
     getCannonObject(): CANNON.Body;
     getPositionalAudio(source: any, data?: any): THREE.PositionalAudio;
     playAudio(loop?: any): void;
+    pauseAudio(): void;
     setPositionalAudioSource(source?: string, data?: any): void;
     /**
      * onFrame function for x3d-object

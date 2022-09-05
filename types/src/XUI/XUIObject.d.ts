@@ -16,6 +16,10 @@ export declare class XUIObject extends XObject {
     };
     constructor(data: any, defaults: any);
     /**
+     * Dispose all object memory (destructor)
+     */
+    destructor(): Promise<void>;
+    /**
      * occurs on Xpell.init
      * @override
      */

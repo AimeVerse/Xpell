@@ -8,6 +8,7 @@ import XUIObject from "./XUIObject";
 import XViewManager from "./XViewManager";
 import XModule, { ModuleData } from "../XModule";
 import XUICoreObjects from "./XUICoreObjects";
+export declare const FIRST_USER_GESTURE = "first-user-gesture";
 export declare class XUIModule extends XModule {
     vm: XViewManager;
     constructor(data: ModuleData);
@@ -17,8 +18,15 @@ export declare class XUIModule extends XModule {
      */
     loadApp(xpellApp: any): void;
     openUrl(url: any, target?: any): void;
+    remove(objectId: any): void;
     loadControl(data: any): void;
     createFromTemplate(xpell2json: any): any;
+    /**
+     * The method fires "first-user-gesture" event
+     * This method is for all Web API that requires User Gesture event.
+     * @fire "first-user-gesture"
+     */
+    enableFirstUserGestureEvent(): void;
     onFrame(frameNumber: any): Promise<void>;
 }
 export declare const XUI: XUIModule;

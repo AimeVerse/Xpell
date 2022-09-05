@@ -64,15 +64,15 @@ export  class XModule {
 
         //await spell_object.init();
         this.objectManger.addObject(xObject)
-        if (data[_XC.NODES.children]) {
+        if (data._children) {
             const sthis = this //strong "this" for anonymous function use
-            data[_XC.NODES.children].forEach(async (spell) => {
+            data._children.forEach(async (spell) => {
                 let new_spell = sthis.create(spell);
                 xObject.append(new_spell)
             });
         }
 
-
+        xObject.onCreate()
         return xObject;
     }
 

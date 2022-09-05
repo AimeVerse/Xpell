@@ -19,6 +19,8 @@ class XEventManager {
     static fireXpellEvent(xevent) {
         //console.log('fire',spell_event)
         document.dispatchEvent(xevent)
+        
+        
     }
 }
 

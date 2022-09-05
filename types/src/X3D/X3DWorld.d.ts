@@ -35,6 +35,7 @@ export declare class X3DWorld {
     };
     constructor(xworld: any);
     run(): Promise<void>;
+    setAudioListener(): void;
     onWindowResize(): void;
     addX3DObject(x3dObject: any): Promise<any>;
     removeX3DObject(objectId: string): Promise<void>;

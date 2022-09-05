@@ -20,6 +20,8 @@ export declare class XObject implements IXObjectData {
      */
     init(): void;
     parse(data: IXObjectData, ignore?: wordsList): void;
+    onCreate(): Promise<void>;
+    onMount(): Promise<void>;
     /**
      * triggers from Xpell frame
      * @param {int} frameNumber

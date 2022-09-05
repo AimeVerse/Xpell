@@ -57,7 +57,11 @@ export class XObjectManager {
 
     // TO-DO - remove object
     removeObject(xObjectId) {
-        this.xObjects[xObjectId] = null;
+        const obj = this.xObjects[xObjectId]
+        if(obj) {
+            this.namesIndex[obj?.name] = null
+            this.xObjects[xObjectId] = null;
+        }
     }
 
     getObject(xObjectId) {

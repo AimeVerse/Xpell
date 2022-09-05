@@ -21,6 +21,8 @@
         version:number
     }
  }
+
+ export const FIRST_USER_GESTURE="first-user-gesture"
  
  export class XUIModule extends XModule {
      vm: XViewManager
@@ -64,7 +66,13 @@
  
  
  
-     
+     remove(objectId) {
+        const obj = this.objectManger.getObject(objectId)
+        if(obj){
+            document.getElementById(obj._id).remove()
+            this.objectManger.removeObject(objectId)
+        }
+     }
      
  
      
@@ -78,14 +86,28 @@
          document.querySelector("#" + pe)?.append(ctrl)
          if(xobj.onMount && typeof xobj.onMount === 'function') {
              xobj.onMount()
-         }
-         
-         
+         } 
      }
  
      createFromTemplate(xpell2json) {
          const s = this.create(XParser.xpellify(xpell2json))
          return s
+     }
+
+     /**
+      * The method fires "first-user-gesture" event 
+      * This method is for all Web API that requires User Gesture event.
+      * @fire "first-user-gesture"
+      */
+     enableFirstUserGestureEvent() {
+        const vstyle = "position:absolute;z-index: 10000;width: 100%;height: 100vh;top:0;left: 0;background-color: transparent;"
+        const obj = XUI.create({_type:"view",_id:"first-gesture-overlay",style:vstyle})
+        obj.onClick=`document.dispatchEvent(new CustomEvent("${FIRST_USER_GESTURE}"));`
+        document.body.appendChild(obj.getDOMObject())
+        document.addEventListener("first-user-gesture",(e) => {
+            XUI.remove("first-gesture-overlay")
+        })
+        
      }
  
      async onFrame(frameNumber) {

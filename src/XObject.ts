@@ -81,6 +81,9 @@ export class XObject implements IXObjectData {
     // async onCreate() {
     // }
 
+    async onCreate() {}
+
+    async onMount() {}
 
     /**
      * triggers from Xpell frame

@@ -102,7 +102,7 @@ export class X3DWorld {
         this.frameNumber = 0
         this.raycaster = new THREE.Raycaster()
          
-        this.audioListener = new THREE.AudioListener()
+        
         this.lights = {}
         this.x3dObjects = {}
         this.defaultCamera = null
@@ -183,7 +183,7 @@ export class X3DWorld {
                     
                 }
                 if(camera["_add_audio_listener"]) {
-                    this.defaultCamera.add(this.audioListener)
+                    document.addEventListener("first-user-gesture",(e) => X3D.world.setAudioListener())
                 }
             }
         } else {
@@ -265,6 +265,12 @@ export class X3DWorld {
 
     }
 
+    setAudioListener(){
+        _xlog.log("Setting camera audio listener")
+        this.audioListener = new THREE.AudioListener()
+        this.defaultCamera.add(this.audioListener)
+    }
+
     onWindowResize() {
         const w = window.innerWidth;
         const h = window.innerHeight;
@@ -301,7 +307,7 @@ export class X3DWorld {
         tobj._three_obj.removeFromParent()
         if(tobj._cannon_obj) this.cWorld.removeBody(tobj._cannon_obj)
         
-        this.x3dObjects[objectId] = null
+        delete this.x3dObjects[objectId] 
     
     }
 

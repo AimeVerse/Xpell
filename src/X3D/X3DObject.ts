@@ -17,6 +17,8 @@ const xpell_object_html_fields_mapping = {
     "_id": "id",
 };
 
+
+
 /**
  * @interface IX3DObjectData
  */
@@ -94,7 +96,7 @@ export class X3DObject extends XObject {
         //this._threes_class_args = []
 
         if(this._positional_audio_source) {
-            this.setPositionalAudioSource()
+            this.setPositionalAudioSource(this._positional_audio_source)
         }
 
         this.xNanoCommands = xNanoCommands
@@ -269,12 +271,12 @@ export class X3DObject extends XObject {
         const audioLoader = new THREE.AudioLoader();
         audioLoader.load( source, function( buffer ) {
             sound.setBuffer( buffer );
-            sound.setRefDistance( 20 );
+            sound.setRefDistance( 10 );
+            sound.setVolume( 1 );
             sound.autoplay  = false
             if(data) {
                 if(data["autoplay"]) sound.play()
                 if(data["loop"]) sound.setLoop(true)
-
             }
         })
         return sound
@@ -283,9 +285,18 @@ export class X3DObject extends XObject {
 
     playAudio(loop?){
         const snd = <THREE.PositionalAudio>this._sound
-        if(snd && !snd.isPlaying) {
+        if(snd ) {
             if(loop) snd.setLoop(true)
+            console.log("play");
+            
             snd.play()
+        }
+    }
+
+    pauseAudio(){
+        const snd = <THREE.PositionalAudio>this._sound
+        if(snd ) {
+            snd.pause()
         }
     }
 
@@ -293,6 +304,7 @@ export class X3DObject extends XObject {
         const src = (source) ? source : this._positional_audio_source
         this._positional_audio = this.getPositionalAudio(src,data)
         if(this._three_obj) this._three_obj.add(this._positional_audio)
+        _xlog.log("Sound " + source  +" loaded")
         
     }
 
