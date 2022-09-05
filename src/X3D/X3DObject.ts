@@ -12,7 +12,7 @@ import {XLogger as _xlog} from '../XLogger'
 
 
 
-const reservedWords = { _children: "child objects" }
+const reservedWords = { _children: "child objects",_position:"position",_rotation:"rotation" }
 const xpell_object_html_fields_mapping = {
     "_id": "id",
 };
@@ -29,13 +29,13 @@ export class X3DObject extends XObject {
     _three_obj: THREE.Object3D | null
     _cannon_obj: CANNON.Body  | undefined
     _cannon_shape:CANNON.Shape | undefined
-    _mass:number = 0
-    _enable_physics:boolean = false
+    _mass:number 
+    _enable_physics:boolean 
     private _position: THREE.Vector3 
     _rotation: THREE.Euler
     private _scale: THREE.Vector3
-    private _visible: boolean = true
-    private _animation: boolean = true
+    private _visible: boolean 
+    private _animation: boolean 
     private _animation_clips: {}
     private _fade_duration: number
     private _clock: THREE.Clock
@@ -101,9 +101,18 @@ export class X3DObject extends XObject {
     }
 
 
+    /**
+     * Dispose all object memory (destructor)
+     */
+    async destructor(){
+        this._three_class = null
+        this._three_obj = null
+        this._cannon_obj = null
+    }
    
 
     parse(data, ignore = reservedWords) {
+        ignore = reservedWords
         this._position = new THREE.Vector3(0, 0, 0) //x,y,z
         this._rotation = new THREE.Euler(0, 0, 0) //x,y,z
         this._scale = new THREE.Vector3(1, 1, 1) //x,y,z
@@ -115,7 +124,8 @@ export class X3DObject extends XObject {
         }
 
         let cdata = Object.keys(data);
-
+        
+        
         cdata.forEach(field => {
             if (!ignore.hasOwnProperty(field) && data.hasOwnProperty(field)) {
                 this[field] = data[field];
@@ -128,7 +138,7 @@ export class X3DObject extends XObject {
         
     }
 
-    setPosition(positionObject: {x:number,y:number,z:number}){
+    setPosition(positionObject: {x:number,y:number,z:number}) {
         this._position.set(positionObject.x,positionObject.y,positionObject.z) //incase Xpell engine controls the position
         const srcObj = (this._cannon_obj) ? this._cannon_obj : this._three_obj 
         srcObj?.position.set(positionObject.x,positionObject.y,positionObject.z) //in case that other engine (like physics) controls the position
@@ -240,6 +250,7 @@ export class X3DObject extends XObject {
                 this._cannon_shape = ttcResult.shape
                 offset = ttcResult.offset
             }
+            
             const rigidBody = new CANNON.Body({ mass: this._mass, material: new CANNON.Material('physics') })
             rigidBody.addShape(this._cannon_shape,offset)
             rigidBody.position.set(this._position.x,this._position.y,this._position.z)
@@ -290,11 +301,10 @@ export class X3DObject extends XObject {
      * - parse textual command to SpellCommand and cache
      * - set 3d-state (position, rotation & scale) if Spell in control
      * - update animation mixer if exists
-     * @param {number} frame_number 
+     * @param {number} frameNumber 
      */
-    async onFrame(frame_number) {
-
-        this._frame_number = frame_number
+    async onFrame(frameNumber) {
+        this._frame_number = frameNumber
         if (this._on_frame) { //search for spell command for execute onFrame
             const cmd_txt = this.name + " " + this._on_frame
             let jcmd = (this._cache_cmd_txt && this._cache_cmd_txt == cmd_txt) ? this._cache_jcmd : XParser.parse(cmd_txt)
@@ -333,7 +343,9 @@ export class X3DObject extends XObject {
         if(this._cannon_obj && this._enable_physics) {
             const cp = this._cannon_obj.position
             const cq = this._cannon_obj.quaternion
-            this._position.set(cp.x,cp.y,cp.z)
+            // console.log(this._position);
+            
+            this.setPosition({x:cp.x,y:cp.y,z:cp.z})
             this._three_obj.quaternion.copy(<any>cq)
             // console.log(this._cannon_obj.position)
         }

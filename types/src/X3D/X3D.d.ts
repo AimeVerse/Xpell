@@ -7,7 +7,8 @@
  *  - events
  */
 import XModule from "../XModule";
-import X3DObject from "./X3DObject";
+import X3DObject, { IX3DObjectData } from "./X3DObject";
+import X3DWorld from './X3DWorld';
 declare const X3DEngineStatus: {
     New: number;
     Ready: number;
@@ -15,13 +16,15 @@ declare const X3DEngineStatus: {
     Stopped: number;
 };
 export declare class X3DModule extends XModule {
-    world: any;
+    world: X3DWorld;
     x3dObjects: {};
     status: number;
     constructor();
     loadWorld(x3dWorldData: any, autoRun?: boolean): Promise<void>;
     create(data: any): any;
-    add(x3dObject: any): void;
+    remove(objectId: string): Promise<void>;
+    add(x3dObject: X3DObject): void;
+    addRaw(x3dJson: IX3DObjectData): X3DObject;
     onWindowResize(): void;
     start(): Promise<void>;
     get_objects_available(): any[];
@@ -33,8 +36,6 @@ export declare class X3DModule extends XModule {
      * @param images - optional images array like ["px.jpg","nx.jpg","py.jpg","ny.jpg","pz.jpg","nz.jpg"]
      */
     addEnvironmentMap(path: any, images?: any): void;
-    set_camera_path(data: any): void;
-    set_camera_path_point(data: any): void;
     onFrame(frameNumber: any): Promise<void>;
 }
 declare let X3D: X3DModule;

@@ -81,6 +81,10 @@ export class X3DWorld {
     audioListener:THREE.AudioListener
     enablePhysics:boolean = true
     cWorld:CANNON.World
+    logger:{
+        addObject:boolean,
+        removeObject:boolean
+    }
 
     constructor(xworld) {
 
@@ -102,7 +106,10 @@ export class X3DWorld {
         this.lights = {}
         this.x3dObjects = {}
         this.defaultCamera = null
-        
+        this.logger = {
+            addObject:false,
+            removeObject:false
+        }
         
         this.enablePhysics = (xworld.physics) ? xworld.physics._active : false
         if(this.enablePhysics) {
@@ -267,17 +274,17 @@ export class X3DWorld {
     }
 
     async addX3DObject(x3dObject) {
-        
         if (x3dObject && !x3dObject._ignore_world) {
-            if(!x3dObject._is_light) {_xlog.log("World adding ", x3dObject._id)}
+            if(this.logger.addObject) {_xlog.log("XWorld adding ", x3dObject._id)}
 
-            this.x3dObjects[x3dObject.name] = x3dObject
+            this.x3dObjects[x3dObject._id] = x3dObject
             const tobj = x3dObject.getThreeObject()
             
             this.scene.add(tobj)
-            if(this.enablePhysics ) {
+            if(this.enablePhysics && x3dObject._enable_physics) {
                 
                 const cannonObject = x3dObject.getCannonObject()
+                
                 if(cannonObject) {
                     this.cWorld.addBody(cannonObject)
                 }
@@ -285,8 +292,17 @@ export class X3DWorld {
 
             return tobj
         }
+    }
 
-
+    async removeX3DObject(objectId:string) {
+        
+        if(this.logger.removeObject) _xlog.log("XWorld Removing " + objectId)
+        const tobj = this.x3dObjects[objectId]
+        tobj._three_obj.removeFromParent()
+        if(tobj._cannon_obj) this.cWorld.removeBody(tobj._cannon_obj)
+        
+        this.x3dObjects[objectId] = null
+    
     }
 
 
@@ -302,18 +318,18 @@ export class X3DWorld {
     }
 
     // being called on every frame 
-    onFrame(frame_number) {
+    async onFrame(frameNumber) {
 
         if (this.status == XWorldStatus.Running) {
             this.clock.start()
-            this.frameNumber = frame_number
-            Object.keys(this.x3dObjects).forEach(obj_name => {
+            this.frameNumber = frameNumber
+            // Object.keys(this.x3dObjects).forEach(obj_name => {
 
-                const off = this.x3dObjects[obj_name].onFrame
-                if (off && (typeof off === 'function')) {
-                    this.x3dObjects[obj_name].onFrame(frame_number)
-                }
-            })
+            //     const off = this.x3dObjects[obj_name].onFrame
+            //     if (off && (typeof off === 'function')) {
+            //         this.x3dObjects[obj_name].onFrame(frameNumber)
+            //     }
+            // })
             //update object move
             this.render()
             if (this.controls && this.controls["update"]) {

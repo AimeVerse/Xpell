@@ -10,6 +10,7 @@
 - XDashboard
 - Scene Background (X3D.addEnvironmentMap)
 - Cannon JS physics engine support
+- Object Manager remove objects (remove method)
 
 1.0.3
 -------

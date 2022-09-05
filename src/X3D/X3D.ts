@@ -13,7 +13,7 @@ import XModule from "../XModule"
 import XObjectManager from "../XObjectManager";
 import XUtils from "../XUtils";
 
-import X3DObject from "./X3DObject"
+import X3DObject, { IX3DObjectData } from "./X3DObject"
 import { XEventManager, XEventList } from "../XEventManager"
 // import Spell3dWorld from "./spell3d-world"
 import X3DPrimitives from "./X3DPrivitives"
@@ -32,7 +32,7 @@ const X3DEngineStatus = {
 
 
 export class X3DModule extends XModule {
-    world: any;
+    world: X3DWorld;
     x3dObjects: {};
     status: number;
     
@@ -76,10 +76,28 @@ export class X3DModule extends XModule {
         } else return null
     }
 
+
+
+    async remove(objectId:string){
+        const xobj = this.om.getObject(objectId)
+        this.om.removeObject(objectId)
+        await this.world.removeX3DObject(objectId)
+        xobj.destructor()
+        // console.log(xobj);
+        
+        //xobj.dispose()
+    }
+
     //get spell3d object
-    add(x3dObject) {
+    add(x3dObject:X3DObject) {
         this.world.addX3DObject(x3dObject)
         this.om.addObject(x3dObject)
+    }
+
+    addRaw(x3dJson:IX3DObjectData):X3DObject {
+        const obj = X3D.create(x3dJson)
+        X3D.add(obj)
+        return obj
     }
 
 
@@ -142,7 +160,7 @@ export class X3DModule extends XModule {
         if (this.world.controls) {
             //const cameraTarget = new THREE.Vector3(0.2,0.2,0)
             //this.world.controls.target = cameraTarget
-            this.world.default_camera.position.set(cameraTarget.x, cameraTarget.y + 0.5, cameraTarget.z + 3)
+            this.world.defaultCamera.position.set(cameraTarget.x, cameraTarget.y + 0.5, cameraTarget.z + 3)
         }
     }
 
@@ -181,38 +199,38 @@ export class X3DModule extends XModule {
         this.world.addBackground(environmentMap)
     }
 
-    set_camera_path(data) {
+    // set_camera_path(data) {
 
 
 
-        const pointsPath = new THREE.CatmullRomCurve3(this.world.cam_path, true);
+    //     const pointsPath = new THREE.CatmullRomCurve3(this.world.cam_path, true);
 
 
-        const material = new THREE.MeshBasicMaterial({
-            color: 0x9132a8
-        });
+    //     const material = new THREE.MeshBasicMaterial({
+    //         color: 0x9132a8
+    //     });
 
-        const geometry = new THREE.BufferGeometry().setFromPoints(pointsPath.getPoints(50));
-
-
-        const path_line = new THREE.Line(geometry, material);
-
-        this.world.scene.add(path_line)
-
-        XData.objects["cam-path"] = pointsPath
-
-    }
-
-    set_camera_path_point(data) {
-        const po = XData.objects["joystick-vector"].clone() //push object
-        if (!this.world.cam_path) {
-            this.world.cam_path = []
-        }
-        this.world.cam_path.push(po)
+    //     const geometry = new THREE.BufferGeometry().setFromPoints(pointsPath.getPoints(50));
 
 
+    //     const path_line = new THREE.Line(geometry, material);
 
-    }
+    //     this.world.scene.add(path_line)
+
+    //     XData.objects["cam-path"] = pointsPath
+
+    // }
+
+    // set_camera_path_point(data) {
+    //     const po = XData.objects["joystick-vector"].clone() //push object
+    //     if (!this.world.cam_path) {
+    //         this.world.cam_path = []
+    //     }
+    //     this.world.cam_path.push(po)
+
+
+
+    // }
 
 
     //   _add(scmd) {

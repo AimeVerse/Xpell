@@ -63,8 +63,14 @@ export declare class X3DObject extends XObject {
     };
     static getFromThreeObject(three_obj: any, defaults: any): X3DObject;
     constructor(data: IX3DObjectData, defaults?: any);
+    /**
+     * Dispose all object memory (destructor)
+     */
+    destructor(): Promise<void>;
     parse(data: any, ignore?: {
         _children: string;
+        _position: string;
+        _rotation: string;
     }): void;
     setPosition(positionObject: {
         x: number;
@@ -97,9 +103,9 @@ export declare class X3DObject extends XObject {
      * - parse textual command to SpellCommand and cache
      * - set 3d-state (position, rotation & scale) if Spell in control
      * - update animation mixer if exists
-     * @param {number} frame_number
+     * @param {number} frameNumber
      */
-    onFrame(frame_number: any): Promise<void>;
+    onFrame(frameNumber: any): Promise<void>;
     /**
     * this method triggered after the THREE 3d object has been created
     * override to implement

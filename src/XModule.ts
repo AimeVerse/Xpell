@@ -142,8 +142,8 @@ export  class XModule {
     async onFrame(frameNumber) {
         Object.keys(this.objectManger.xObjects).forEach(key=>{
             const so = this.objectManger.xObjects[key]
-            if(so.onFrame && typeof so.onFrame === 'function') {
-                so.onFrame(frameNumber)
+            if(so && so.onFrame && typeof so.onFrame === 'function') {
+                so?.onFrame(frameNumber)
             }
         })
     }

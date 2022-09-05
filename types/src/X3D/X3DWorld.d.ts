@@ -29,12 +29,17 @@ export declare class X3DWorld {
     audioListener: THREE.AudioListener;
     enablePhysics: boolean;
     cWorld: CANNON.World;
+    logger: {
+        addObject: boolean;
+        removeObject: boolean;
+    };
     constructor(xworld: any);
     run(): Promise<void>;
     onWindowResize(): void;
     addX3DObject(x3dObject: any): Promise<any>;
+    removeX3DObject(objectId: string): Promise<void>;
     create_transform_controls(obj: any): void;
-    onFrame(frame_number: any): void;
+    onFrame(frameNumber: any): Promise<void>;
     /**
      * Adds background to the scene
      * @param {THREE.Texture}environmentMap scene background
