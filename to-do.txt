@@ -1,13 +1,9 @@
 
-
+- docs
 
 - add support for text with children (if the view has text the interpreter ignore the children tag)
 
-- object manager : remove object (add new method)
-- remove xpell object from object manager
-- remove DomElement from Dom tree
-- remove object 3D from memory
-- add cam support + controls
+- add 3rd person camera + avatar moving
 
 
 

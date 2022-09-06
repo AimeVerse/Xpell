@@ -248,7 +248,17 @@ export class X3DObject extends XObject {
             let offset = new CANNON.Vec3(0,0,0)
             if(!this._cannon_shape) {
                 //using BoundingBox because CovexHull is FPS consuming and Mesh (Cannon.Trimesh) does not support collisions
-                const ttcResult = threeToCannon(this._three_obj, {type: ShapeType.BOX})
+                let shape = ShapeType.BOX
+                if(this._collider) {
+                    const collisionType = (<string>this._collider).toLowerCase()
+                    if(collisionType === "sphere") {shape = ShapeType.SPHERE}
+                    else if(collisionType === "box") {shape = ShapeType.BOX}
+                    else if(collisionType === "cylinder") {shape = ShapeType.CYLINDER}
+                    else if(collisionType === "hull") {shape = ShapeType.HULL}
+                    else if(collisionType === "mesh") {shape = ShapeType.MESH}
+                    
+                }
+                const ttcResult = threeToCannon(this._three_obj, {type: shape})
                 this._cannon_shape = ttcResult.shape
                 offset = ttcResult.offset
             }
@@ -264,27 +274,32 @@ export class X3DObject extends XObject {
     }
 
 
-    getPositionalAudio(source,data?){
+    async createPositionalAudio(source,data?){
         const sound = new THREE.PositionalAudio( X3D.world.audioListener );
-        this._sound = sound
         // load a sound and set it as the PositionalAudio object's buffer
         const audioLoader = new THREE.AudioLoader();
-        audioLoader.load( source, function( buffer ) {
-            sound.setBuffer( buffer );
-            sound.setRefDistance( 10 );
-            sound.setVolume( 1 );
-            sound.autoplay  = false
-            if(data) {
-                if(data["autoplay"]) sound.play()
-                if(data["loop"]) sound.setLoop(true)
-            }
-        })
+        const buffer = await audioLoader.loadAsync(source)
+        sound.setBuffer( buffer );
+        sound.setRefDistance( 10 );
+        sound.setVolume( 1 );
+        sound.autoplay  = false
+        if(data) {
+            if(data["autoplay"]) sound.play()
+            if(data["loop"]) sound.setLoop(true)
+        }
         return sound
     }
 
+    async setPositionalAudioSource(source?:string,data?) {
+        const src = (source) ? source : this._positional_audio_source
+        this._positional_audio = await this.createPositionalAudio(src,data)
+        if(this._three_obj) this._three_obj.add(this._positional_audio)
+        _xlog.log("Sound " + source  +" loaded")
+        
+    }
 
     playAudio(loop?){
-        const snd = <THREE.PositionalAudio>this._sound
+        const snd = <THREE.PositionalAudio>this._positional_audio
         if(snd ) {
             if(loop) snd.setLoop(true)
             console.log("play");
@@ -294,19 +309,13 @@ export class X3DObject extends XObject {
     }
 
     pauseAudio(){
-        const snd = <THREE.PositionalAudio>this._sound
+        const snd = <THREE.PositionalAudio>this._positional_audio
         if(snd ) {
             snd.pause()
         }
     }
 
-    setPositionalAudioSource(source?:string,data?) {
-        const src = (source) ? source : this._positional_audio_source
-        this._positional_audio = this.getPositionalAudio(src,data)
-        if(this._three_obj) this._three_obj.add(this._positional_audio)
-        _xlog.log("Sound " + source  +" loaded")
-        
-    }
+    
 
     /**
      * onFrame function for x3d-object
@@ -409,6 +418,13 @@ export class X3DObject extends XObject {
                 //ns_cmd.s3d_object._disable_frame_3d_state = true
                 this._current_action = clipName
             }
+        }
+    }
+
+    stopAnimation() {
+        if(this._current_action){
+            this._animation_clips[<any>this._current_action].fadeOut(this._fade_duration)
+            this._current_action = null
         }
     }
 }

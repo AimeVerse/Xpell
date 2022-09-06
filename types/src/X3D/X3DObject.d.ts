@@ -95,10 +95,10 @@ export declare class X3DObject extends XObject {
      */
     getThreeObject(): THREE.Object3D<THREE.Event>;
     getCannonObject(): CANNON.Body;
-    getPositionalAudio(source: any, data?: any): THREE.PositionalAudio;
+    createPositionalAudio(source: any, data?: any): Promise<THREE.PositionalAudio>;
+    setPositionalAudioSource(source?: string, data?: any): Promise<void>;
     playAudio(loop?: any): void;
     pauseAudio(): void;
-    setPositionalAudioSource(source?: string, data?: any): void;
     /**
      * onFrame function for x3d-object
      * - parse textual command to SpellCommand and cache
@@ -121,5 +121,6 @@ export declare class X3DObject extends XObject {
     show(): void;
     hide(): void;
     playAnimation(clipName: string): void;
+    stopAnimation(): void;
 }
 export default X3DObject;

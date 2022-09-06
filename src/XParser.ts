@@ -2,7 +2,7 @@ import XCommand from "./XCommand"
 import * as _XC from "./XConst"
 
 /**
- * Xpell Parser
+ * Xpell Parser - Parse XML, HTML, Raw Text & Json to Xpell Command
  */
 
 export class XParser {
@@ -25,6 +25,11 @@ export class XParser {
     }
 
 
+    /**
+     * Adds HTML-Xpell Mapping item
+     * @param htmlElement HTML element to change from
+     * @param xpellElement Xpell element to change to 
+     */
     static addHtml2XpellMapItem(htmlElement:string,xpellElement:string) {
         XParser.html2XMap.elements[htmlElement] = xpellElement
     }
@@ -62,7 +67,12 @@ export class XParser {
     }
 
 
-    static parseXpell(rawXpell) {
+    /**
+     * Convert raw Xpell command (JSON) to XCommand
+     * @param rawXpell JSON of Xpell command
+     * @returns {XCommand}
+     */
+    static parseXpell(rawXpell):XCommand {
         let code = rawXpell.trim();
 
         let args:Array<string> = XParser.parseArguments(code);
@@ -96,7 +106,12 @@ export class XParser {
     }
 
 
-    static parseArguments(code:string) {
+    /**
+     * Parse CLI arguments
+     * @param code arguments
+     * @returns Array<string> 
+     */
+    static parseArguments(code:string):Array<string>  {
         let args:Array<string> = [];
 
         while (code.length) {
@@ -123,9 +138,14 @@ export class XParser {
         return args;
     }
 
-    static xpellify(XP2Json)  {
+    /**
+     * Covent Xpell2 (XP2) Json to Xpell JSON
+     * @param XP2Json Xpell 2 JSON
+     * @returns 
+     */
+    static xpellify(XP2Json):any  {
         const tkeys = Object.keys(XP2Json)
-        let outputXpell:any = {[_XC.NODES.type]:tkeys[0]}
+        let outputXpell:any = {_type:tkeys[0]}
         outputXpell[_XC.NODES.children] = [] // child's xpells
         const firstObject = XP2Json[tkeys[0]]
         const foKeys = Object.keys(firstObject)
@@ -143,7 +163,12 @@ export class XParser {
     }
 
 
-    static xmlString2Xpell(xmlString) {
+    /**
+     * Converts XML/HTML string to XCommand
+     * @param xmlString XML string
+     * @returns 
+     */
+    static xmlString2Xpell(xmlString):{}   {
         const parser = new DOMParser();
         const xmlDoc = parser.parseFromString(xmlString,"text/xml");
         if(xmlDoc.childNodes.length>0) {
@@ -152,7 +177,13 @@ export class XParser {
   
     }
 
-    static xml2Xpell  (xmlNode,forceXhtml?)  {
+    /**
+     * Converts XML/HTML Document to Xpell JSON
+     * @param xmlNode XML Document Node
+     * @param forceXhtml force Xpell XHTML for every unknown object
+     * @returns {} Xpell JSON
+     */
+    static xml2Xpell  (xmlNode,forceXhtml?):{}  {
         //Conversation map for elements and attributes
         const cMap = XParser.html2XMap
         let scanChildren = true

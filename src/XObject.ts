@@ -1,7 +1,11 @@
+/**
+ * XObject - Base Xpell object for Xpell modules
+ */
 
-import XUtils from "./XUtils"
-//import * as _XC from "./XConst"
+import {XUtils,IXData} from "./XUtils"
 import XCommand from "./XCommand";
+
+
 
 export type wordsList = {
     [k:string]:string
@@ -10,8 +14,12 @@ export type wordsList = {
 const reservedWords:wordsList = {_children:"child nodes"  }
 const xpell_object_html_fields_mapping = { "_id": "id", "css-class": "class", "animation": "xyz", "input-type": "type" };
 
-export interface IXObjectData{
-    [k:string]: any
+/**
+ * XObject constructor data interface 
+ * @interface IXObjectData
+ */
+export interface IXObjectData extends IXData {
+    [k:string]: string | null | [] | undefined | Function | boolean | number | {}
     _id?:string | null
     id?:string | null
     name?:string
@@ -20,10 +28,20 @@ export interface IXObjectData{
     
 }
 
+
+/**
+ * XObject class
+ * @class XObject
+ */
 export class XObject implements IXObjectData {
     [k:string]: string | null | [] | undefined | Function | boolean | number | {}
     _children:Array<XObject>
 
+    /**
+     * XObject constructor is creating the object and adding all the data keys to the XObject instance
+     * @param data constructor input data (object)
+     * @param defaults - defaults to merge with data
+     */
     constructor(data:IXObjectData , defaults?:IXObjectData ) {
         if (defaults) {
             XUtils.mergeDefaultsWithData(data, defaults)
@@ -35,14 +53,14 @@ export class XObject implements IXObjectData {
 
         
         if (data) {
-            delete data._id
-            // if (data.hasOwnProperty("_ignore")) {
-            //     this._ignore = reserved_words
-            // }
+            delete data._id // delete the _id field to remove duplication by the parse function
             this.parse(data, reservedWords);
         }
     }
 
+    async destructor() {
+
+    }
 
     //get _id() {return this.#_id}
 
@@ -55,6 +73,11 @@ export class XObject implements IXObjectData {
     }
 
 
+    /**
+     * Parse data to the XObject
+     * @param data data to parse
+     * @param ignore - lis of words to ignore in the parse process
+     */
     parse(data:IXObjectData, ignore = reservedWords) {
         let cdata = Object.keys(data);
         cdata.forEach(field => {
@@ -64,30 +87,22 @@ export class XObject implements IXObjectData {
         });
     }
 
-    // log() {
-    //     let keys = Object.keys(this);
-    //     keys.forEach(key => {
-    //         if (this[key]) {
-    //             console.log(key + ":" + this[key]);
-    //         }
-    //     });
-    //     console.log(this);
-    // }
+   
 
 
     // /**
     //  * this method triggered after the HTML DOM object has been created and added to the parent element
     //  */
-    // async onCreate() {
-    // }
-
     async onCreate() {}
 
+    /**
+     * Triggers when the object is being mounted to other element
+     */
     async onMount() {}
 
     /**
-     * triggers from Xpell frame
-     * @param {int} frameNumber 
+     * Triggers from Xpell frame every frame
+     * @param {number} frameNumber 
      * 
      * 
      */
@@ -99,13 +114,25 @@ export class XObject implements IXObjectData {
             }})
     }
 
+    /**
+     * Execute XCommand within the XObject
+     * @param xCommand XCommand to execute
+     */
     async execute(xCommand:XCommand) {
     }
     
 }
 
 
+/**
+ * ObjectPack class for multi object registration
+ */
 export class XObjectPack {
+
+    /**
+     * Get all registered object in this ObjectPack
+     * @returns XObject dictionary
+     */
     static getObjects():object {
         return {
             "object":XObject

@@ -7,7 +7,7 @@
 import XUtils from "../XUtils"
 import XUIObject from "./XUIObject"
 import XData from "../XData"
-import nipplejs from 'nipplejs' //NippleJS Joystick Controller
+import * as nipplejs from 'nipplejs' //NippleJS Joystick Controller
 
 
 

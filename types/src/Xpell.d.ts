@@ -23,10 +23,23 @@ export declare class XpellEngine {
     frameNumber: number;
     parser: typeof XParser;
     constructor();
+    /**
+     * Enable Xpell logs to console
+     */
     verbose(): void;
+    /**
+     * Loads Xpell module into the engine
+     * @param {XModule} xModule
+     */
     loadModule(xModule: XModule): void;
-    loadModules(xModulesArray: []): void;
-    load(): void;
+    /**
+     * Loads multiple module at ones
+     * @param {Array<XModule>} xModulesArray
+     */
+    loadModules(xModulesArray: Array<XModule>): void;
+    /**
+     * Display information about the Xpell engine to the console
+     */
     info(): void;
     /**
     * Run textual xCommand -
@@ -43,6 +56,11 @@ export declare class XpellEngine {
      * calls all the sub-modules onFrame methods (if implemented)
      */
     onFrame(): void;
+    /**
+     * Gets Xpell module by name
+     * @param {string} moduleName - name of the loaded module
+     * @returns {XModule}
+     */
     getModule(moduleName: string): XModule;
     /**
      * Start Xpell engine for web browsers using requestAnimationFrame

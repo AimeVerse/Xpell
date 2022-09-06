@@ -1,14 +1,14 @@
 import XObjectManager from "./XObjectManager";
 import { XObjectPack } from "./XObject";
+export interface ModuleData {
+    name: string;
+}
 /**
  * Xpell Base Module
  * This class represents xpell base module to be extends
  * @class XModule
  *
  */
-export interface ModuleData {
-    name: string;
-}
 export declare class XModule {
     _id: string;
     name: string;
@@ -16,8 +16,7 @@ export declare class XModule {
     constructor(data: ModuleData);
     load(): void;
     /**
-     * create new XOBJECT
-     * @static
+     * Creates new XObject from data object
      * @param data - The data of the new object (JSON)
      * @return {XObject|*}
      */

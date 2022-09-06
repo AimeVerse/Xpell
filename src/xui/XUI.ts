@@ -69,7 +69,7 @@
      remove(objectId) {
         const obj = this.objectManger.getObject(objectId)
         if(obj){
-            document.getElementById(obj._id).remove()
+            document.getElementById(<string>obj._id).remove()
             this.objectManger.removeObject(objectId)
         }
      }
@@ -78,7 +78,7 @@
      
      
  
-     loadControl(data) {
+     loadControl(data):XUIObject {
          const xobj = this.create(data)
          
          const ctrl = xobj.getDOMObject()
@@ -87,6 +87,7 @@
          if(xobj.onMount && typeof xobj.onMount === 'function') {
              xobj.onMount()
          } 
+         return xobj
      }
  
      createFromTemplate(xpell2json) {

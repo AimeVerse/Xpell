@@ -70,11 +70,18 @@ export class XpellEngine {
     }
 
 
+    /**
+     * Enable Xpell logs to console
+     */
     verbose(){
         _xlog.enabled=true
     }
    
 
+    /**
+     * Loads Xpell module into the engine
+     * @param {XModule} xModule 
+     */
     loadModule(xModule:XModule):void {
         if (this.#modules.hasOwnProperty(xModule.name)) {
             _xlog.log("Module " + xModule.name + " already loaded")
@@ -84,17 +91,19 @@ export class XpellEngine {
         }
     }
 
-    loadModules(xModulesArray:[]):void {
+    /**
+     * Loads multiple module at ones
+     * @param {Array<XModule>} xModulesArray 
+     */
+    loadModules(xModulesArray:Array<XModule>):void {
         const sthis = this //strong this
         xModulesArray.forEach(mod => sthis.loadModule(mod))
     }
 
 
-
-    load() {
-        //this.loadModule(new XpellMainModule({}))
-    }
-
+    /**
+     * Display information about the Xpell engine to the console
+     */
     info(){
         _xlog.log("Xpell information:\n- Engine Id: "  + this.engineId + "\n- Version " + this.version)   
     }
@@ -146,6 +155,11 @@ export class XpellEngine {
     }
 
 
+    /**
+     * Gets Xpell module by name
+     * @param {string} moduleName - name of the loaded module
+     * @returns {XModule}
+     */
     getModule(moduleName:string):XModule{
         return this.#modules[moduleName]
     }

@@ -1,4 +1,29 @@
-
+/**
+ * XModule - Xpell Base Module
+ * This class is being extended by modules with the following logic:
+ * 1. Every module must have a name
+ * 2. Module holds Object manager to manager the module specific object (extends XObject)
+ * 3. Every module can execute XCommand (XCommand, JSON, text(CLI style)),
+ *    the rules of the method invocation is the "underscore" sign, meaning functions that will start with "_" sign
+ *    will be exposed to XPell Interpreter
+ *
+ * @example
+ *  '''
+ *    The following module:
+ *      
+ *    class myModule extends XModule {
+ *          constructor() {...}
+ *          _my_Command(xCommand) {
+ *              ...
+ *          }
+ *    }
+ * 
+ *    will be called like this:
+ * 
+ *    XModule.execute("my-Command")
+ *      - when calling the method there is no need for the underscore sign, spaces and dashes will be converted to underscore
+ *  '''
+ */
 import XUtils from "./XUtils"
 import XParser from "./XParser"
 import {XLogger as _xl} from "./XLogger";
@@ -6,17 +31,18 @@ import XObjectManager from "./XObjectManager";
 import * as _XC from "./XConst"
 import {XObject,XObjectPack} from "./XObject";
 
+
+
+export interface ModuleData {
+    name:string
+}
+
 /**
  * Xpell Base Module
  * This class represents xpell base module to be extends
  * @class XModule
  * 
  */
-
-export interface ModuleData {
-    name:string
-}
-
 export  class XModule {
 
     _id:string 
@@ -26,6 +52,7 @@ export  class XModule {
     protected objectManger = new XObjectManager()
     //engine: any;  //deprecated remove after spell3d
 
+    
     constructor(data:ModuleData) {
         this.name = data.name
         this._id = XUtils.guid()
@@ -38,8 +65,7 @@ export  class XModule {
     }
 
     /**
-     * create new XOBJECT
-     * @static
+     * Creates new XObject from data object
      * @param data - The data of the new object (JSON)
      * @return {XObject|*}
      */
@@ -75,6 +101,7 @@ export  class XModule {
         xObject.onCreate()
         return xObject;
     }
+
 
     _info(xCommand) {
         _xl.log("module info")
@@ -139,7 +166,12 @@ export  class XModule {
 
     }
 
-    async onFrame(frameNumber) {
+    /**
+     * This method triggers every frame from the Xpell engine.
+     * The method can be override by the extending module to support extended onFrame functionality
+     * @param frameNumber Current frame number
+     */
+    async onFrame(frameNumber:number) {
         Object.keys(this.objectManger.xObjects).forEach(key=>{
             const so = this.objectManger.xObjects[key]
             if(so && so.onFrame && typeof so.onFrame === 'function') {

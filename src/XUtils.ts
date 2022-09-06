@@ -5,6 +5,11 @@
 //     declare function now()
 // }
 
+
+export interface IXData {
+    [k:string]: string | null | [] | undefined | Function | boolean | number | {}
+}
+
 export class XUtils {
     /**
      * create ignore list for parser to ignore spells words
@@ -18,6 +23,10 @@ export class XUtils {
     }
 
 
+    /**
+     * Generates GUID (Globally unique Identifier)
+     * @returns {string} 
+     */
     static guid() {
         let chars = '0123456789abcdef'.split('');
         let uuid:string[] = [], rnd = Math.random, r;
@@ -32,7 +41,13 @@ export class XUtils {
         return uuid.join('');
     }
 
-    static mergeDefaultsWithData(data:{[k:string]:string | null | [] | undefined | Function}, defaults:{[k:string]:string | null | [] | undefined | Function | {}},force?:boolean) {
+    /**
+     * Merges XDataObject with Defaults object
+     * @param data - data of the Xpell command
+     * @param defaults - defaults object to merge with
+     * @param force - add defaults values even if exists
+     */
+    static mergeDefaultsWithData(data:IXData, defaults:IXData,force?:boolean) {
         if (data) {
             if (!data["_id"]) {
                 if(!data["id"]) {defaults["_id"] = XUtils.guid()}
@@ -52,18 +67,21 @@ export class XUtils {
         }
     }
 
-    
 
-
-    static deg2Rad(degrees:number) {
-        const pi = Math.PI;
-        return degrees * (pi / 180);
-    }
-
+    /**
+     * Encode string to Base-64 format
+     * @param str string to encode
+     * @returns {string}
+     */
     static encode(str:string) {
         return btoa(encodeURIComponent(str));
     }
 
+    /**
+     * Decode Base64 String to text
+     * @param str Base64 encoded string
+     * @returns {string}
+     */
     static decode( str:string ) {
         return decodeURIComponent(atob(str));
     }
@@ -73,7 +91,10 @@ export class XUtils {
 
 
 
-
+/**
+ * FPS Calculator
+ * @class FPSCalc
+ */
 export class FPSCalc  {
     #accumulatedFPS:number = 0  //accumulated FPS
     #historyMovingAvg:number = 0//history moving average
@@ -81,6 +102,10 @@ export class FPSCalc  {
 
 
 
+    /**
+     * Calc FPS according to moving average formula
+     * @returns Accumulated FPS value
+     */
     calc() {
         
         const now:number = performance.now();

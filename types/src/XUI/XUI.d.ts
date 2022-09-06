@@ -19,7 +19,7 @@ export declare class XUIModule extends XModule {
     loadApp(xpellApp: any): void;
     openUrl(url: any, target?: any): void;
     remove(objectId: any): void;
-    loadControl(data: any): void;
+    loadControl(data: any): XUIObject;
     createFromTemplate(xpell2json: any): any;
     /**
      * The method fires "first-user-gesture" event
