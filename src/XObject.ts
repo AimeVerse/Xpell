@@ -58,7 +58,7 @@ export class XObject implements IXObjectData {
         }
     }
 
-    async destructor() {
+    async dispose() {
 
     }
 

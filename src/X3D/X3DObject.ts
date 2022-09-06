@@ -4,15 +4,15 @@ import * as _XC from "../XConst"
 import * as THREE from 'three'
 import * as CANNON from 'cannon-es'
 import { threeToCannon, ShapeType } from 'three-to-cannon';
-import {XObject ,IXObjectData } from "../XObject"
+import { XObject, IXObjectData } from "../XObject"
 import xNanoCommands from './XNanoCommands'
 import X3D from "./X3D"
-import {XLogger as _xlog} from '../XLogger'
+import { XLogger as _xlog } from '../XLogger'
 
 
 
 
-const reservedWords = { _children: "child objects",_position:"position",_rotation:"rotation" }
+const reservedWords = { _children: "child objects", _position: "position", _rotation: "rotation" }
 const xpell_object_html_fields_mapping = {
     "_id": "id",
 };
@@ -29,15 +29,15 @@ export interface IX3DObjectData extends IXObjectData {
 export class X3DObject extends XObject {
     _three_class: any
     _three_obj: THREE.Object3D | null
-    _cannon_obj: CANNON.Body  | undefined
-    _cannon_shape:CANNON.Shape | undefined
-    _mass:number 
-    _enable_physics:boolean 
-    private _position: THREE.Vector3 
+    _cannon_obj: CANNON.Body | undefined
+    _cannon_shape: CANNON.Shape | undefined
+    _mass: number
+    _enable_physics: boolean
+    private _position: THREE.Vector3
     _rotation: THREE.Euler
     private _scale: THREE.Vector3
-    private _visible: boolean 
-    private _animation: boolean 
+    private _visible: boolean
+    private _animation: boolean
     private _animation_clips: {}
     private _fade_duration: number
     private _clock: THREE.Clock
@@ -52,7 +52,7 @@ export class X3DObject extends XObject {
     private _3d_set_once: boolean
     private _current_action: string
     private _positional_audio: THREE.PositionalAudio | undefined
-    private _positional_audio_source:string
+    private _positional_audio_source: string
     xNanoCommands: { move: (ns_cmd: any) => void; position: (ns_cmd: any) => void; scale: (ns_cmd: any) => void; rotation: (ns_cmd: any) => void; spin: (ns_cmd: any) => void; "stop-spin": (ns_cmd: any) => void; log: (ns_cmd: any) => void; rotate: (ns_cmd: any) => void; "rotate-toward": (ns_cmd: any) => void; play: (ns_cmd: any) => void; "follow-joystick": (ns_cmd: any) => void; "follow-keypoint": (ns_cmd: any) => void; "follow-path": (ns_cmd: any) => void; hover: (ns_cmd: any) => void }
 
     static getXData(threeObj: THREE.Object3D, defaults) {
@@ -65,12 +65,12 @@ export class X3DObject extends XObject {
             _position: threeObj.position,
             _rotation: threeObj.rotation,
             _scale: threeObj.scale,
-            _enable_physics:false
+            _enable_physics: false
         }
         if (defaults) {
 
             _XU.mergeDefaultsWithData(<IXObjectData>_xdata, defaults, true)
-            
+
 
         }
         return _xdata
@@ -95,39 +95,49 @@ export class X3DObject extends XObject {
         this._fraction = 0
         //this._threes_class_args = []
 
-        if(this._positional_audio_source) {
+        if (this._positional_audio_source) {
             this.setPositionalAudioSource(this._positional_audio_source)
         }
 
         this.xNanoCommands = xNanoCommands
+
     }
+
 
 
     /**
      * Dispose all object memory (destructor)
      */
-    async destructor(){
+    async dispose() {
         this._three_class = null
         this._three_obj = null
         this._cannon_obj = null
     }
-   
+
 
     parse(data, ignore = reservedWords) {
+
         ignore = reservedWords
-        this._position = new THREE.Vector3(0, 0, 0) //x,y,z
-        this._rotation = new THREE.Euler(0, 0, 0) //x,y,z
+        //x,y,z
+
         this._scale = new THREE.Vector3(1, 1, 1) //x,y,z
-        if(data._position) {
+
+        if (data._position) {
+            this._position = new THREE.Vector3(data._position.x, data._position.y, data._position.z)
             this.setPosition(data._position)
+        } else {
+            this._position = new THREE.Vector3(0, 0, 0)
         }
-        if(data._rotation) {
+        if (data._rotation) {
+            this._rotation = new THREE.Euler(data._rotation.x, data._rotation.y, data._rotation.z, data._rotation?.w)
             this.setRotation(data._rotation)
+        } else {
+            this._rotation = new THREE.Euler(0, 0, 0) //x,y,z
         }
 
         let cdata = Object.keys(data);
-        
-        
+
+
         cdata.forEach(field => {
             if (!ignore.hasOwnProperty(field) && data.hasOwnProperty(field)) {
                 this[field] = data[field];
@@ -136,25 +146,25 @@ export class X3DObject extends XObject {
         if (!this.name) {
             this.name = this._id
         }
-        
-        
+
+
     }
 
-    setPosition(positionObject: {x:number,y:number,z:number}) {
-        this._position.set(positionObject.x,positionObject.y,positionObject.z) //incase Xpell engine controls the position
-        const srcObj = (this._cannon_obj) ? this._cannon_obj : this._three_obj 
-        srcObj?.position.set(positionObject.x,positionObject.y,positionObject.z) //in case that other engine (like physics) controls the position
+    setPosition(positionObject: { x: number, y: number, z: number }) {
+        this._position.set(positionObject.x, positionObject.y, positionObject.z) //incase Xpell engine controls the position
+        const srcObj = (this._cannon_obj) ? this._cannon_obj : this._three_obj
+        srcObj?.position.set(positionObject.x, positionObject.y, positionObject.z) //in case that other engine (like physics) controls the position
     }
 
-    setRotation(rotationObject: {x:number,y:number,z:number,w?:string}){
-        this._rotation.set(rotationObject.x,rotationObject.y,rotationObject.z,rotationObject.w) //incase Xpell engine controls the position
-        if(this._cannon_obj) {
-            this?._cannon_obj?.quaternion.setFromEuler(this._rotation.x,this._rotation.y,this._rotation.z)
-        } else if(this._three_obj){
-            this._three_obj?.rotation.set(rotationObject.x,rotationObject.y,rotationObject.z,rotationObject.w) //in case that other engine (like physics) controls the position
+    setRotation(rotationObject: { x: number, y: number, z: number, w?: string }) {
+        this._rotation.set(rotationObject.x, rotationObject.y, rotationObject.z, rotationObject.w) //incase Xpell engine controls the position
+        if (this._cannon_obj) {
+            this?._cannon_obj?.quaternion.setFromEuler(this._rotation.x, this._rotation.y, this._rotation.z)
+        } else if (this._three_obj) {
+            this._three_obj?.rotation.set(rotationObject.x, rotationObject.y, rotationObject.z, rotationObject.w) //in case that other engine (like physics) controls the position
         }
 
-        
+
     }
 
 
@@ -162,8 +172,8 @@ export class X3DObject extends XObject {
      * This method sets the 3D State of the object (position, rotation & scale).
      */
     set3DState() {
-        if (this._three_obj  ) {
-            
+        if (this._three_obj) {
+
             this._three_obj.position.set(this._position.x, this._position.y, this._position.z)
             this._three_obj.rotation.set(this._rotation.x, this._rotation.y, this._rotation.z)
             this._three_obj.scale.set(this._scale.x, this._scale.y, this._scale.z)
@@ -176,16 +186,16 @@ export class X3DObject extends XObject {
     load() { }
 
 
-    async importAnimations(threeObj:THREE.Object3D){
+    async importAnimations(threeObj: THREE.Object3D) {
         this._animation_mixer = new THREE.AnimationMixer(this._three_obj)
-        threeObj.animations.forEach((anim)=> {
+        threeObj.animations.forEach((anim) => {
             const a2 = anim.clone()
             this._three_obj.animations.push(a2)
             a2.optimize()
             this._animation_clips[a2.name] = this._animation_mixer.clipAction(a2)
             _xlog.log("Animation " + a2.name + " loaded on object " + this._id);
-        }) 
-    
+        })
+
     }
 
 
@@ -216,25 +226,20 @@ export class X3DObject extends XObject {
                 const keys = Object.keys(this)
 
                 const s2t_props = [""]
+                
+
                 keys.forEach(key => {
                     if (!key.startsWith("_")) {
-                        if (this._three_obj) {
-                            if (key == "color") {
-                                this._three_obj[key] = new THREE.Color(<string>this[key]);
-                            } else {
-                                this._three_obj[key] = this[key]
-                            }
-                        }
-                        /* FIELD Checker - debug only unmark and add fields
-                        const flds = ["name","height","width","visible","side","roughness"]
-                        if(this[key] && flds.includes(key)){
+                        if (key == "color") {
+                            this._three_obj[key] = new THREE.Color(<string>this[key]);
+                        } else {
                             this._three_obj[key] = this[key]
                         }
-                        */
+
                     }
                 })
 
-                if(this._positional_audio) {
+                if (this._positional_audio) {
                     this._three_obj.add(this._positional_audio)
                 }
             }
@@ -242,31 +247,31 @@ export class X3DObject extends XObject {
         }
         return this._three_obj
     }
-    
-    getCannonObject():CANNON.Body  {
-        if(!this._cannon_obj && this._enable_physics){
-            let offset = new CANNON.Vec3(0,0,0)
-            if(!this._cannon_shape) {
+
+    getCannonObject(): CANNON.Body {
+        if (!this._cannon_obj && this._enable_physics) {
+            let offset = new CANNON.Vec3(0, 0, 0)
+            if (!this._cannon_shape) {
                 //using BoundingBox because CovexHull is FPS consuming and Mesh (Cannon.Trimesh) does not support collisions
                 let shape = ShapeType.BOX
-                if(this._collider) {
+                if (this._collider) {
                     const collisionType = (<string>this._collider).toLowerCase()
-                    if(collisionType === "sphere") {shape = ShapeType.SPHERE}
-                    else if(collisionType === "box") {shape = ShapeType.BOX}
-                    else if(collisionType === "cylinder") {shape = ShapeType.CYLINDER}
-                    else if(collisionType === "hull") {shape = ShapeType.HULL}
-                    else if(collisionType === "mesh") {shape = ShapeType.MESH}
-                    
+                    if (collisionType === "sphere") { shape = ShapeType.SPHERE }
+                    else if (collisionType === "box") { shape = ShapeType.BOX }
+                    else if (collisionType === "cylinder") { shape = ShapeType.CYLINDER }
+                    else if (collisionType === "hull") { shape = ShapeType.HULL }
+                    else if (collisionType === "mesh") { shape = ShapeType.MESH }
+
                 }
-                const ttcResult = threeToCannon(this._three_obj, {type: shape})
+                const ttcResult = threeToCannon(this._three_obj, { type: shape })
                 this._cannon_shape = ttcResult.shape
                 offset = ttcResult.offset
             }
-            
+
             const rigidBody = new CANNON.Body({ mass: this._mass, material: new CANNON.Material('physics') })
-            rigidBody.addShape(this._cannon_shape,offset)
-            rigidBody.position.set(this._position.x,this._position.y,this._position.z)
-            rigidBody.quaternion.setFromEuler(this._rotation.x,this._rotation.y,this._rotation.z)
+            rigidBody.addShape(this._cannon_shape, offset)
+            rigidBody.position.set(this._position.x, this._position.y, this._position.z)
+            rigidBody.quaternion.setFromEuler(this._rotation.x, this._rotation.y, this._rotation.z)
             rigidBody.linearDamping = 0.9
             this._cannon_obj = rigidBody
         }
@@ -274,48 +279,48 @@ export class X3DObject extends XObject {
     }
 
 
-    async createPositionalAudio(source,data?){
-        const sound = new THREE.PositionalAudio( X3D.world.audioListener );
+    async createPositionalAudio(source, data?) {
+        const sound = new THREE.PositionalAudio(X3D.world.audioListener);
         // load a sound and set it as the PositionalAudio object's buffer
         const audioLoader = new THREE.AudioLoader();
         const buffer = await audioLoader.loadAsync(source)
-        sound.setBuffer( buffer );
-        sound.setRefDistance( 10 );
-        sound.setVolume( 1 );
-        sound.autoplay  = false
-        if(data) {
-            if(data["autoplay"]) sound.play()
-            if(data["loop"]) sound.setLoop(true)
+        sound.setBuffer(buffer);
+        sound.setRefDistance(10);
+        sound.setVolume(1);
+        sound.autoplay = false
+        if (data) {
+            if (data["autoplay"]) sound.play()
+            if (data["loop"]) sound.setLoop(true)
         }
         return sound
     }
 
-    async setPositionalAudioSource(source?:string,data?) {
+    async setPositionalAudioSource(source?: string, data?) {
         const src = (source) ? source : this._positional_audio_source
-        this._positional_audio = await this.createPositionalAudio(src,data)
-        if(this._three_obj) this._three_obj.add(this._positional_audio)
-        _xlog.log("Sound " + source  +" loaded")
-        
+        this._positional_audio = await this.createPositionalAudio(src, data)
+        if (this._three_obj) this._three_obj.add(this._positional_audio)
+        _xlog.log("Sound " + source + " loaded")
+
     }
 
-    playAudio(loop?){
+    playAudio(loop?) {
         const snd = <THREE.PositionalAudio>this._positional_audio
-        if(snd ) {
-            if(loop) snd.setLoop(true)
+        if (snd) {
+            if (loop) snd.setLoop(true)
             console.log("play");
-            
+
             snd.play()
         }
     }
 
-    pauseAudio(){
+    pauseAudio() {
         const snd = <THREE.PositionalAudio>this._positional_audio
-        if(snd ) {
+        if (snd) {
             snd.pause()
         }
     }
 
-    
+
 
     /**
      * onFrame function for x3d-object
@@ -346,7 +351,7 @@ export class X3DObject extends XObject {
             //set 3d state once for initial position/rotation
             // to override this set "_3d_set_once":false on Spell object input data
             if (this._3d_set_once) {
-                
+
                 this.set3DState()
 
                 this._3d_set_once = false
@@ -360,13 +365,13 @@ export class X3DObject extends XObject {
             const diff = this._clock.getDelta()
             this._animation_mixer.update(diff)
         }
-        
-        if(this._cannon_obj && this._enable_physics) {
+
+        if (this._cannon_obj && this._enable_physics) {
             const cp = this._cannon_obj.position
             const cq = this._cannon_obj.quaternion
             // console.log(this._position);
-            
-            this.setPosition({x:cp.x,y:cp.y,z:cp.z})
+
+            this.setPosition({ x: cp.x, y: cp.y, z: cp.z })
             this._three_obj.quaternion.copy(<any>cq)
             // console.log(this._cannon_obj.position)
         }
@@ -422,7 +427,7 @@ export class X3DObject extends XObject {
     }
 
     stopAnimation() {
-        if(this._current_action){
+        if (this._current_action) {
             this._animation_clips[<any>this._current_action].fadeOut(this._fade_duration)
             this._current_action = null
         }

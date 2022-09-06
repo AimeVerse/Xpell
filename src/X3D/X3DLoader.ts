@@ -48,7 +48,7 @@ class X3DLoader {
                 xobject.loadAnimations()
                 // console.log(xobject);
 
-
+                
 
                 X3D.add(xobject)
                 // if(!firstObj) {

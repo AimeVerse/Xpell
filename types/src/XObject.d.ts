@@ -31,7 +31,7 @@ export declare class XObject implements IXObjectData {
      * @param defaults - defaults to merge with data
      */
     constructor(data: IXObjectData, defaults?: IXObjectData);
-    destructor(): Promise<void>;
+    dispose(): Promise<void>;
     /**
      * occurs on Xpell.init
      * must override

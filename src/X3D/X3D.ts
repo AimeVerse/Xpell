@@ -1,23 +1,18 @@
 /**
  * Xpell3d 
- * @description Universal User Interface (UI) Engine for Javascript supporting devices & browsers
+ * @description Real-time User Interface (UI) Engine for Javascript supporting devices & browsers
  * Wrapper for THREE.JS engine
  
 *  change-log:
  *  - events
  */
 
-//import SpellUI from "../ui/spell-ui.js"
 import * as THREE from 'three'
 import XModule from "../XModule"
-import XObjectManager from "../XObjectManager";
-import XUtils from "../XUtils";
 
 import X3DObject, { IX3DObjectData } from "./X3DObject"
 import { XEventManager, XEventList } from "../XEventManager"
-// import Spell3dWorld from "./spell3d-world"
 import X3DPrimitives from "./X3DPrivitives"
-// import SpellGLTFLoader from "./s3d-objects/spell-gltf"
 import XData from "../XData";
 import X3DWorld from './X3DWorld'
 import {XLogger as _xlog} from '../XLogger'
@@ -30,7 +25,9 @@ const X3DEngineStatus = {
 }
 
 
-
+/**
+ * @class X3DModule - Xpell 3D Module
+ */
 export class X3DModule extends XModule {
     world: X3DWorld;
     x3dObjects: {};
@@ -48,12 +45,14 @@ export class X3DModule extends XModule {
     }
 
 
+    /**
+     * Loads XWorld from world data object
+     * @param x3dWorldData World Data object
+     * @param autoRun 
+     */
     async loadWorld(x3dWorldData, autoRun = true) {
-
         this.world = new X3DWorld(x3dWorldData)
         this.status = X3DEngineStatus.Ready
-
-
 
         window.addEventListener('resize', () => {
             X3D.onWindowResize()
@@ -65,7 +64,12 @@ export class X3DModule extends XModule {
     }
 
 
-    //get spell3d object
+    /**
+     * Creates new X3DObject from data object
+     * @param data - The data of the new object (JSON)
+     * @return {X3DObject}
+     * @override 
+     */
     create(data) {
 
         if (this.om.hasObjectClass(data._type)) {
@@ -77,12 +81,15 @@ export class X3DModule extends XModule {
     }
 
 
-
+    /**
+     * Removes X3DObject from X3D engine (including world and X3D object manager)
+     * @param objectId th e_id of the X3D object to remove
+     */
     async remove(objectId:string){
         const xobj = this.om.getObject(objectId)
         this.om.removeObject(objectId)
         await this.world.removeX3DObject(objectId)
-        xobj.destructor()
+        xobj.dispose()
         // console.log(xobj);
         
         //xobj.dispose()
@@ -90,8 +97,8 @@ export class X3DModule extends XModule {
 
     //get spell3d object
     add(x3dObject:X3DObject) {
-        this.world.addX3DObject(x3dObject)
         this.om.addObject(x3dObject)
+        this.world.addX3DObject(x3dObject)
     }
 
     addRaw(x3dJson:IX3DObjectData):X3DObject {

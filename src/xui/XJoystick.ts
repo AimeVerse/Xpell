@@ -7,10 +7,10 @@
 import XUtils from "../XUtils"
 import XUIObject from "./XUIObject"
 import XData from "../XData"
-import * as nipplejs from 'nipplejs' //NippleJS Joystick Controller
 
-
-
+import nipplejs from 'nipplejs';
+//import * as nipplejs from 'nipplejs';
+// unmark for creating types
 
 export class XJoystick extends XUIObject {
     private _joy_manager: any
@@ -50,7 +50,7 @@ export class XJoystick extends XUIObject {
         const dom_object = super.getDOMObject() //create dom element for fist time 
         if (!this._joy_manager) {
             this._joy_options.zone = document.getElementById(<string>this["_id"]) 
-            this._joy_manager = nipplejs.create(this._joy_options);
+            this._joy_manager =nipplejs.create(this._joy_options);
             this._joy_manager['0'].on('move', function (evt, data) {
                 const forward = data.vector.y
                 const turn = data.vector.x

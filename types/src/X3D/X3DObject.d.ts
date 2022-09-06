@@ -66,7 +66,7 @@ export declare class X3DObject extends XObject {
     /**
      * Dispose all object memory (destructor)
      */
-    destructor(): Promise<void>;
+    dispose(): Promise<void>;
     parse(data: any, ignore?: {
         _children: string;
         _position: string;

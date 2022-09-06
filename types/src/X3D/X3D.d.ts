@@ -1,6 +1,6 @@
 /**
  * Xpell3d
- * @description Universal User Interface (UI) Engine for Javascript supporting devices & browsers
+ * @description Real-time User Interface (UI) Engine for Javascript supporting devices & browsers
  * Wrapper for THREE.JS engine
  
 *  change-log:
@@ -15,13 +15,31 @@ declare const X3DEngineStatus: {
     Running: number;
     Stopped: number;
 };
+/**
+ * @class X3DModule - Xpell 3D Module
+ */
 export declare class X3DModule extends XModule {
     world: X3DWorld;
     x3dObjects: {};
     status: number;
     constructor();
+    /**
+     * Loads XWorld from world data object
+     * @param x3dWorldData World Data object
+     * @param autoRun
+     */
     loadWorld(x3dWorldData: any, autoRun?: boolean): Promise<void>;
+    /**
+     * Creates new X3DObject from data object
+     * @param data - The data of the new object (JSON)
+     * @return {X3DObject}
+     * @override
+     */
     create(data: any): any;
+    /**
+     * Removes X3DObject from X3D engine (including world and X3D object manager)
+     * @param objectId th e_id of the X3D object to remove
+     */
     remove(objectId: string): Promise<void>;
     add(x3dObject: X3DObject): void;
     addRaw(x3dJson: IX3DObjectData): X3DObject;

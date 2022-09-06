@@ -35,7 +35,12 @@ export declare class XModule {
      * @returns command execution result
      */
     execute(xCommand: any): Promise<any>;
-    onFrame(frameNumber: any): Promise<void>;
+    /**
+     * This method triggers every frame from the Xpell engine.
+     * The method can be override by the extending module to support extended onFrame functionality
+     * @param frameNumber Current frame number
+     */
+    onFrame(frameNumber: number): Promise<void>;
     /**
      * X Object Manager
      */

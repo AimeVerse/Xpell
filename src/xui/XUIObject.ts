@@ -47,7 +47,7 @@ export class XUIObject extends XObject {
     /**
      * Dispose all object memory (destructor)
      */
-     async destructor(){
+     async dispose(){
         this._dom_object = null
         this._children = null
     }

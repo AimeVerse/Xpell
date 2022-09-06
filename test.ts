@@ -15,6 +15,7 @@ import { TopBar } from "./src/XUI/XDashboard"
 
 //display Xpell engine info
 _x.verbose()
+
 _x.info()
 
 //load Xpell UI (XUI) Module
@@ -31,7 +32,8 @@ const world = {
     },
     physics: {
         engine: "cannon.js",
-        _active: true
+        _active: true,
+        _debug:false
     },
     scene: {
         "lights": {
@@ -132,29 +134,29 @@ const world = {
             castShadow: true,
             _on_frame: `follow-joystick`
         },
-        "spr": {
-            _type: "sphere",
-            _id: "spr",
-            _geometry: {
-                _type: "sphere-geometry",
-                widthSegments: 16,
-                heightSegments: 16,
-                radius: 0.5
-            },
-            _material: {
-                _type: "basic-material",
-                color: 0x00bb00,
-                side: 2,
-                // _normal_map:{
-                //     texture:"/normal-map.gif"
-                // },
-                // roughness: 0.5,
-            },
-            _position: { x: 2, y: 0, z: -1 },
-            _rotation: { x: 0, y: 0, z: 0 },
-            _enable_physics: true,
-            _mass: 0.5
-        },
+        // "spr": {
+        //     _type: "sphere",
+        //     _id: "spr",
+        //     _geometry: {
+        //         _type: "sphere-geometry",
+        //         widthSegments: 16,
+        //         heightSegments: 16,
+        //         radius: 0.5
+        //     },
+        //     _material: {
+        //         _type: "basic-material",
+        //         color: 0x00bb00,
+        //         side: 2,
+        //         // _normal_map:{
+        //         //     texture:"/normal-map.gif"
+        //         // },
+        //         // roughness: 0.5,
+        //     },
+        //     _position: { x: 2, y: 0, z: -1 },
+        //     _rotation: { x: 0, y: 0, z: 0 },
+        //     _enable_physics: true,
+        //     _mass: 0.5
+        // },
 
 
         "floor": {
@@ -185,7 +187,7 @@ const world = {
 
 
 await X3D.loadWorld(world)
-
+//X3D.world.logger.addObject = true
 XUI.importObject("top-bar", TopBar)
 
 const topBar = XUI.create({
@@ -221,41 +223,10 @@ document.addEventListener("first-user-gesture", async (e) => {
         _collider:"box",
         _mass: 50
     }, (x3dObject) => {
-        _loader.loadFBXAnimation("anim.fbx", x3dObject, () => {
+        _loader.loadFBXAnimation("belly-dancing.fbx", x3dObject, () => {
             x3dObject.playAnimation("mixamo.com")
             
-            setInterval((e) => {
-                x3dObject.stopAnimation()
-                const color = new THREE.Color(0xffffff);
-                color.setHex(Math.random() * 0xffffff); //Random color
-
-                const spr = {
-                    _type: "sphere",
-                    _geometry: {
-                        _type: "sphere-geometry",
-                        widthSegments: 16,
-                        heightSegments: 16,
-                        radius: THREE.MathUtils.randFloat(0.1, 0.2)
-                    },
-                    _material: {
-                        _type: "basic-material",
-                        color: color.getHex(),
-                        side: 2,
-                        // roughness: 0.5,
-                    },
-                    _position: { x: THREE.MathUtils.randFloat(-1, 1), y: THREE.MathUtils.randFloat(1, 2), z: THREE.MathUtils.randFloat(0, 2) },
-                    _rotation: { x: 0, y: 0, z: 0 },
-                    _enable_physics: true,
-                    _mass: 5
-                }
-                const obj: X3DObject = X3D.addRaw(<any>spr)
-
-                setTimeout((e2) => {
-                    X3D.remove(<X3DObject>obj._id)
-                }, 5000)
-
-                //X3D.om.getObject("aime").position = {x:0,y:0,z:0}
-            }, 500)
+            
         })
         // x3dObject._three_obj.traverse((child) => {
         //     if (child.isBone) {
@@ -275,17 +246,46 @@ document.addEventListener("first-user-gesture", async (e) => {
 
 
 
-    // _loader.loadGLTF("/arena.glb",{
-    //     _id:"arena",name:"arena",_position:{x: 0, y: -5, z: 30},
-    //     // _on_frame:"rotation y:++0.01"
-    // },(arena:X3DObject)=>{
-    //     // console.log(arena);
+    _loader.loadGLTF("https://d1a370nemizbjq.cloudfront.net/190f9869-f7d9-4aef-b341-167f002fe92f.glb", {
+        _id: "dancer1",
+        name: "dancer1",
+        _position: { x: 2, y: 5, z: 0 }
+        , _scale: { x: 1, y: 1, z: 1 },
+        _enable_physics: true,
+        _collider:"box",
+        _mass: 50
+    }, (x3dObject) => {
+        _loader.loadFBXAnimation("hip-hop-dance-anim.fbx", x3dObject, () => {
+            x3dObject.playAnimation("mixamo.com")
+            
+            
+        })
+        
+    })
 
-    //     // arena.playAnimation("Armature.001Action")
-    //     //aimeModel.playAudio()
-    // })
 
 
+
+    _loader.loadGLTF("https://d1a370nemizbjq.cloudfront.net/9230073a-5721-45fd-aea7-5ccc3eb5821b.glb", {
+        _id: "dancer2",
+        name: "dancer2",
+        _position: { x: -2, y: 5, z: 0 },
+        _scale: { x: 1, y: 1, z: 1 },
+        _enable_physics: true,
+        _collider:"box",
+        _mass: 50
+    }, (x3dObject) => {
+        _loader.loadFBXAnimation("slide-hip-hip-dance.fbx", x3dObject, () => {
+            x3dObject.playAnimation("mixamo.com")
+            
+            animateSpheres()
+        })
+        
+    })
+
+
+
+  
 
 
     XUI.loadControl({
@@ -312,3 +312,40 @@ document.addEventListener("first-user-gesture", async (e) => {
 
 
 })
+
+
+
+
+function animateSpheres(){
+    setInterval((e) => {
+        const color = new THREE.Color(0xffffff);
+        color.setHex(Math.random() * 0xffffff); //Random color
+
+        const spr = {
+            _type: "sphere",
+            _geometry: {
+                _type: "sphere-geometry",
+                widthSegments: 16,
+                heightSegments: 16,
+                radius: THREE.MathUtils.randFloat(0.1, 0.2)
+            },
+            _material: {
+                _type: "basic-material",
+                color: color.getHex(),
+                side: 2,
+                // roughness: 0.5,
+            },
+            _position: { x: THREE.MathUtils.randFloat(-1, 1), y: THREE.MathUtils.randFloat(1, 2), z: THREE.MathUtils.randFloat(0, 2) },
+            _rotation: { x: 0, y: 0, z: 0 },
+            _enable_physics: true,
+            _mass: 5
+        }
+        const obj: X3DObject = X3D.addRaw(<any>spr)
+
+        setTimeout((e2) => {
+            X3D.remove(<string>obj._id)
+        }, 5000)
+
+        //X3D.om.getObject("aime").position = {x:0,y:0,z:0}
+    }, 500)
+}
