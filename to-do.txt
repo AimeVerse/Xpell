@@ -6,4 +6,9 @@
 - add 3rd person camera + avatar moving
 
 
-
+-- Avatar Controller
+-- Keyboard Controller
+-- Collaboration
+-- NPC Controller
+-- Smart Objects Controller
+-- Scene Editor

@@ -131,35 +131,43 @@ export class X3DModule extends XModule {
 
 
     raycast(e) {
-        // const cam = this.world.default_camera;
-        // const mouse = { x: 0, y: 0 }
+        const cam = this.world.defaultCamera;
+        const mouse = { x: 0, y: 0 }
 
-        // const div = e.target
-
-
-        // if (div.tagName.toLowerCase() != this.world.renderer.domElement.tagName.toLowerCase()) return
-
-        // if (e.which != 1) return;
+        const div = e.target
 
 
-        // mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
-        // mouse.y = - (e.clientY / window.innerHeight) * 2 + 1;
+        if (div.tagName.toLowerCase() != this.world.renderer.domElement.tagName.toLowerCase()) return
+
+        if (e.which != 1) return;
 
 
-        // this.world.raycaster.setFromCamera(mouse, cam);
+        mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
+        mouse.y = - (e.clientY / window.innerHeight) * 2 + 1;
 
 
-        // const intersects = this.world.raycaster.intersectObjects(this.world.scene.children);
-        // if (intersects[0]?.object) {
-        //     //to-do add op for 
-        //     let obj = intersects[0].object
-        //     if (intersects[0].object.parent.parent) {
-        //         obj = intersects[0].object.parent
-        //     }
+        this.world.raycaster.setFromCamera(mouse, cam);
 
-        //     document.getElementById("spell-command").value = obj.name + " "
-        //     //this.set_world_control_target(intersects[0].object.position)
-        // }
+
+        const intersects = this.world.raycaster.intersectObjects(this.world.scene.children);
+        
+        intersects.forEach((ints) => {
+
+            if (ints?.object) {
+                let obj = ints.object
+                let found = false
+                while (obj.parent && !found) {
+                    if (obj.parent.type == "Scene") {
+                        console.log(obj)
+                        found = true
+                    }
+                    else {
+                        obj = obj.parent
+                    }
+                }
+            }
+        })
+        
     }
 
     set_world_control_target(cameraTarget) {

@@ -68,10 +68,8 @@ export class X3DObject extends XObject {
             _enable_physics: false
         }
         if (defaults) {
-
+            if(defaults.name) {threeObj.name = defaults.name}
             _XU.mergeDefaultsWithData(<IXObjectData>_xdata, defaults, true)
-
-
         }
         return _xdata
     }
@@ -154,6 +152,10 @@ export class X3DObject extends XObject {
         this._position.set(positionObject.x, positionObject.y, positionObject.z) //incase Xpell engine controls the position
         const srcObj = (this._cannon_obj) ? this._cannon_obj : this._three_obj
         srcObj?.position.set(positionObject.x, positionObject.y, positionObject.z) //in case that other engine (like physics) controls the position
+    }
+    
+    setPositionFromVector3(newPosition:THREE.Vector3) {
+        this.setPosition({ x: newPosition.x, y: newPosition.y, z: newPosition.z })
     }
 
     setRotation(rotationObject: { x: number, y: number, z: number, w?: string }) {

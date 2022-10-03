@@ -14,7 +14,8 @@ import { CannonDebugRenderer } from './X3DUtils';
 import XUtils from '../XUtils';
 import XData from '../XData';
 import {XLogger as _xlog} from '../XLogger'
-import X3D from "./X3D"
+import {X3D,X3DObject} from "./X3D"
+
 
 
 
@@ -74,7 +75,8 @@ export class X3DWorld {
     renderer: THREE.WebGLRenderer;
     frameNumber: number;
     raycaster: THREE.Raycaster;
-    widgetControls: TransformControls;
+    transformControls: TransformControls
+    transformControlX3dObject:X3DObject
     lights: {};
     x3dObjects: {};
     defaultCamera: any;
@@ -269,6 +271,12 @@ export class X3DWorld {
             })
         }
 
+        if(xworld.transformControls?._active){
+            this.transformControls = new TransformControls(this.defaultCamera, this.renderer["domElement"])
+            this.transformControls.addEventListener("dragging-changed", (e) => {
+                this.controls["enabled"] = ! e.value
+            })
+        }
         
 
         
@@ -325,14 +333,14 @@ export class X3DWorld {
 
 
 
-    create_transform_controls(obj) {
-        this.widgetControls = new TransformControls(this.defaultCamera, this.renderer["domElement"])
-        this.widgetControls.addEventListener("dragging-changed", (e) => {
-
-            this.controls["enabled"] = ! e.value
+    createTransformControls(x3dObject) {
+        this.transformControlX3dObject = x3dObject
+        this.transformControls.attach(x3dObject.getThreeObject())
+        this.transformControls.addEventListener("objectChange",(e) => {
+            
+            this.transformControlX3dObject.setPositionFromVector3(this.transformControls.object.position)
         })
-        this.widgetControls["attach"](obj)
-        this.scene.add(this.widgetControls)
+        this.scene.add(this.transformControls)
     }
 
     // being called on every frame 
