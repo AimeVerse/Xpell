@@ -333,12 +333,21 @@ export class X3DWorld {
 
 
 
-    createTransformControls(x3dObject) {
+    setTransformControls(x3dObject) {
         this.transformControlX3dObject = x3dObject
         this.transformControls.attach(x3dObject.getThreeObject())
         this.transformControls.addEventListener("objectChange",(e) => {
+            const pos = this.transformControls.object.position
+            const rot = this.transformControls.object.rotation
+            this.transformControlX3dObject.setPositionFromVector3(pos)
+            XData.variables["tc-pos-x"] = pos.x.toFixed(2)
+            XData.variables["tc-pos-y"] = pos.y.toFixed(2)
+            XData.variables["tc-pos-z"] = pos.z.toFixed(2)
             
-            this.transformControlX3dObject.setPositionFromVector3(this.transformControls.object.position)
+            XData.variables["tc-rot-x"] = rot.x.toFixed(2)
+            XData.variables["tc-rot-y"] = rot.y.toFixed(2)
+            XData.variables["tc-rot-z"] = rot.z.toFixed(2)
+
         })
         this.scene.add(this.transformControls)
     }

@@ -11,6 +11,7 @@ import { XUI } from "./src/XUI/XUI"
 import { XUIObject } from "./src/XUI/XUIObject"
 import XJoystick from "./src/XUI/XJoystick"
 import { TopBar } from "./src/XUI/XDashboard"
+import { XEditor,XTransformControls } from "./src/XUI/XEditor"
 
 
 //display Xpell engine info
@@ -22,6 +23,7 @@ _x.info()
 _x.loadModule(XUI)
 _x.loadModule(X3D)
 XUI.importObject("joystick", XJoystick)
+XUI.importObjectPack(XEditor)
 
 _x.start()
 
@@ -203,10 +205,10 @@ const world = {
                 color: 0xff0000,
                 side: 2
             },
-            _position: { x: 0, y: 2.5, z: 0 },
+            _position: { x: 3, y: 2, z: 0 },
             _rotation: { x: 0, y: Math.PI / 2, z: 0 },
             _enable_physics: true,
-            _mass: 0,
+            _mass: 1,
         }
     }
 }
@@ -345,6 +347,13 @@ XUI.enableFirstUserGestureEvent()
             dynamicPage: true,
             color: "green"
         }
+    })
+
+    XUI.loadControl({
+        _id: "transform",
+        _type: "transform-controls",
+        _parent_element: "xcontrols",
+        style:"position:absolute;width:200px;height:100px;left:50px;top:50px;border:1px solid white;background-color:rgba(0,0,0,0.4);color:white"
     })
 
 

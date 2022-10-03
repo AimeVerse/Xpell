@@ -115,7 +115,7 @@ export class XJoystick extends XUIObject {
 
 
         }
-        super.onCreate()
+        super.onMount()
         //return dom_object
     }
 
@@ -125,7 +125,7 @@ export class XJoystick extends XUIObject {
 
 
 export class XMoveControls {
-    static get_objects() {
+    static getObjects() {
         return {
             "joystick": XJoystick
         }

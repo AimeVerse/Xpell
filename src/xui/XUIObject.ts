@@ -224,9 +224,11 @@ export class XUIObject extends XObject {
 
                     //to do - optimization point = cache positions
                     while ((index = trimmed.indexOf("_$", start_index)) > -1) {
-                        const val = ob[trimmed.substr(index+1,1)].toFixed(2)
+                        const f = trimmed.substr(index+2,1)
+                        const val = ob[f].toFixed(2)
+                        //console.log("v",val,val.toString().length)
                         trimmed = replace_at_plus_one(trimmed,index,val)
-                        start_index = index + 1 + val.length;
+                        start_index = index + 2 + val.length ;
                     }
                     this.setText(trimmed)
                 } else {

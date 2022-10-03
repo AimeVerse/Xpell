@@ -156,9 +156,15 @@ export class X3DModule extends XModule {
             if (ints?.object) {
                 let obj = ints.object
                 let found = false
+                //search all child objects to find the root object
                 while (obj.parent && !found) {
                     if (obj.parent.type == "Scene") {
-                        console.log(obj)
+                        
+                        const x3dObject  = X3D.om.getObjectByName(obj.name)
+                        if(x3dObject){
+                            //console.log(x3dObject);
+                            X3D.world.setTransformControls(x3dObject)
+                        }
                         found = true
                     }
                     else {
