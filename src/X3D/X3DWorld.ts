@@ -339,7 +339,10 @@ export class X3DWorld {
         this.transformControls.addEventListener("objectChange",(e) => {
             const pos = this.transformControls.object.position
             const rot = this.transformControls.object.rotation
+            const scale = this.transformControls.object.scale
             this.transformControlX3dObject.setPositionFromVector3(pos)
+            this.transformControlX3dObject.setRotationFromEuler(rot)
+            this.transformControlX3dObject.setScaleFromVector3(scale)
             XData.variables["tc-pos-x"] = pos.x.toFixed(2)
             XData.variables["tc-pos-y"] = pos.y.toFixed(2)
             XData.variables["tc-pos-z"] = pos.z.toFixed(2)
@@ -347,7 +350,15 @@ export class X3DWorld {
             XData.variables["tc-rot-x"] = rot.x.toFixed(2)
             XData.variables["tc-rot-y"] = rot.y.toFixed(2)
             XData.variables["tc-rot-z"] = rot.z.toFixed(2)
+            
+            XData.variables["tc-scale-x"] = scale.x.toFixed(2)
+            XData.variables["tc-scale-y"] = scale.y.toFixed(2)
+            XData.variables["tc-scale-z"] = scale.z.toFixed(2)
 
+        })
+        
+        document.addEventListener("xtransform-controls-state-changed",(e) => {            
+            this.transformControls.setMode(<'translate' | 'rotate' | 'scale'>XData.variables["xtransform-controls-state"])
         })
         this.scene.add(this.transformControls)
     }

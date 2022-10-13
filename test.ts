@@ -209,6 +209,29 @@ const world = {
             _rotation: { x: 0, y: Math.PI / 2, z: 0 },
             _enable_physics: true,
             _mass: 1,
+        },
+        "wall-2": {
+            _id: "wall-2",
+
+            _type: "box",
+            _geometry: {
+                _type: "box-geometry",
+                width: 5,
+                height: 5,
+                depth: 0.3,
+                widthSegments: 50,
+                heightSegments: 50,
+                depthSegments: 50
+            },
+            _material: {
+                _type: "standard-material",
+                color: 0xff0000,
+                side: 2
+            },
+            _position: { x: -3, y: 2, z: 0 },
+            _rotation: { x: 0, y: Math.PI / 2, z: 0 },
+            _enable_physics: false,
+            _mass: 1,
         }
     }
 }
