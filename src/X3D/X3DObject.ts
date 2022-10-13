@@ -165,10 +165,23 @@ export class X3DObject extends XObject {
         } else if (this._three_obj) {
             this._three_obj?.rotation.set(rotationObject.x, rotationObject.y, rotationObject.z, rotationObject.w) //in case that other engine (like physics) controls the position
         }
-
-
     }
 
+    setRotationFromEuler(newRotation:THREE.Euler) {
+        this.setRotation({ x: newRotation.x, y: newRotation.y, z: newRotation.z,w:newRotation.order })
+    }
+
+
+    setScale(newScale: { x: number, y: number, z: number }) {
+        this._scale.set(newScale.x, newScale.y, newScale.z)
+        if (this._three_obj) {
+            this._three_obj.scale.set(newScale.x, newScale.y, newScale.z) //in case that other engine (like physics) controls the position
+        }
+    }
+    
+    setScaleFromVector3(newScale:THREE.Vector3) {
+        this.setScale({ x: newScale.x, y: newScale.y, z: newScale.z })
+    }
 
     /**
      * This method sets the 3D State of the object (position, rotation & scale).
@@ -274,6 +287,7 @@ export class X3DObject extends XObject {
             rigidBody.addShape(this._cannon_shape, offset)
             rigidBody.position.set(this._position.x, this._position.y, this._position.z)
             rigidBody.quaternion.setFromEuler(this._rotation.x, this._rotation.y, this._rotation.z)
+            rigidBody.position
             rigidBody.linearDamping = 0.9
             this._cannon_obj = rigidBody
         }
