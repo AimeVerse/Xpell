@@ -12,7 +12,7 @@ import { XLogger as _xlog } from '../XLogger'
 
 
 
-const reservedWords = { _children: "child objects", _position: "position", _rotation: "rotation" }
+const reservedWords = { _children: "child objects", _position: "position", _rotation: "rotation",_scale:"scale" }
 const xpell_object_html_fields_mapping = {
     "_id": "id",
 };
@@ -118,7 +118,7 @@ export class X3DObject extends XObject {
         ignore = reservedWords
         //x,y,z
 
-        this._scale = new THREE.Vector3(1, 1, 1) //x,y,z
+        
 
         if (data._position) {
             this._position = new THREE.Vector3(data._position.x, data._position.y, data._position.z)
@@ -126,6 +126,14 @@ export class X3DObject extends XObject {
         } else {
             this._position = new THREE.Vector3(0, 0, 0)
         }
+
+        if (data._scale) {
+            this._scale = new THREE.Vector3(data._scale.x, data._scale.y, data._scale.z)
+            this.setScale(data._scale)
+        } else {
+            this._scale = new THREE.Vector3(1, 1, 1) //x,y,z
+        }
+
         if (data._rotation) {
             this._rotation = new THREE.Euler(data._rotation.x, data._rotation.y, data._rotation.z, data._rotation?.w)
             this.setRotation(data._rotation)
@@ -173,9 +181,16 @@ export class X3DObject extends XObject {
 
 
     setScale(newScale: { x: number, y: number, z: number }) {
+        
+        
         this._scale.set(newScale.x, newScale.y, newScale.z)
         if (this._three_obj) {
             this._three_obj.scale.set(newScale.x, newScale.y, newScale.z) //in case that other engine (like physics) controls the position
+        }
+        if (this._cannon_obj) {
+            //this._three_obj.scale.set(newScale.x, newScale.y, newScale.z) //in case that other engine (like physics) controls the position
+            this._cannon_shape
+            this._cannon_obj.updateBoundingRadius()
         }
     }
     
@@ -280,6 +295,7 @@ export class X3DObject extends XObject {
                 }
                 const ttcResult = threeToCannon(this._three_obj, { type: shape })
                 this._cannon_shape = ttcResult.shape
+                this._cannon_shape
                 offset = ttcResult.offset
             }
 
