@@ -38,7 +38,7 @@ const world = {
     physics: {
         engine: "cannon.js",
         _active: true,
-        _debug:false
+        _debug:true
     },
     scene: {
         "lights": {

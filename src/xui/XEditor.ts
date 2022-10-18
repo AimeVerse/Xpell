@@ -12,7 +12,7 @@ import XEventManager from "../XEventManager"
 export class XTransformControls extends XUIObject {
     private _keyboard_down_listener: Function
     private _key_down: boolean
-    private _state: 'translate' | 'rotate' | 'scale' //list -> transfer / scale / rotate
+    private _state: 'translate' | 'rotate' | 'scale' 
 
     constructor(data) {
 
@@ -92,31 +92,47 @@ export class XTransformControls extends XUIObject {
         })
 
         this.append(this._grid_scale_row)
+        
+        this._grid_buttons = XUI.create({
+            _type: "view",
+            style: "width:100%;height:20px;left:0;top:0;display:flex",
+            _children: [
+                { _id:"tc-pos-button" , _type: "button", text: "Position", style: "" },
+                { _id:"tc-rot-button" , _type: "button", text: "Rotation", style: "" },
+                { _id:"tc-scale-button" , _type: "button", text: "Scale", style: "" },
+                
+            ]
+        })
+        
+        this.append(this._grid_buttons)
 
+    }
 
+    changeState(newState:'translate' | 'rotate' | 'scale') {
+        this._state = newState
+        XData.variables["xtransform-controls-state"] = this._state
+        XEventManager.fire("xtransform-controls-state-changed")
 
     }
 
     async onMount() {
         const dom_object = super.getDOMObject() //create dom element for first time 
 
-        XData.variables["xtransform-controls-state"] = this._state
-        XEventManager.fire("xtransform-controls-state-changed")
         const sthis = this //strong this
         this._key_down = true
-        document.addEventListener('keydown', async (event) => {
+        document.addEventListener('keypress', async (event) => {
             sthis._key_down = true
             //            const lkey = event.key.toLowerCase()
             if (event.altKey) {
                 switch (event.code) {
                     case 'KeyG':
-                        this._state = 'translate'
+                        this.changeState('translate')
                         break
                     case 'KeyR':
-                        this._state = 'rotate'
+                        this.changeState('rotate')
                         break
                     case 'KeyS':
-                        this._state = 'scale'
+                        this.changeState('scale')
                         break
                 }
 
@@ -126,15 +142,23 @@ export class XTransformControls extends XUIObject {
 
         }, false);
 
-        document.addEventListener('keyup', async (event) => {
-            if (sthis._key_down) {
-                sthis._key_down = false
-                XData.variables["xtransform-controls-state"] = this._state
-                XEventManager.fire("xtransform-controls-state-changed")
-                //const joy_move = { forward: 0, backward: 0, left: 0, right: 0, up: 0, down: 0 }
-            }
-        }, false);
+       
 
+
+        const btn_pos = document.getElementById("tc-pos-button")
+        btn_pos.addEventListener("click",(event) => {
+            this.changeState('translate')
+        })
+
+        const btn_rot = document.getElementById("tc-rot-button")
+        btn_rot.addEventListener("click",(event) => {
+            this.changeState('rotate')
+        })
+
+        const btn_scale = document.getElementById("tc-scale-button")
+        btn_scale.addEventListener("click",(event) => {
+            this.changeState("scale")
+        })
 
 
         super.onMount()
