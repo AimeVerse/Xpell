@@ -172,6 +172,52 @@ export class XTransformControls extends XUIObject {
 
 
 
+export class X3DObjectViewer extends XUIObject {
+
+    constructor(data) {
+
+        const ids = XUtils.guid()
+        const defaults = {
+            _type: "x3d-object-viewer",
+            _html_tag: "div",
+            class: "x3d-object-viewer",
+            _title: "Transform",
+            _id: "x3d-object-viewer",
+            _parent_element: "body",
+        }
+        super(data, defaults);
+
+        this._state = "translate"
+
+        this._top_bar = XUI.create({
+            _type: "view",
+            _id: "x3d-object-viewer-top-bar", name: "x3d-object-viewer-top-bar", class: "xtransform-controls-top-bar",
+            style: "width:100%;height:20px;left:0;top:0;text-align:center;border-bottom:1px white solid",
+            text: this._title
+        })
+
+        this.append(this._top_bar)
+
+
+    }
+
+    async onMount() {
+        const dom_object = super.getDOMObject() //create dom element for first time 
+
+        const sthis = this //strong this
+        
+
+        super.onMount()
+    }
+
+    //return dom_object
+
+
+
+}
+
+
+
 export class XEditor {
     static getObjects() {
         return {
