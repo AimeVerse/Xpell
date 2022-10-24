@@ -11,7 +11,6 @@ import { XUI } from "./src/XUI/XUI"
 import { XUIObject } from "./src/XUI/XUIObject"
 import XJoystick from "./src/XUI/XJoystick"
 import { TopBar } from "./src/XUI/XDashboard"
-import { XEditor,XTransformControls } from "./src/XUI/XEditor"
 
 
 //display Xpell engine info
@@ -23,7 +22,7 @@ _x.info()
 _x.loadModule(XUI)
 _x.loadModule(X3D)
 XUI.importObject("joystick", XJoystick)
-XUI.importObjectPack(XEditor)
+
 
 _x.start()
 
@@ -186,52 +185,6 @@ const world = {
             _rotation: { x: Math.PI / 2, y: 0, z: 0 },
             _enable_physics: true,
             _mass: 0,
-        },
-        "wall-1": {
-            _id: "wall-1",
-
-            _type: "box",
-            _geometry: {
-                _type: "box-geometry",
-                width: 5,
-                height: 5,
-                depth: 0.3,
-                widthSegments: 50,
-                heightSegments: 50,
-                depthSegments: 50
-            },
-            _material: {
-                _type: "standard-material",
-                color: 0xff0000,
-                side: 2
-            },
-            _position: { x: 3, y: 2, z: 0 },
-            _rotation: { x: 0, y: Math.PI / 2, z: 0 },
-            _enable_physics: true,
-            _mass: 1,
-        },
-        "wall-2": {
-            _id: "wall-2",
-
-            _type: "box",
-            _geometry: {
-                _type: "box-geometry",
-                width: 5,
-                height: 5,
-                depth: 0.3,
-                widthSegments: 50,
-                heightSegments: 50,
-                depthSegments: 50
-            },
-            _material: {
-                _type: "standard-material",
-                color: 0xff0000,
-                side: 2
-            },
-            _position: { x: -3, y: 2, z: 0 },
-            _rotation: { x: 0, y: Math.PI / 2, z: 0 },
-            _enable_physics: false,
-            _mass: 1,
         }
     }
 }
@@ -249,6 +202,24 @@ const topBar = XUI.create({
 
 topBar.attach("player")
 
+
+
+XUI.loadControl({
+    _id: "joystick-1",
+    _type: "joystick",
+    _parent_element: "xcontrols",
+    _joy_options: {
+        size: 120,
+        multitouch: true,
+        maxNumberOfNipples: 1,
+        mode: 'static',
+        restJoystick: true,
+        shape: 'circle',
+        position: { bottom: '90px', left: '90px' },
+        dynamicPage: true,
+        color: "green"
+    }
+})
 
 XUI.enableFirstUserGestureEvent()
 
@@ -271,114 +242,23 @@ XUI.enableFirstUserGestureEvent()
         _id: "aime",
         name: "aime",
         _position: { x:1, y: 5, z: 0 }
-        , _scale: { x: 1, y: 1, z: 1 },
+        , _rotation: { x: 0, y: Math.PI, z: 0 },
+        _visible:false,
         _enable_physics: true,
         _collider:"box",
         _mass: 50
     }, (x3dObject) => {
+        x3dObject._visible=true
         //X3D.world.createTransformControls(x3dObject)
 
     })
 
     
-    // _loader.loadGLTF("/aime-avatar.glb", {
-    //     _id: "aime",
-    //     name: "aime",
-    //     _position: { x: 0, y: 5, z: 0 }
-    //     , _scale: { x: 1, y: 1, z: 1 },
-    //     _enable_physics: true,
-    //     _collider:"box",
-    //     _mass: 50
-    // }, (x3dObject) => {
-    //     _loader.loadFBXAnimation("belly-dancing.fbx", x3dObject, () => {
-    //         x3dObject.playAnimation("mixamo.com")
-            
-            
-    //     })
-    //     // x3dObject._three_obj.traverse((child) => {
-    //     //     if (child.isBone) {
-    //     //         console.log(child.name);
-    //     //         if(child.name == "RightForeArm") {
-
-    //     //             // console.log(child.position);
-    //     //             // child.position.add(new THREE.Vector3(0.1,0,0))
-    //     //             child.rotation.z = -Math.PI /2
-
-    //     //         }
-    //     //     // object.position.set(x,y,z);
-    //     //     // …
-    //     //     }
-    //     // })
-    // })
-
-
-
-    // _loader.loadGLTF("https://d1a370nemizbjq.cloudfront.net/190f9869-f7d9-4aef-b341-167f002fe92f.glb", {
-    //     _id: "dancer1",
-    //     name: "dancer1",
-    //     _position: { x: 2, y: 5, z: 0 }
-    //     , _scale: { x: 1, y: 1, z: 1 },
-    //     _enable_physics: true,
-    //     _collider:"box",
-    //     _mass: 50
-    // }, (x3dObject) => {
-    //     _loader.loadFBXAnimation("hip-hop-dance-anim.fbx", x3dObject, () => {
-    //         x3dObject.playAnimation("mixamo.com")
-            
-            
-    //     })
-        
-    // })
-
-
-
-
-    // _loader.loadGLTF("https://d1a370nemizbjq.cloudfront.net/9230073a-5721-45fd-aea7-5ccc3eb5821b.glb", {
-    //     _id: "dancer2",
-    //     name: "dancer2",
-    //     _position: { x: -2, y: 5, z: 0 },
-    //     _scale: { x: 1, y: 1, z: 1 },
-    //     _enable_physics: true,
-    //     _collider:"box",
-    //     _mass: 50
-    // }, (x3dObject) => {
-    //     _loader.loadFBXAnimation("slide-hip-hip-dance.fbx", x3dObject, () => {
-    //         x3dObject.playAnimation("mixamo.com")
-            
-    //         animateSpheres()
-    //     })
-        
-    // })
-
 
 
   
 
-
-    XUI.loadControl({
-        _id: "joystick-1",
-        _type: "joystick",
-        _parent_element: "xcontrols",
-        _joy_options: {
-            size: 120,
-            multitouch: true,
-            maxNumberOfNipples: 1,
-            mode: 'static',
-            restJoystick: true,
-            shape: 'circle',
-            position: { bottom: '90px', left: '90px' },
-            dynamicPage: true,
-            color: "green"
-        }
-    })
-
-    XUI.loadControl({
-        _id: "transform",
-        _type: "transform-controls",
-        _parent_element: "xcontrols",
-        style:"position:absolute;width:200px;height:100px;left:50px;top:50px;border:1px solid white;background-color:rgba(0,0,0,0.4);color:white"
-    })
-
+    
 
 
 
@@ -386,43 +266,3 @@ XUI.enableFirstUserGestureEvent()
 
 
 //})
-
-document.addEventListener('dblclick', (e) => {
-    X3D.raycast(e)
-}, false)
-
-
-
-function animateSpheres(){
-    setInterval((e) => {
-        const color = new THREE.Color(0xffffff);
-        color.setHex(Math.random() * 0xffffff); //Random color
-
-        const spr = {
-            _type: "sphere",
-            _geometry: {
-                _type: "sphere-geometry",
-                widthSegments: 16,
-                heightSegments: 16,
-                radius: THREE.MathUtils.randFloat(0.1, 0.2)
-            },
-            _material: {
-                _type: "basic-material",
-                color: color.getHex(),
-                side: 2,
-                // roughness: 0.5,
-            },
-            _position: { x: THREE.MathUtils.randFloat(-1, 1), y: THREE.MathUtils.randFloat(1, 2), z: THREE.MathUtils.randFloat(0, 2) },
-            _rotation: { x: 0, y: 0, z: 0 },
-            _enable_physics: true,
-            _mass: 5
-        }
-        const obj: X3DObject = X3D.addRaw(<any>spr)
-
-        setTimeout((e2) => {
-            X3D.remove(<string>obj._id)
-        }, 5000)
-
-        //X3D.om.getObject("aime").position = {x:0,y:0,z:0}
-    }, 500)
-}
