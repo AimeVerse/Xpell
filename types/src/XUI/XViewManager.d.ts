@@ -11,9 +11,10 @@ export declare class XViewManager {
     activeView: string;
     parentHTMLElement: string;
     /**
-     * Spell View Manager constructor
-     * @member raw_views This object contains the textual JSON representation of views (these are not SpellView objects, uses for caching views before loading)
-     * @member views SpellView objects that are ready to use (show, hide...)
+     * Xpell View Manager constructor
+     * @member viewMetadata This object contains the textual JSON representation of views (these are not XView objects, uses for caching views before loading)
+     * @member views View objects that are ready to use (show, hide...)
+     * @member activeView The screen active view (page)
      */
     constructor();
     /**

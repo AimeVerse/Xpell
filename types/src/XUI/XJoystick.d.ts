@@ -13,7 +13,7 @@ export declare class XJoystick extends XUIObject {
     onMount(): Promise<void>;
 }
 export declare class XMoveControls {
-    static get_objects(): {
+    static getObjects(): {
         joystick: typeof XJoystick;
     };
 }

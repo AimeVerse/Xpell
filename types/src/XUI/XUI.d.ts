@@ -11,6 +11,7 @@ import XUICoreObjects from "./XUICoreObjects";
 export declare const FIRST_USER_GESTURE = "first-user-gesture";
 export declare class XUIModule extends XModule {
     vm: XViewManager;
+    firstGestureOccured: boolean;
     constructor(data: ModuleData);
     /**
      * Loads Xpell application object

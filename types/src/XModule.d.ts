@@ -60,7 +60,8 @@ export declare class XModule {
     /**
      * Imports external objects to the engine
      * The object class should be like XObjects with static implementation of getObjects() method
-     * @param {XObjects} xObjectPack
+     * @param xObjectName
+     * @param xObject
      */
     importObject(xObjectName: any, xObject: any): void;
 }

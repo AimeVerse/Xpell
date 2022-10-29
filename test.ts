@@ -26,6 +26,9 @@ XUI.importObject("joystick", XJoystick)
 
 _x.start()
 
+
+
+
 const world = {
     "html-tag-id": "x3d-player",
     helper: {
@@ -221,7 +224,7 @@ XUI.loadControl({
     }
 })
 
-XUI.enableFirstUserGestureEvent()
+//XUI.enableFirstUserGestureEvent()
 
 
 
@@ -241,20 +244,30 @@ XUI.enableFirstUserGestureEvent()
     _loader.loadGLTF("/aime-avatar.glb", {
         _id: "aime",
         name: "aime",
-        _position: { x:1, y: 5, z: 0 }
-        , _rotation: { x: 0, y: Math.PI, z: 0 },
+        _position: { x:1, y: 2, z: 0 }
+        , _rotation: { x: 0, y: -Math.PI, z: 0 },
         _visible:false,
         _enable_physics: true,
         _collider:"box",
         _mass: 50
     }, (x3dObject) => {
         x3dObject._visible=true
+        _loader.loadFBXAnimation("Talking.fbx", x3dObject, async () => {
+            x3dObject.playAnimation("mixamo.com")
+            
+            x3dObject._visible = true;
+            console.log(x3dObject);
+            
+        })
         //X3D.world.createTransformControls(x3dObject)
 
     })
 
     
 
+    document.addEventListener('dblclick', (e) => {
+        X3D.raycast(e)
+    }, false)
 
   
 

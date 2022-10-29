@@ -158,8 +158,9 @@ export class X3DObject extends XObject {
 
     setPosition(positionObject: { x: number, y: number, z: number }) {
         this._position.set(positionObject.x, positionObject.y, positionObject.z) //incase Xpell engine controls the position
-        const srcObj = (this._cannon_obj) ? this._cannon_obj : this._three_obj
-        srcObj?.position.set(positionObject.x, positionObject.y, positionObject.z) //in case that other engine (like physics) controls the position
+        this._cannon_obj?.position.set(this._position.x,this._position.y,this._position.z)
+        // const srcObj = (this._cannon_obj) ? this._cannon_obj : this._three_obj
+        // srcObj?.position.set(positionObject.x, positionObject.y, positionObject.z) //in case that other engine (like physics) controls the position
     }
     
     setPositionFromVector3(newPosition:THREE.Vector3) {
@@ -168,11 +169,9 @@ export class X3DObject extends XObject {
 
     setRotation(rotationObject: { x: number, y: number, z: number, w?: string }) {
         this._rotation.set(rotationObject.x, rotationObject.y, rotationObject.z, rotationObject.w) //incase Xpell engine controls the position
-        if (this._cannon_obj) {
-            this?._cannon_obj?.quaternion.setFromEuler(this._rotation.x, this._rotation.y, this._rotation.z)
-        } else if (this._three_obj) {
-            this._three_obj?.rotation.set(rotationObject.x, rotationObject.y, rotationObject.z, rotationObject.w) //in case that other engine (like physics) controls the position
-        }
+        this?._cannon_obj?.quaternion.setFromEuler(this._rotation.x, this._rotation.y, this._rotation.z)
+        
+
     }
 
     setRotationFromEuler(newRotation:THREE.Euler) {
@@ -185,12 +184,12 @@ export class X3DObject extends XObject {
         
         this._scale.set(newScale.x, newScale.y, newScale.z)
         if (this._three_obj) {
-            this._three_obj.scale.set(newScale.x, newScale.y, newScale.z) //in case that other engine (like physics) controls the position
+            
         }
         if (this._cannon_obj) {
-            //this._three_obj.scale.set(newScale.x, newScale.y, newScale.z) //in case that other engine (like physics) controls the position
-            this._cannon_shape
-            this._cannon_obj.updateBoundingRadius()
+            
+            // this._cannon_shape
+            // this._cannon_obj.updateBoundingRadius()
         }
     }
     
@@ -203,12 +202,19 @@ export class X3DObject extends XObject {
      */
     set3DState() {
         if (this._three_obj) {
-
-            this._three_obj.position.set(this._position.x, this._position.y, this._position.z)
-            this._three_obj.rotation.set(this._rotation.x, this._rotation.y, this._rotation.z)
-            this._three_obj.scale.set(this._scale.x, this._scale.y, this._scale.z)
-            this._three_obj.visible = this._visible
+            this._three_obj.scale.copy(this._scale) //in case that other engine (like physics) controls the position
+            this._three_obj?.rotation.copy(this._rotation)
+            this._three_obj.position.copy(this._position)
+            this._three_obj.scale.copy(this._scale)       
         }
+
+        // if (this._cannon_obj) {
+        //     this?._cannon_obj?.quaternion.setFromEuler(this._rotation.x, this._rotation.y, this._rotation.z)
+        //     this._cannon_obj.position.set(this._position.x,this._position.y,this._position.z)
+        //     //this._three_obj.scale.set(newScale.x, newScale.y, newScale.z) //in case that other engine (like physics) controls the position
+        // } 
+
+        
     }
 
 

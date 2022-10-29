@@ -71,18 +71,27 @@ export declare class X3DObject extends XObject {
         _children: string;
         _position: string;
         _rotation: string;
+        _scale: string;
     }): void;
     setPosition(positionObject: {
         x: number;
         y: number;
         z: number;
     }): void;
+    setPositionFromVector3(newPosition: THREE.Vector3): void;
     setRotation(rotationObject: {
         x: number;
         y: number;
         z: number;
         w?: string;
     }): void;
+    setRotationFromEuler(newRotation: THREE.Euler): void;
+    setScale(newScale: {
+        x: number;
+        y: number;
+        z: number;
+    }): void;
+    setScaleFromVector3(newScale: THREE.Vector3): void;
     /**
      * This method sets the 3D State of the object (position, rotation & scale).
      */
