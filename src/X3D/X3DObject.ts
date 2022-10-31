@@ -9,10 +9,14 @@ import xNanoCommands from './XNanoCommands'
 import X3D from "./X3D"
 import { XLogger as _xlog } from '../XLogger'
 
+/**
+ * Extended imports
+ */
+import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader';
 
 
 
-const reservedWords = { _children: "child objects", _position: "position", _rotation: "rotation",_scale:"scale" }
+const reservedWords = { _children: "child objects", _position: "position", _rotation: "rotation", _scale: "scale" }
 const xpell_object_html_fields_mapping = {
     "_id": "id",
 };
@@ -68,7 +72,7 @@ export class X3DObject extends XObject {
             _enable_physics: false
         }
         if (defaults) {
-            if(defaults.name) {threeObj.name = defaults.name}
+            if (defaults.name) { threeObj.name = defaults.name }
             _XU.mergeDefaultsWithData(<IXObjectData>_xdata, defaults, true)
         }
         return _xdata
@@ -87,7 +91,7 @@ export class X3DObject extends XObject {
         this._children = [];
         this._animation = true
         this._animation_clips = {}
-        this._fade_duration = 0.2
+        this._fade_duration = 0.25
         this._ignore = reservedWords
         this._clock = new THREE.Clock();
         this._fraction = 0
@@ -118,7 +122,7 @@ export class X3DObject extends XObject {
         ignore = reservedWords
         //x,y,z
 
-        
+
 
         if (data._position) {
             this._position = new THREE.Vector3(data._position.x, data._position.y, data._position.z)
@@ -158,42 +162,40 @@ export class X3DObject extends XObject {
 
     setPosition(positionObject: { x: number, y: number, z: number }) {
         this._position.set(positionObject.x, positionObject.y, positionObject.z) //incase Xpell engine controls the position
-        this._cannon_obj?.position.set(this._position.x,this._position.y,this._position.z)
+        this._cannon_obj?.position.set(this._position.x, this._position.y, this._position.z)
         // const srcObj = (this._cannon_obj) ? this._cannon_obj : this._three_obj
         // srcObj?.position.set(positionObject.x, positionObject.y, positionObject.z) //in case that other engine (like physics) controls the position
     }
-    
-    setPositionFromVector3(newPosition:THREE.Vector3) {
+
+    setPositionFromVector3(newPosition: THREE.Vector3) {
         this.setPosition({ x: newPosition.x, y: newPosition.y, z: newPosition.z })
     }
 
     setRotation(rotationObject: { x: number, y: number, z: number, w?: string }) {
         this._rotation.set(rotationObject.x, rotationObject.y, rotationObject.z, rotationObject.w) //incase Xpell engine controls the position
         this?._cannon_obj?.quaternion.setFromEuler(this._rotation.x, this._rotation.y, this._rotation.z)
-        
+
 
     }
 
-    setRotationFromEuler(newRotation:THREE.Euler) {
-        this.setRotation({ x: newRotation.x, y: newRotation.y, z: newRotation.z,w:newRotation.order })
+    setRotationFromEuler(newRotation: THREE.Euler) {
+        this.setRotation({ x: newRotation.x, y: newRotation.y, z: newRotation.z, w: newRotation.order })
     }
 
 
     setScale(newScale: { x: number, y: number, z: number }) {
-        
-        
         this._scale.set(newScale.x, newScale.y, newScale.z)
         if (this._three_obj) {
-            
+
         }
         if (this._cannon_obj) {
-            
+
             // this._cannon_shape
             // this._cannon_obj.updateBoundingRadius()
         }
     }
-    
-    setScaleFromVector3(newScale:THREE.Vector3) {
+
+    setScaleFromVector3(newScale: THREE.Vector3) {
         this.setScale({ x: newScale.x, y: newScale.y, z: newScale.z })
     }
 
@@ -205,7 +207,7 @@ export class X3DObject extends XObject {
             this._three_obj.scale.copy(this._scale) //in case that other engine (like physics) controls the position
             this._three_obj?.rotation.copy(this._rotation)
             this._three_obj.position.copy(this._position)
-            this._three_obj.scale.copy(this._scale)       
+            this._three_obj.scale.copy(this._scale)
         }
 
         // if (this._cannon_obj) {
@@ -214,7 +216,7 @@ export class X3DObject extends XObject {
         //     //this._three_obj.scale.set(newScale.x, newScale.y, newScale.z) //in case that other engine (like physics) controls the position
         // } 
 
-        
+
     }
 
 
@@ -222,32 +224,7 @@ export class X3DObject extends XObject {
     load() { }
 
 
-    async importAnimations(threeObj: THREE.Object3D) {
-        this._animation_mixer = new THREE.AnimationMixer(this._three_obj)
-        threeObj.animations.forEach((anim) => {
-            const a2 = anim.clone()
-            this._three_obj.animations.push(a2)
-            a2.optimize()
-            this._animation_clips[a2.name] = this._animation_mixer.clipAction(a2)
-            _xlog.log("Animation " + a2.name + " loaded on object " + this._id);
-        })
-
-    }
-
-
-    async loadAnimations() {
-
-        if (this._three_obj && this._three_obj.animations.length > 0) {
-            const anim = this._three_obj.animations
-            this._animation_mixer = new THREE.AnimationMixer(this._three_obj)
-            anim.forEach(__anim => {
-                this._animation_clips[__anim.name] = this._animation_mixer.clipAction(__anim)
-                _xlog.log("Animation " + __anim.name + " loaded on object " + this._id);
-            })
-        }
-
-    }
-
+    
     /**
      * @override
      */
@@ -262,7 +239,7 @@ export class X3DObject extends XObject {
                 const keys = Object.keys(this)
 
                 const s2t_props = [""]
-                
+
 
                 keys.forEach(key => {
                     if (!key.startsWith("_")) {
@@ -447,19 +424,102 @@ export class X3DObject extends XObject {
 
     hide() { this._visible = false }
 
-    playAnimation(clipName: string) {
+    /**
+     * Import animation from a THREE Object3D to the current object
+     * @param threeObj ThreeJs Object3D to import the animations from
+     * @param newName optional - change the animation name to a new name
+     */
+     async importAnimations(threeObj: THREE.Object3D,newName?:string) {
+        if (!this._animation_mixer) {
+            this._animation_mixer = new THREE.AnimationMixer(this._three_obj)
+        }
+        threeObj.animations.forEach((anim) => {
+            //console.log(anim)
+            const a2 = anim.clone()
+            if(newName) {
+                a2.name = newName
+            }
+            this._three_obj.animations.push(a2)
+            a2.optimize()
+            this._animation_clips[a2.name] = this._animation_mixer.clipAction(a2)
+            _xlog.log("Animation " + a2.name + " loaded on object " + this._id);
+        })
+    }
+
+    /**
+     * Import animations from an FBX file (compatible with maximo.com animations)
+     * @param url - url of the FBX file
+     * @since 1.04
+     */
+    async importAnimationFromFBXFile(url: string,newName?:string) {
+        const getFBXAnimation = (url: string): Promise<THREE.Object3D> => {
+            return new Promise(function (resolve, reject) {
+                const _onload = (obj: THREE.Object3D) => {
+                    resolve(obj)
+                    //onLoadCallBack()
+                }
+
+                const _onprogress = (data) => { }
+
+                const _onerror = (error) => {
+                    _xlog.error(error);
+                    this.loading = false
+                    reject(error)
+                }
+
+                const loader = new FBXLoader()
+                loader.load(url, _onload, _onprogress, _onerror);
+
+            })
+        }
+
+
+
+        const obj = await getFBXAnimation(url)
+        if (obj && obj instanceof THREE.Object3D) {
+            await this.importAnimations(obj,newName)
+        }
+
+    }
+
+
+    /**
+     * loads animation on start or after create object
+     */
+    async loadAnimations() {
+
+        if (this._three_obj && this._three_obj.animations.length > 0) {
+            const anim = this._three_obj.animations
+            this._animation_mixer = new THREE.AnimationMixer(this._three_obj)
+            anim.forEach(__anim => {
+                this._animation_clips[__anim.name] = this._animation_mixer.clipAction(__anim)
+                _xlog.log("Animation " + __anim.name + " loaded on object " + this._id);
+            })
+        }
+
+    }
+
+
+    playAnimation(clipName: string,loop?:THREE.AnimationActionLoopStyles) {
 
         if (clipName) {
             const anim = this._animation_clips[clipName]
+            if(loop)
+                anim.setLoop(loop)
+            
+            // anim.blendMode = THREE.AdditiveAnimationBlendMode
             if (anim) {
+                // _xlog.log("playing animation " + clipName)
                 if (this._current_action) {
-                    this._animation_clips[<any>this._current_action].fadeOut(this._fade_duration)
-                    anim.reset().fadeIn(this._fade_duration).play();
+                    
+                    this._animation_clips[<any>this._current_action].stop() //crossFadeTo(anim,this._fade_duration)
+                    anim.play();
                 } else {
                     anim.play()
                 }
                 //ns_cmd.s3d_object._disable_frame_3d_state = true
                 this._current_action = clipName
+                
             }
         }
     }

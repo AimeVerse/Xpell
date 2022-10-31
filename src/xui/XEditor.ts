@@ -8,6 +8,7 @@ import XUtils from "../XUtils"
 import XUIObject from "./XUIObject"
 import XData from "../XData"
 import XEventManager from "../XEventManager"
+import { json } from "stream/consumers"
 
 export class XTransformControls extends XUIObject {
     private _keyboard_down_listener: Function
@@ -39,57 +40,56 @@ export class XTransformControls extends XUIObject {
         this.append(this._top_bar)
 
 
-        const gridRowStyle = "text-align:center;flex:0 0 25%"
+
+        const getCopy2ClipboardFunction = (type:'pos' | 'rot' | 'scale' ) => {
+            return  `
+            console.log(document.getElementById("tc-${type}-x"))
+            const v = "{x:" + document.getElementById("tc-${type}-x").innerText + ",y:" + document.getElementById("tc-${type}-y").innerText + ",z:" + document.getElementById("tc-${type}-z").innerText + "}"
+            navigator.clipboard.writeText(v)`
+        }
+
+        const getGridRow = (state : 'pos' | "rot" | "scale") => {
+            return {
+                _type: "view",
+                style: gridRowStyle,
+                _children: [
+                    { _type: "view", text: state },
+                    { id: "tc-"+ state + "-x" ,_type: "view", text: "0", _data_source: "tc-"+ state + "-x" },
+                    { id: "tc-"+ state + "-y" ,_type: "view", text: "0", _data_source: "tc-"+ state + "-y" },
+                    { id: "tc-"+ state + "-z" , _type: "view", text: "0", _data_source: "tc-"+ state + "-z" },
+                    { _type: "button", text: "copy", style: "" ,onclick:getCopy2ClipboardFunction(state)},
+                ]
+            }
+        }
+        const gridRowStyle = "width:100%;height:20px;left:0;top:0;display:flex;justify-content:space-between;text-align:left"
+        const gridColStyle = "text-align:left"
 
         this._grid_title = XUI.create({
             _type: "view",
-            style: "width:100%;height:20px;left:0;top:0;display:flex",
+            style:gridRowStyle ,
             _children: [
-                { _type: "view", text: "...", style: gridRowStyle },
-                { _type: "view", text: "X", style: gridRowStyle },
-                { _type: "view", text: "Y", style: gridRowStyle },
-                { _type: "view", text: "Z", style: gridRowStyle },
+                { _type: "view", text: "..." },
+                { _type: "view", text: "X" },
+                { _type: "view", text: "Y" },
+                { _type: "view", text: "Z" },
+                { _type: "view", text: "..." },
             ]
         })
 
         this.append(this._grid_title)
 
-        this._grid_position_row = XUI.create({
-            _type: "view",
-            style: "width:100%;height:20px;left:0;top:0;display:flex",
-            _children: [
-                { _type: "view", text: "Pos", style: gridRowStyle },
-                { _type: "view", text: "0", _data_source: "tc-pos-x", style: gridRowStyle },
-                { _type: "view", text: "0", _data_source: "tc-pos-y", style: gridRowStyle },
-                { _type: "view", text: "0", _data_source: "tc-pos-z", style: gridRowStyle },
-            ]
-        })
+        this._grid_position_row = XUI.create(getGridRow("pos"))
 
         this.append(this._grid_position_row)
 
-        this._grid_rotation_row = XUI.create({
-            _type: "view",
-            style: "width:100%;height:20px;left:0;top:0;display:flex",
-            _children: [
-                { _type: "view", text: "Rot", style: gridRowStyle },
-                { _type: "view", text: "0", _data_source: "tc-rot-x", style: gridRowStyle },
-                { _type: "view", text: "0", _data_source: "tc-rot-y", style: gridRowStyle },
-                { _type: "view", text: "0", _data_source: "tc-rot-z", style: gridRowStyle },
-            ]
-        })
+        this._grid_rotation_row = XUI.create(getGridRow("rot"))
 
         this.append(this._grid_rotation_row)
 
-        this._grid_scale_row = XUI.create({
-            _type: "view",
-            style: "width:100%;height:20px;left:0;top:0;display:flex",
-            _children: [
-                { _type: "view", text: "Scale", style: gridRowStyle },
-                { _type: "view", text: "0", _data_source: "tc-scale-x", style: gridRowStyle },
-                { _type: "view", text: "0", _data_source: "tc-scale-y", style: gridRowStyle },
-                { _type: "view", text: "0", _data_source: "tc-scale-z", style: gridRowStyle },
-            ]
-        })
+
+        
+
+        this._grid_scale_row = XUI.create(getGridRow("scale"))
 
         this.append(this._grid_scale_row)
         

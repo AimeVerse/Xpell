@@ -11,7 +11,7 @@ import { XUI } from "./src/XUI/XUI"
 import { XUIObject } from "./src/XUI/XUIObject"
 import XJoystick from "./src/XUI/XJoystick"
 import { TopBar } from "./src/XUI/XDashboard"
-
+import { XEditor, XTransformControls } from "./src/XUI/XEditor"
 
 //display Xpell engine info
 _x.verbose()
@@ -22,7 +22,7 @@ _x.info()
 _x.loadModule(XUI)
 _x.loadModule(X3D)
 XUI.importObject("joystick", XJoystick)
-
+XUI.importObjectPack(XEditor)
 
 _x.start()
 
@@ -34,13 +34,13 @@ const world = {
     helper: {
         //axes: 5
     },
-    transformControls:{
-        _active:true
+    transformControls: {
+        _active: true
     },
     physics: {
         engine: "cannon.js",
         _active: true,
-        _debug:false
+        _debug: true
     },
     scene: {
         "lights": {
@@ -211,6 +211,7 @@ XUI.loadControl({
     _id: "joystick-1",
     _type: "joystick",
     _parent_element: "xcontrols",
+    _move_speed: 0.2,
     _joy_options: {
         size: 120,
         multitouch: true,
@@ -224,6 +225,13 @@ XUI.loadControl({
     }
 })
 
+XUI.loadControl({
+    _id: "transform",
+    _type: "transform-controls",
+    _parent_element: "xcontrols",
+    style: "position:absolute;width:200px;height:100px;left:50px;top:50px;border:1px solid white;background-color:rgba(0,0,0,0.4);color:white"
+})
+
 //XUI.enableFirstUserGestureEvent()
 
 
@@ -232,46 +240,75 @@ XUI.loadControl({
 
 
 
-    //console.log(X3D.world)
+//console.log(X3D.world)
 
-    const stage = {
-        x: 0,
-        y: 1.5,
-        z: 0,
-    }
+const stage = {
+    x: 0,
+    y: 1.5,
+    z: 0,
+}
 
 
-    _loader.loadGLTF("/aime-avatar.glb", {
-        _id: "aime",
-        name: "aime",
-        _position: { x:1, y: 2, z: 0 }
-        , _rotation: { x: 0, y: -Math.PI, z: 0 },
-        _visible:false,
-        _enable_physics: true,
-        _collider:"box",
-        _mass: 50
-    }, (x3dObject) => {
-        x3dObject._visible=true
-        _loader.loadFBXAnimation("Talking.fbx", x3dObject, async () => {
-            x3dObject.playAnimation("mixamo.com")
-            
-            x3dObject._visible = true;
-            console.log(x3dObject);
-            
-        })
-        //X3D.world.createTransformControls(x3dObject)
+_loader.loadGLTF("/aime-avatar.glb", {
+    _id: "aime",
+    name: "aime",
+    _position: { x: 0.06, y: -0.78, z: -0.00 },
+    _rotation: { x: -1.55, y: 0.01, z: -2.60 },
+    _visible: false,
+    _enable_physics: false,
+    _collider: "box",
+    _mass: 50
+}, async (x3dObject: X3DObject) => {
+    await x3dObject.importAnimationFromFBXFile("anim/Angry.fbx", "angry")
+    await x3dObject.importAnimationFromFBXFile("anim/Look Around.fbx", "look-around")
+    await x3dObject.importAnimationFromFBXFile("anim/Idle.fbx", "idle")
+    // _loader.loadFBXAnimation("anim/Angry.fbx", x3dObject, async () => {
+    //     //x3dObject._visible=true
+    x3dObject.playAnimation("look-around",THREE.LoopPingPong)
+    //     X3D.world.setTransformControls(x3dObject)    
+    //     x3dObject._visible = true;
 
-    })
 
+    // })
+    //X3D.world.createTransformControls(x3dObject)
+
+})
+
+const btn = XUI.loadControl({
+    _type:"button",
+    text:"change",
+    _id:"changeAnim",
+    style:"position:absolute;top:10;right:0",
+    _parent_element: "xcontrols",
+})
+
+
+const animations = [ "idle","angry","look-around"]
+let aidx = 0
+
+btn.getDOMObject().addEventListener("click",(e) => {
+    const a = animations[aidx]
+    const o = X3D.om.getObject("aime")
     
-
-    document.addEventListener('dblclick', (e) => {
-        X3D.raycast(e)
-    }, false)
-
-  
-
     
+    // o.playAnimation(a)
+    o.playAnimation(a)
+    aidx++
+    if(aidx>=animations.length) {aidx =0;console.log("reset")}
+})
+
+
+
+document.addEventListener('dblclick', (e) => {
+    X3D.raycast(e)
+}, false)
+
+
+
+
+document.addEventListener("raycast-data", (e) => {
+    console.log(e);
+}, false)
 
 
 

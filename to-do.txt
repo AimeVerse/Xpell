@@ -12,3 +12,4 @@
 -- NPC Controller
 -- Smart Objects Controller
 -- Scene Editor
+-- joystick speed (add to parameters)

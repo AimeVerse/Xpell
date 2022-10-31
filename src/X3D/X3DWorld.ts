@@ -76,7 +76,8 @@ export class X3DWorld {
     frameNumber: number;
     raycaster: THREE.Raycaster;
     transformControls: TransformControls
-    transformControlX3dObject:X3DObject
+    private transformControlX3dObject:X3DObject
+    private transformControlsListenerAdded: boolean;
     lights: {};
     x3dObjects: {};
     defaultCamera: any;
@@ -336,31 +337,34 @@ export class X3DWorld {
     setTransformControls(x3dObject) {
         this.transformControlX3dObject = x3dObject
         this.transformControls.attach(x3dObject.getThreeObject())
-        this.transformControls.addEventListener("objectChange",(e) => {
-            const pos = this.transformControls.object.position
-            const rot = this.transformControls.object.rotation
-            const scale = this.transformControls.object.scale
-            this.transformControlX3dObject.setPositionFromVector3(pos)
-            this.transformControlX3dObject.setRotationFromEuler(rot)
-            this.transformControlX3dObject.setScaleFromVector3(scale)
-            XData.variables["tc-pos-x"] = pos.x.toFixed(2)
-            XData.variables["tc-pos-y"] = pos.y.toFixed(2)
-            XData.variables["tc-pos-z"] = pos.z.toFixed(2)
+        if(!this.transformControlsListenerAdded) {
+            this.transformControlsListenerAdded = true
+            this.transformControls.addEventListener("objectChange",(e) => {
+                const pos = this.transformControls.object.position
+                const rot = this.transformControls.object.rotation
+                const scale = this.transformControls.object.scale
+                this.transformControlX3dObject.setPositionFromVector3(pos)
+                this.transformControlX3dObject.setRotationFromEuler(rot)
+                this.transformControlX3dObject.setScaleFromVector3(scale)
+                XData.variables["tc-pos-x"] = pos.x.toFixed(2)
+                XData.variables["tc-pos-y"] = pos.y.toFixed(2)
+                XData.variables["tc-pos-z"] = pos.z.toFixed(2)
+                
+                XData.variables["tc-rot-x"] = rot.x.toFixed(2)
+                XData.variables["tc-rot-y"] = rot.y.toFixed(2)
+                XData.variables["tc-rot-z"] = rot.z.toFixed(2)
+                
+                XData.variables["tc-scale-x"] = scale.x.toFixed(2)
+                XData.variables["tc-scale-y"] = scale.y.toFixed(2)
+                XData.variables["tc-scale-z"] = scale.z.toFixed(2)
+    
+            })
             
-            XData.variables["tc-rot-x"] = rot.x.toFixed(2)
-            XData.variables["tc-rot-y"] = rot.y.toFixed(2)
-            XData.variables["tc-rot-z"] = rot.z.toFixed(2)
-            
-            XData.variables["tc-scale-x"] = scale.x.toFixed(2)
-            XData.variables["tc-scale-y"] = scale.y.toFixed(2)
-            XData.variables["tc-scale-z"] = scale.z.toFixed(2)
-
-        })
-        
-        document.addEventListener("xtransform-controls-state-changed",(e) => {            
-            this.transformControls.setMode(<'translate' | 'rotate' | 'scale'>XData.variables["xtransform-controls-state"])
-        })
-        this.scene.add(this.transformControls)
+            document.addEventListener("xtransform-controls-state-changed",(e) => {            
+                this.transformControls.setMode(<'translate' | 'rotate' | 'scale'>XData.variables["xtransform-controls-state"])
+            })
+            this.scene.add(this.transformControls)
+        }
     }
 
     // being called on every frame 

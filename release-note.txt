@@ -11,7 +11,7 @@
 - Scene Background (X3D.addEnvironmentMap)
 - Cannon JS physics engine support
 - Object Manager remove objects (remove method)
-
+- X3D Raycast fires "raycast-data" event 
 1.0.3
 -------
 - Full TS compatibility

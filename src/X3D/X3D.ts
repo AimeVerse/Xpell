@@ -163,7 +163,8 @@ export class X3DModule extends XModule {
                         const x3dObject  = X3D.om.getObjectByName(obj.name)
                         if(x3dObject){
                             //console.log(x3dObject);
-                            X3D.world.setTransformControls(x3dObject)
+                            //X3D.world.setTransformControls(x3dObject)
+                            XEventManager.fire("raycast-data",{detail:{x3dObject:x3dObject}})
                         }
                         found = true
                     }
