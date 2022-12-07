@@ -13,3 +13,6 @@
 -- Smart Objects Controller
 -- Scene Editor
 -- joystick speed (add to parameters)
+
+
+-- x3dobject add load from gltf

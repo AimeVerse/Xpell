@@ -101,17 +101,23 @@ export class XUIObject extends XObject {
                 }
             });
 
-            if (this["text"] && this["text"].length > 0) {
-                
+            //--> support both text and _text to deprecate text 
+            if ((this["text"] && this["text"].length > 0)) {
                 dom_object.textContent = this["text"];
-            } else if (this._children.length > 0) {
+            }  else if (this["_text"] && (<string>this["_text"]).length > 0) {
+                dom_object.textContent = <string>this["_text"];
+            }
+            
+            
+            //--> change to support text content and children
+            if (this._children.length > 0) {
                 this._children.forEach((child:XUIObject) => {
                     const coo = child.getDOMObject()
                     dom_object.appendChild(coo);
                 })
             }
             this._dom_object = dom_object;
-            this.onCreate()
+            // this.onCreate()
         }
         return this._dom_object;
     }
@@ -176,22 +182,37 @@ export class XUIObject extends XObject {
         }
     }
 
+    
+    
+    
+    
     /**
-     * this method triggered after the HTML DOM object has been created and added to the parent element
+     * this method triggered after the HTML DOM object has been mounted by the super
+     * it implemented in this class to support the following events for XUIObject:
+     * _on_click: (XUIObject,event) => {}
      */
-    async onCreate() {
-        this._children.forEach( (child:XUIObject) => {
-            if(child.onCreate && typeof child.onCreate === 'function') {
-                child.onCreate()
-            }})
+    
+    async onMount() {
+        //check for _on_click event definition
+        const sthis = this
+        if (sthis._on_click) {
+            if (typeof sthis._on_click === 'function') {
+                this.getDOMObject().addEventListener("click", (e) => { sthis._on_click(sthis,e) })
+            }
+            else if (typeof sthis._on_click === 'string') {
+
+            }
+        }
+
+        super.onMount()
     }
 
-    async onMount() {
-        this._children.forEach( (child:XUIObject) => {
-            if(child.onMount && typeof child.onMount === 'function') {
-                child.onMount()
-            }})
+
+
+    async onEvent() {
+
     }
+
 
 
     /**

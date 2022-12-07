@@ -72,16 +72,16 @@ export  class XModule {
     create(data) {
 
         let xObject;
-        if (data.hasOwnProperty(_XC.NODES.type)) {
+        if (data.hasOwnProperty("_type")) {
             if (this.objectManger.hasObjectClass(data["_type"])) {
-                let xObjectClass = this.objectManger.getObjectClass(data[_XC.NODES.type]);
+                let xObjectClass = this.objectManger.getObjectClass(data["_type"]);
                 if (xObjectClass.hasOwnProperty("defaults")) {
                     XUtils.mergeDefaultsWithData(data, xObjectClass.defaults);
                 }
                 xObject = new xObjectClass(data);
             }
             else {
-                throw "Xpell object '" + data[_XC.NODES.type] + "' not found";
+                throw "Xpell object '" + data["_type"] + "' not found";
             }
         }
         else {
@@ -97,7 +97,6 @@ export  class XModule {
                 xObject.append(new_spell)
             });
         }
-
         xObject.onCreate()
         return xObject;
     }

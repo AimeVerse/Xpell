@@ -13,7 +13,7 @@ import { XLogger as _xlog } from '../XLogger'
  * Extended imports
  */
 import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader';
-
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 
 
 const reservedWords = { _children: "child objects", _position: "position", _rotation: "rotation", _scale: "scale" }
@@ -235,7 +235,7 @@ export class X3DObject extends XObject {
                 this._three_obj.name = <string>this.name
                 this._clock.start()
 
-                this.onCreate()
+                
                 const keys = Object.keys(this)
 
                 const s2t_props = [""]
@@ -499,9 +499,12 @@ export class X3DObject extends XObject {
 
     }
 
+    stopAllAnimations(){
+        this._animation_mixer.stopAllAction()
+    }
 
     playAnimation(clipName: string,loop?:THREE.AnimationActionLoopStyles) {
-
+        
         if (clipName) {
             const anim = this._animation_clips[clipName]
             if(loop)
@@ -512,11 +515,12 @@ export class X3DObject extends XObject {
                 // _xlog.log("playing animation " + clipName)
                 if (this._current_action) {
                     
-                    this._animation_clips[<any>this._current_action].stop() //crossFadeTo(anim,this._fade_duration)
-                    anim.play();
+                    // this._animation_clips[<any>this._current_action].fadeOut(this._fade_duration)
+                    // anim.play().fadeIn(this._fade_duration);
+                    this._animation_mixer.stopAllAction()
                 } else {
-                    anim.play()
                 }
+                anim.play()
                 //ns_cmd.s3d_object._disable_frame_3d_state = true
                 this._current_action = clipName
                 

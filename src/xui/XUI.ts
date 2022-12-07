@@ -81,9 +81,10 @@ export class XUIModule extends XModule {
 
     loadControl(data): XUIObject {
         const xobj = this.create(data)
-
         const ctrl = xobj.getDOMObject()
-        const pe = (xobj._parent_element) ? xobj._parent_element : this.vm["parentHTMLElement"];
+        
+        
+        const pe = (xobj._parent_element) ? xobj._parent_element : "xcontrols";
         document.querySelector("#" + pe)?.append(ctrl)
         if (xobj.onMount && typeof xobj.onMount === 'function') {
             xobj.onMount()

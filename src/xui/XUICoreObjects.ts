@@ -239,12 +239,13 @@ export class XButton extends XUIObject {
     onClick: CallableFunction;
     constructor(data) {
         const defs = {
-            [_XC.NODES.type] : "button",
+            _type : "button",
             class:"xbutton",
             _html_tag :"button"
         }
         super(data,defs);        
     }
+    
     setOnclick(fun:CallableFunction)
     {
         this.onClick = fun;

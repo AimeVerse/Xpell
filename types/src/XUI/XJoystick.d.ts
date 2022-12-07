@@ -9,6 +9,7 @@ export declare class XJoystick extends XUIObject {
     private _joy_options;
     private _keyboard_down_listener;
     private _key_down;
+    private _move_speed;
     constructor(data: any);
     onMount(): Promise<void>;
 }

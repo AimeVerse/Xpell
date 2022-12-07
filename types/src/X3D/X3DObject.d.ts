@@ -97,8 +97,6 @@ export declare class X3DObject extends XObject {
      */
     set3DState(): void;
     load(): void;
-    importAnimations(threeObj: THREE.Object3D): Promise<void>;
-    loadAnimations(): Promise<void>;
     /**
      * @override
      */
@@ -129,7 +127,24 @@ export declare class X3DObject extends XObject {
     append(x3dObject: any): void;
     show(): void;
     hide(): void;
-    playAnimation(clipName: string): void;
+    /**
+     * Import animation from a THREE Object3D to the current object
+     * @param threeObj ThreeJs Object3D to import the animations from
+     * @param newName optional - change the animation name to a new name
+     */
+    importAnimations(threeObj: THREE.Object3D, newName?: string): Promise<void>;
+    /**
+     * Import animations from an FBX file (compatible with maximo.com animations)
+     * @param url - url of the FBX file
+     * @since 1.04
+     */
+    importAnimationFromFBXFile(url: string, newName?: string): Promise<void>;
+    /**
+     * loads animation on start or after create object
+     */
+    loadAnimations(): Promise<void>;
+    stopAllAnimations(): void;
+    playAnimation(clipName: string, loop?: THREE.AnimationActionLoopStyles): void;
     stopAnimation(): void;
 }
 export default X3DObject;

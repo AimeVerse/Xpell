@@ -6,7 +6,7 @@
 // }
 
 
-export interface IXData {
+interface IXData {
     [k:string]: string | null | [] | undefined | Function | boolean | number | {}
 }
 
@@ -112,7 +112,7 @@ export class FPSCalc  {
         const diff:number = now-this.#lastTimestamp
         this.#lastTimestamp = now
         
-        this.#historyMovingAvg = .98 * this.#historyMovingAvg + .02 * diff //#stable FPS with moving avarage
+        this.#historyMovingAvg = .95 * this.#historyMovingAvg + .05 * diff //#stable FPS with moving avarage
         this.#accumulatedFPS = Math.floor((1 / this.#historyMovingAvg)*1000)
         return this.#accumulatedFPS
     }

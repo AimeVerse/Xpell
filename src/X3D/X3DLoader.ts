@@ -80,7 +80,7 @@ class X3DLoader {
 
 
     static loadFBX(fileName: string, data: any, onLoadCallBack?: Function) {
-
+        
         const _onload = (obj) => {
             
             //to-do fix group loading position
@@ -161,7 +161,37 @@ class X3DLoader {
     }
 
 
-    
+    async loadModelFromGLTF(modelUrl: string): Promise<THREE.Object3D> {
+        return new Promise(function (resolve, reject) {
+            const _onload = (gltf) => {
+
+                const child = gltf.scene
+
+                child.animations = gltf.animations
+
+                // child.traverse((child2) => {
+                //     child2.frustumCulled = false
+                //     /** add more */
+                // })
+
+                resolve(child)
+            }
+
+            const _onprogress = (data) => {
+                //console.log(data);
+                // this.loading=false
+
+            }
+
+            const _onerror = (error) => {
+                console.log(error);
+                reject(error)
+            }
+
+            const loader = new GLTFLoader()
+            loader.load(modelUrl, _onload, _onprogress, _onerror)
+        })
+    }
 
 }
 

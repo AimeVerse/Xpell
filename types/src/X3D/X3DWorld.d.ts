@@ -4,7 +4,6 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { FirstPersonControls } from 'three/examples/jsm/controls/FirstPersonControls.js';
 import { PointerLockControls } from 'three/examples/jsm/controls/PointerLockControls.js';
 import { TransformControls } from 'three/examples/jsm/controls/TransformControls';
-import { X3DObject } from "./X3D";
 /**
  * Spell3dWorld
  */
@@ -22,7 +21,8 @@ export declare class X3DWorld {
     frameNumber: number;
     raycaster: THREE.Raycaster;
     transformControls: TransformControls;
-    transformControlX3dObject: X3DObject;
+    private transformControlX3dObject;
+    private transformControlsListenerAdded;
     lights: {};
     x3dObjects: {};
     defaultCamera: any;

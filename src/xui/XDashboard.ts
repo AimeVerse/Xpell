@@ -16,7 +16,7 @@ export class TopBar extends XUIObject {
 
         const myLabel = XUI.create({
             _type:"label",
-            _id:"my-label",
+            _id:"top-bar-label",
             text:"Xpell Dashboard"
         })
         this.append(myLabel)

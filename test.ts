@@ -58,32 +58,6 @@ const world = {
                 intensity: 1,
                 _position: { x: 0, y: 1, z: 0 },
 
-            },
-            "p2": {
-                _type: "light",
-                _light: "directional",
-                //_helper:true,
-                color: "hsl(300, 100%, 50%)",
-                intensity: 1,
-                _position: { x: 6, y: 10, z: -23.21 },
-
-            },
-            "p3": {
-                _type: "light",
-                _light: "directional",
-                color: "hsl(100, 100%, 50%)",
-                //_helper:true,
-                intensity: 1,
-                _position: { x: 21, y: 10, z: 16 }
-
-            },
-            "p4": {
-                _type: "light",
-                _light: "spotlight",
-                color: "hsl(250, 100%, 50%)",
-                //_helper:true,
-                intensity: 1,
-                _position: { x: 12, y: 12, z: 22 }
             }
         },
         cameras: {
@@ -249,29 +223,44 @@ const stage = {
 }
 
 
-_loader.loadGLTF("/aime-avatar.glb", {
+_loader.loadGLTF("/keren-av.glb", {
     _id: "aime",
     name: "aime",
-    _position: { x: 0.06, y: -0.78, z: -0.00 },
-    _rotation: { x: -1.55, y: 0.01, z: -2.60 },
+    _position: { x: 0.06, y: -0.5, z: -0.00 },
+    _rotation: { x: 0, y: 0, z: 0 },
     _visible: false,
     _enable_physics: false,
     _collider: "box",
     _mass: 50
 }, async (x3dObject: X3DObject) => {
+    
     await x3dObject.importAnimationFromFBXFile("anim/Angry.fbx", "angry")
-    await x3dObject.importAnimationFromFBXFile("anim/Look Around.fbx", "look-around")
-    await x3dObject.importAnimationFromFBXFile("anim/Idle.fbx", "idle")
-    // _loader.loadFBXAnimation("anim/Angry.fbx", x3dObject, async () => {
-    //     //x3dObject._visible=true
-    x3dObject.playAnimation("look-around",THREE.LoopPingPong)
-    //     X3D.world.setTransformControls(x3dObject)    
-    //     x3dObject._visible = true;
+    
+    //let t = x3dObject._three_obj.animations[0].tracks.shift();
+	//         for (let i = 0; i < t.length; i += 4) {
+    // 	        let q = new THREE.Quaternion(t[i], t[i+1], t[i+2], t[i+3]);
+	//             let w = new THREE.Quaternion();
+    // 	        w.setFromAxisAngle(new THREE.Vector3(0,0,1), Math.PI / 2);
+    // 	        q.multiply(w);
+    // 	        t[i] = q.x;
+    //             t[i+1] = q.y;
+    //             t[i+2] = q.z;
+    //             t[i+3] = q.w;
+	        // }
+    // console.log(x3dObject._three_obj?.animations[0].tracks);
+    // await x3dObject.importAnimationFromFBXFile("anim/Look Around.fbx", "look-around")
+    // await x3dObject.importAnimationFromFBXFile("anim/Idle.fbx", "idle")
+    console.log(x3dObject._three_obj.animations);
+    // x3dObject._three_obj.animations[0].tracks.shift()
+    // x3dObject._three_obj.animations[1].tracks.shift()
+    // x3dObject._three_obj.animations[2].tracks.shift()
 
-
-    // })
-    //X3D.world.createTransformControls(x3dObject)
-
+    x3dObject.setRotation( { x: -1.55, y: 0.01, z: -2.60 })
+    x3dObject.playAnimation("angry",THREE.LoopRepeat)
+    X3D.world.setTransformControls(x3dObject)    
+    const helper = new THREE.SkeletonHelper( x3dObject.getThreeObject() );
+    X3D.world.scene.add( helper );
+    
 })
 
 const btn = XUI.loadControl({
@@ -311,7 +300,18 @@ document.addEventListener("raycast-data", (e) => {
 }, false)
 
 
+XData.variables["my-label"] = "This is a label"
 
+const lbl = {
+    _type:"label",
+    _id:"my-label",
+    text:"hey",
+    _data_source:"my-label",
+    _parent_element: "xcontrols",
+    style:"color:white;background-color:black;position:absolute;top:200"
+}
+
+XUI.loadControl(lbl)
 
 
 
