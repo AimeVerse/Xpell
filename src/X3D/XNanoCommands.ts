@@ -92,6 +92,8 @@ export const xNanoCommands = {
         console.log("scale");
     },
     "rotation": (ns_cmd) => {
+        console.log(ns_cmd.s3d_object._on_frame);
+        
         //rotation x:0.01 y:++0.01 z:--0.01
         const x = get_param(0, "x", ns_cmd)
 
@@ -115,8 +117,8 @@ export const xNanoCommands = {
         const z_str = (z) ? "z:++" + z : ""
         const sstr = `rotation ${x_str} ${y_str} ${z_str}`
 
-        console.log(sstr);
-        ns_cmd.s3d_object.onframe = sstr
+        // console.log(sstr);
+        ns_cmd.s3d_object._on_frame = sstr
     },
     "stop-spin": (ns_cmd) => {
         ns_cmd.s3d_object.onframe = ""

@@ -4,7 +4,7 @@
 
 import { XUtils } from "./XUtils"
 import XCommand from "./XCommand";
-
+import XParser from "./XParser"
 
 
 export interface IXData {
@@ -154,8 +154,21 @@ export class XObject implements IXObjectData {
      */
     async onFrame(frameNumber: number) {
         //
-        if (this._on_frame && typeof this._on_frame == "function") {
-            this._on_frame(this, frameNumber)
+        if (this._on_frame ) { 
+            if (typeof this._on_frame == "function") {
+                this._on_frame(this, frameNumber)
+            } else if (typeof this._on_frame == "string") {
+                    const cmd_txt = this.name + " " + this._on_frame
+                    let jcmd:XCommand = (this._cache_cmd_txt && this._cache_cmd_txt == cmd_txt) ? this._cache_jcmd : XParser.parse(cmd_txt)
+                    //cache command to prevent parsing in every frame
+                    this._cache_cmd_txt = cmd_txt
+                    this._cache_jcmd = jcmd
+        
+                    this.execute(jcmd)
+        
+        
+                
+            }
         }
 
         //propagate event to children

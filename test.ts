@@ -230,6 +230,12 @@ _loader.loadGLTF("/keren-av.glb", {
     _rotation: { x: 0, y: 0, z: 0 },
     _visible: false,
     _enable_physics: false,
+    
+    //example how to spin X3DObject with text command / JS functions
+    //_on_frame:"spin z:0.01",
+    // _on_frame:(xobj:X3DObject,frame) => {
+    //     xobj._rotation.z += 0.01
+    // },
     _collider: "box",
     _mass: 50
 }, async (x3dObject: X3DObject) => {

@@ -346,18 +346,7 @@ export class X3DObject extends XObject {
      */
     async onFrame(frameNumber) {
         this._frame_number = frameNumber
-        if (this._on_frame) { //search for spell command for execute onFrame
-            const cmd_txt = this.name + " " + this._on_frame
-            let jcmd = (this._cache_cmd_txt && this._cache_cmd_txt == cmd_txt) ? this._cache_jcmd : XParser.parse(cmd_txt)
-
-            //cache command to prevent parsing in every frame
-            this._cache_cmd_txt = cmd_txt
-            this._cache_jcmd = jcmd
-
-            this.execute(jcmd)
-
-
-        }
+        
         //check if _disable_frame_3d_state is in the Spell object
         // _disable_frame_3d_state disables onFrame positioning by Spell (for external controllers like Orbit Controls)
         if (!this._disable_frame_3d_state) {
@@ -390,6 +379,8 @@ export class X3DObject extends XObject {
             this._three_obj.quaternion.copy(<any>cq)
             // console.log(this._cannon_obj.position)
         }
+
+        super.onFrame(frameNumber)
     }
 
 
