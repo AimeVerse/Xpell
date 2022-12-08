@@ -5,7 +5,7 @@ import * as THREE from 'three'
 import * as CANNON from 'cannon-es'
 import { threeToCannon, ShapeType } from 'three-to-cannon';
 import { XObject, IXObjectData } from "../XObject"
-import xNanoCommands from './XNanoCommands'
+import _x3dobject_nano_commands from './X3DNanoCommands'
 import X3D from "./X3D"
 import { XLogger as _xlog } from '../XLogger'
 
@@ -57,7 +57,7 @@ export class X3DObject extends XObject {
     private _current_action: string
     private _positional_audio: THREE.PositionalAudio | undefined
     private _positional_audio_source: string
-    xNanoCommands: { move: (ns_cmd: any) => void; position: (ns_cmd: any) => void; scale: (ns_cmd: any) => void; rotation: (ns_cmd: any) => void; spin: (ns_cmd: any) => void; "stop-spin": (ns_cmd: any) => void; log: (ns_cmd: any) => void; rotate: (ns_cmd: any) => void; "rotate-toward": (ns_cmd: any) => void; play: (ns_cmd: any) => void; "follow-joystick": (ns_cmd: any) => void; "follow-keypoint": (ns_cmd: any) => void; "follow-path": (ns_cmd: any) => void; hover: (ns_cmd: any) => void }
+    _nano_commands: { move: (ns_cmd: any) => void; position: (ns_cmd: any) => void; scale: (ns_cmd: any) => void; rotation: (ns_cmd: any) => void; spin: (ns_cmd: any) => void; "stop-spin": (ns_cmd: any) => void; log: (ns_cmd: any) => void; rotate: (ns_cmd: any) => void; "rotate-toward": (ns_cmd: any) => void; play: (ns_cmd: any) => void; "follow-joystick": (ns_cmd: any) => void; "follow-keypoint": (ns_cmd: any) => void; "follow-path": (ns_cmd: any) => void; hover: (ns_cmd: any) => void }
 
     static getXData(threeObj: THREE.Object3D, defaults) {
         let _xdata = {
@@ -91,7 +91,7 @@ export class X3DObject extends XObject {
         this._children = [];
         this._animation = true
         this._animation_clips = {}
-        this._fade_duration = 0.25
+        // this._fade_duration = 0.25
         this._ignore = reservedWords
         this._clock = new THREE.Clock();
         this._fraction = 0
@@ -101,7 +101,7 @@ export class X3DObject extends XObject {
             this.setPositionalAudioSource(this._positional_audio_source)
         }
 
-        this.xNanoCommands = xNanoCommands
+        this.addNanoCommandPack(_x3dobject_nano_commands)
 
     }
 
@@ -125,9 +125,12 @@ export class X3DObject extends XObject {
 
 
         if (data._position) {
+            console.log("1,1,pos", data);
             this._position = new THREE.Vector3(data._position.x, data._position.y, data._position.z)
             this.setPosition(data._position)
         } else {
+            console.log("0,0-,pos", data, this._three_obj);
+
             this._position = new THREE.Vector3(0, 0, 0)
         }
 
@@ -144,10 +147,10 @@ export class X3DObject extends XObject {
         } else {
             this._rotation = new THREE.Euler(0, 0, 0) //x,y,z
         }
-
+        
         let cdata = Object.keys(data);
-
-
+        
+        
         cdata.forEach(field => {
             if (!ignore.hasOwnProperty(field) && data.hasOwnProperty(field)) {
                 this[field] = data[field];
@@ -156,7 +159,10 @@ export class X3DObject extends XObject {
         if (!this.name) {
             this.name = this._id
         }
-
+        
+        if(!data._fade_duration) {
+            this._fade_duration = 0.25
+        }
 
     }
 
@@ -204,10 +210,9 @@ export class X3DObject extends XObject {
      */
     set3DState() {
         if (this._three_obj) {
-            this._three_obj.scale.copy(this._scale) //in case that other engine (like physics) controls the position
-            this._three_obj?.rotation.copy(this._rotation)
-            this._three_obj.position.copy(this._position)
-            this._three_obj.scale.copy(this._scale)
+            if (this._scale) this._three_obj.scale.copy(this._scale) //in case that other engine (like physics) controls the position
+            if (this._rotation) this._three_obj.rotation.copy(this._rotation)
+            if (this._position) this._three_obj.position.copy(this._position)
         }
 
         // if (this._cannon_obj) {
@@ -224,18 +229,18 @@ export class X3DObject extends XObject {
     load() { }
 
 
-    
+
     /**
      * @override
      */
-    getThreeObject() {
+    getThreeObject(): THREE.Object3D {
         if (!this._three_obj && this._three_class) {
             this._three_obj = new this._three_class(...this._threes_class_args)
             if (this._three_obj) {
                 this._three_obj.name = <string>this.name
                 this._clock.start()
 
-                
+
                 const keys = Object.keys(this)
 
                 const s2t_props = [""]
@@ -346,7 +351,7 @@ export class X3DObject extends XObject {
      */
     async onFrame(frameNumber) {
         this._frame_number = frameNumber
-        
+
         //check if _disable_frame_3d_state is in the Spell object
         // _disable_frame_3d_state disables onFrame positioning by Spell (for external controllers like Orbit Controls)
         if (!this._disable_frame_3d_state) {
@@ -380,31 +385,28 @@ export class X3DObject extends XObject {
             // console.log(this._cannon_obj.position)
         }
 
+        //very important to call the super function 
+        //in order to activate anonymous functions (_on_frame,_on_click...)
+        // and to propagate the event to the object children
         super.onFrame(frameNumber)
     }
 
 
-    /**
-    * this method triggered after the THREE 3d object has been created
-    * override to implement
-    */
-    async onCreate() {
-    }
 
+    // MOVED TO XObject
+    // /**
+    //  * execute spell command in the local 3d object
+    //  * @param {JSON} spell command (json format)
+    //  */
+    // async execute(jcmd) {
 
-    /**
-     * execute spell command in the local 3d object
-     * @param {JSON} spell command (json format)
-     */
-    async execute(jcmd) {
+    //     //limited xpell 
 
-        //limited xpell 
-
-        if (this.xNanoCommands[jcmd.op]) {
-            jcmd.s3d_object = this
-            this.xNanoCommands[jcmd.op](jcmd)
-        } else throw this.name + " has no op name " + jcmd.op
-    }
+    //     if (this._nano_commands[jcmd.op]) {
+    //         jcmd.s3d_object = this
+    //         this._nano_commands[jcmd.op](jcmd)
+    //     } else throw this.name + " has no op name " + jcmd.op
+    // }
 
     append(x3dObject) {
         this._children.push(x3dObject);
@@ -418,18 +420,27 @@ export class X3DObject extends XObject {
     /**
      * Import animation from a THREE Object3D to the current object
      * @param threeObj ThreeJs Object3D to import the animations from
-     * @param newName optional - change the animation name to a new name
+     * @param newName optional - change the animation name to a new name 
+     *                           (if there are more than one animation they 
+     *                            will be added with index: Idle, Idle-2, Idle -3 ...)
      */
-     async importAnimations(threeObj: THREE.Object3D,newName?:string) {
+    async importAnimations(threeObj: THREE.Object3D, newName?: string) {
         if (!this._animation_mixer) {
             this._animation_mixer = new THREE.AnimationMixer(this._three_obj)
         }
+        let idx = 1
         threeObj.animations.forEach((anim) => {
             //console.log(anim)
             const a2 = anim.clone()
-            if(newName) {
-                a2.name = newName
+
+            if (newName) {
+                if (idx == 1) {
+                    a2.name = newName
+                } else {
+                    a2.name = newName + "-" + idx
+                }
             }
+            idx++
             this._three_obj.animations.push(a2)
             a2.optimize()
             this._animation_clips[a2.name] = this._animation_mixer.clipAction(a2)
@@ -437,17 +448,61 @@ export class X3DObject extends XObject {
         })
     }
 
+
+    /**
+     * Loads a new 3D model to the X3DObject from a GLTF/GLB file
+     * @param modelUrl - url of the model file
+     * @returns Promise<THREE.Object3D>
+     */
+
+    async loadThreeObjectFromGLTF(modelUrl: string): Promise<THREE.Object3D> {
+        return new Promise(function (resolve, reject) {
+            const _onload = (gltf) => {
+                const child = gltf.scene
+                child.animations = gltf.animations
+                child.traverse((child2) => {
+                    child2.frustumCulled = false
+                    /** add more */
+                })
+                resolve(child)
+            }
+
+            const _onprogress = (data) => { }
+
+            const _onerror = (error) => {
+                _xlog.error("ERROR loading GLTF", error);
+                reject(error)
+            }
+
+            const loader = new GLTFLoader()
+            loader.load(modelUrl, _onload, _onprogress, _onerror)
+        })
+    }
+
+    async loadModel(modelUrl: string) {
+        _xlog.log("Loading avatar " + modelUrl)
+        const model: THREE.Object3D = await this.loadThreeObjectFromGLTF(modelUrl)
+        this._three_class = model.type
+        this._three_obj = model
+        // this._model_url = modelUrl
+    }
+
+
+    async importAnimationFromGLTF(modelUrl: string, newName: string | undefined) {
+        const model: THREE.Object3D = await this.loadThreeObjectFromGLTF(modelUrl)
+        this.importAnimations(model, newName)
+    }
+
     /**
      * Import animations from an FBX file (compatible with maximo.com animations)
      * @param url - url of the FBX file
      * @since 1.04
      */
-    async importAnimationFromFBXFile(url: string,newName?:string) {
+    async importAnimationFromFBXFile(url: string, newName?: string) {
         const getFBXAnimation = (url: string): Promise<THREE.Object3D> => {
             return new Promise(function (resolve, reject) {
                 const _onload = (obj: THREE.Object3D) => {
                     resolve(obj)
-                    //onLoadCallBack()
                 }
 
                 const _onprogress = (data) => { }
@@ -468,7 +523,7 @@ export class X3DObject extends XObject {
 
         const obj = await getFBXAnimation(url)
         if (obj && obj instanceof THREE.Object3D) {
-            await this.importAnimations(obj,newName)
+            await this.importAnimations(obj, newName)
         }
 
     }
@@ -490,37 +545,51 @@ export class X3DObject extends XObject {
 
     }
 
-    stopAllAnimations(){
+    stopAllAnimations() {
         this._animation_mixer.stopAllAction()
     }
 
-    playAnimation(clipName: string,loop?:THREE.AnimationActionLoopStyles) {
-        
+
+
+    playRandomStateAnimation(state: string) {
+        this.playAnimation(state + "-" + _XU.getRandomInt(1, this._npc_state_animations[state].length))
+    }
+
+    playAnimation(clipName: string, loop?: THREE.AnimationActionLoopStyles) {
+
         if (clipName) {
             const anim = this._animation_clips[clipName]
-            if(loop)
-                anim.setLoop(loop)
-            
-            // anim.blendMode = THREE.AdditiveAnimationBlendMode
+
             if (anim) {
-                // _xlog.log("playing animation " + clipName)
-                if (this._current_action) {
-                    
-                    // this._animation_clips[<any>this._current_action].fadeOut(this._fade_duration)
-                    // anim.play().fadeIn(this._fade_duration);
-                    this._animation_mixer.stopAllAction()
-                } else {
+                _xlog.log("playing animation: " + clipName);
+
+                if (loop) { 
+                    anim.setLoop(loop) 
                 }
-                anim.play()
-                //ns_cmd.s3d_object._disable_frame_3d_state = true
+
+                if (this._current_action) {
+                    const prevAnim:THREE.AnimationAction = this._animation_clips[<any>this._current_action]
+                    anim.reset()
+                    // anim.time = 0.0
+                    // anim.setEffectiveTimeScale(1.0)
+                    // anim.setEffectiveWeight(1.0)
+                    anim.crossFadeFrom(prevAnim, this._fade_duration, false).play()
+                    prevAnim.fadeOut( this._fade_duration)
+                } else {
+                    anim.reset()
+                    anim.time = 0.0
+                    anim.play()
+                }
                 this._current_action = clipName
-                
             }
         }
     }
 
+
     stopAnimation() {
         if (this._current_action) {
+            console.log(this._fade_duration);
+            
             this._animation_clips[<any>this._current_action].fadeOut(this._fade_duration)
             this._current_action = null
         }

@@ -3,7 +3,7 @@ import XUtils from "../XUtils"
 import XData from "../XData"
 import XObject, { IXObjectData } from "../XObject"
 import * as _XC from "../XConst"
-
+import _xuiobject_basic_nano_commands from "./XUINanoCommands"
 const reservedWords = { _children:"child objects" }
 const xpellObjectHtmlFieldsMapping = { "_id": "id", "css-class": "class", "animation": "xyz", "input-type": "type" };
 
@@ -34,6 +34,7 @@ export class XUIObject extends XObject {
         this._html = "";
         this._children = [];
         this._ignore = reservedWords;
+        
         //this._base_display = "block"
 
         if (data) {
@@ -42,6 +43,8 @@ export class XUIObject extends XObject {
             }
             this.parse(data, this._ignore);
         }
+
+        this.addNanoCommandPack(_xuiobject_basic_nano_commands)
     }
 
     /**
@@ -197,10 +200,10 @@ export class XUIObject extends XObject {
         const sthis = this
         if (sthis._on_click) {
             if (typeof sthis._on_click === 'function') {
-                this.getDOMObject().addEventListener("click", (e) => { sthis._on_click(sthis,e) })
+                this.getDOMObject().addEventListener("click", (e) => { (<Function>sthis._on_click)(sthis,e) })
             }
             else if (typeof sthis._on_click === 'string') {
-
+                this.getDOMObject().addEventListener("click", (e) => {sthis.run(sthis._id + " " + sthis._on_click) })
             }
         }
 
@@ -208,10 +211,6 @@ export class XUIObject extends XObject {
     }
 
 
-
-    async onEvent() {
-
-    }
 
 
 

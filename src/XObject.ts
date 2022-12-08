@@ -5,7 +5,10 @@
 import { XUtils } from "./XUtils"
 import XCommand from "./XCommand";
 import XParser from "./XParser"
-
+import {XLogger as _xlog} from "./XLogger";
+import {XEventManager as _xem} from "./XEventManager";
+import { _xobject_basic_nano_commands,XNanoCommandPack } from "./XNanoCommands";
+import xNanoCommands from "./XNanoCommands";
 
 export interface IXData {
     [k: string]: string | null | [] | undefined | Function | boolean | number | {}
@@ -40,7 +43,7 @@ export interface IXObjectData extends IXData {
 export class XObject implements IXObjectData {
     [k: string]: string | null | [] | undefined | Function | boolean | number | {}
     _children: Array<XObject>
-
+    _nano_commands:{[k:string]:Function}
     /**
      * XObject constructor is creating the object and adding all the data keys to the XObject instance
      * @param data constructor input data (object)
@@ -53,14 +56,33 @@ export class XObject implements IXObjectData {
 
         this._id = (data && data._id) ? data._id : "so-" + XUtils.guid();
         this._type = "object" //default type
-        this._children = [];
-
-
+        this._children = []
+        this._nano_commands ={}
+        this.addNanoCommandPack(_xobject_basic_nano_commands)
+        
         if (data) {
             delete data._id // delete the _id field to remove duplication by the parse function
             this.parse(data, reservedWords);
         }
     }
+
+
+    addNanoCommand(commandName:string,nanoCommandFunction:Function) {
+        if(typeof nanoCommandFunction === 'function'){
+            // _xlog.log("command " + commandName + " loaded to xobject " + this._id)
+            this._nano_commands[commandName] = nanoCommandFunction
+        }
+    }
+    
+    addNanoCommandPack(ncPack:XNanoCommandPack) {
+        if(ncPack) {
+            Object.keys(ncPack).forEach ((key:string) => {
+                this.addNanoCommand(key,ncPack[key])
+            })
+        }
+
+    }
+   
 
     async dispose() {
 
@@ -105,8 +127,12 @@ export class XObject implements IXObjectData {
      * 
     */
     async onCreate() {
-        if (this._on_create && typeof this._on_create == "function") {
-            this._on_create(this)
+        if (this._on_create) {
+            if(typeof this._on_create == "function") {
+                this._on_create(this)
+            } else if (typeof this._on_create == "string") {
+                this.run(this._id + " " + this._on_create) //
+            }
         }
         //propagate event to children
         this._children.forEach((child: XObject) => {
@@ -127,8 +153,12 @@ export class XObject implements IXObjectData {
      * }
      */
     async onMount() { 
-        if (this._on_mount && typeof this._on_mount == "function") {
-            this._on_mount(this)
+        if (this._on_mount ) {
+            if(typeof this._on_mount == "function") {
+                this._on_mount(this)
+            } else if (typeof this._on_mount == "string") {
+                this.run(this._id + " " + this._on_mount) //
+            }
         }
         //propagate event to children
         this._children.forEach((child: XObject) => {
@@ -142,7 +172,9 @@ export class XObject implements IXObjectData {
      * Triggers from Xpell frame every frame
      * Support _on_frame atrribute that can be XCommand string or function
      * @param {number} frameNumber 
-     * support external _on_frame anonymous function in the , example:
+     * 
+     * XObject supports
+     * 1. External _on_frame anonymous function in the , example:
      * _on_frame: async (xObject,frameNumber) => {
      *      // xObject -> The XObject parent of the _on_frame function, use instead of this keyword
      *      // frameNumber = Xpell current frame number 
@@ -151,6 +183,10 @@ export class XObject implements IXObjectData {
      *      // be wise with the function execution and try to keep it in the 15ms running time to support 60 FPS
      * }
      * 
+     * 2. String execution of nano commands
+     * 
+     * _on_frame: "nano command text"
+     * 
      */
     async onFrame(frameNumber: number) {
         //
@@ -158,19 +194,10 @@ export class XObject implements IXObjectData {
             if (typeof this._on_frame == "function") {
                 this._on_frame(this, frameNumber)
             } else if (typeof this._on_frame == "string") {
-                    const cmd_txt = this.name + " " + this._on_frame
-                    let jcmd:XCommand = (this._cache_cmd_txt && this._cache_cmd_txt == cmd_txt) ? this._cache_jcmd : XParser.parse(cmd_txt)
-                    //cache command to prevent parsing in every frame
-                    this._cache_cmd_txt = cmd_txt
-                    this._cache_jcmd = jcmd
-        
-                    this.execute(jcmd)
-        
-        
-                
+                this.run(this._id + " " + this._on_frame) //
             }
         }
-
+        
         //propagate event to children
         this._children.forEach((child: XObject) => {
             if (child.onFrame && typeof child.onFrame === 'function') {
@@ -178,14 +205,46 @@ export class XObject implements IXObjectData {
             }
         })
     }
-
+    
     /**
-     * Execute XCommand within the XObject
-     * @param xCommand XCommand to execute
+     * Runs object nano commands
+     * @param nanoCommand - object nano command (string)
+     * @param cache - cache last command to prevent multiple parsing on the same command
      */
-    async execute(xCommand: XCommand) {
+
+    async run(nanoCommand:string,cache = true) {
+
+        let jcmd:XCommand = (this._cache_cmd_txt && this._cache_cmd_txt == nanoCommand) ? <XCommand>this._cache_jcmd : XParser.parse(nanoCommand)
+        //cache command to prevent parsing in every frame
+        if(cache) {
+            this._cache_cmd_txt = nanoCommand
+            this._cache_jcmd = jcmd
+        }
+        this.execute(jcmd) //execute nano commands
+        
     }
 
+
+    /**
+     * Execute XCommand within the XObject Nano Commands
+     * @param xCommand XCommand to execute
+     * 
+     * Nano command example:
+     * 
+     * "set-text" : (xCommand,xObject) => {
+     *      xObject.setText(xCommands.params.text)
+     * }
+     * 
+     */
+    async execute(xCommand: XCommand) {
+        // run nano commands
+
+        if (this._nano_commands[xCommand.op]) {
+            this._nano_commands[xCommand.op](xCommand,this)
+        } else {
+            _xlog.error(this._id + " has no op name " + xCommand.op)
+        }
+    }
 }
 
 

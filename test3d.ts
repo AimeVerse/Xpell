@@ -71,7 +71,7 @@ const world = {
                     far: 5000,
                     close: 0.01
                 },
-                _position: { x: 0, y: 0, z: -5 },
+                _position: { x: 0, y: 1.5, z: -5 },
                 _rotation: { x: 0, y: 0, z: 0 },
                 _disable_frame_3d_state: true, //set true for cam-controls
                 _3d_set_once: true,
@@ -110,7 +110,7 @@ const world = {
                 side: 2,
                 // roughness: 0.5,
             },
-            _position: { x: 0, y: 0, z: 0 },
+            _position: { x: 0, y: 1.5, z: 0 },
             _rotation: { x: 0, y: 0, z: 0 },
             castShadow: true,
             _on_frame: `follow-joystick`
@@ -158,7 +158,7 @@ const world = {
                 color: 0xff00ff,
                 side: 2
             },
-            _position: { x: 0, y: -1, z: 0 },
+            _position: { x: 0, y: -0.2, z: 0 },
             _rotation: { x: Math.PI / 2, y: 0, z: 0 },
             _enable_physics: true,
             _mass: 0,
@@ -226,13 +226,13 @@ const stage = {
 _loader.loadGLTF("/keren-av.glb", {
     _id: "aime",
     name: "aime",
-    _position: { x: 0.06, y: -0.5, z: -0.00 },
+    _position: { x: 0, y: 0, z: 0.00 },
     _rotation: { x: 0, y: 0, z: 0 },
     _visible: false,
     _enable_physics: false,
-    
+    _fade_duration:0.3,
     //example how to spin X3DObject with text command / JS functions
-    //_on_frame:"spin z:0.01",
+    // _on_frame:"spin z:0.01",
     // _on_frame:(xobj:X3DObject,frame) => {
     //     xobj._rotation.z += 0.01
     // },
@@ -240,32 +240,16 @@ _loader.loadGLTF("/keren-av.glb", {
     _mass: 50
 }, async (x3dObject: X3DObject) => {
     
-    await x3dObject.importAnimationFromFBXFile("anim/Angry.fbx", "angry")
+    await x3dObject.importAnimationFromFBXFile("anim/Injured.fbx", "Injured")
     
-    //let t = x3dObject._three_obj.animations[0].tracks.shift();
-	//         for (let i = 0; i < t.length; i += 4) {
-    // 	        let q = new THREE.Quaternion(t[i], t[i+1], t[i+2], t[i+3]);
-	//             let w = new THREE.Quaternion();
-    // 	        w.setFromAxisAngle(new THREE.Vector3(0,0,1), Math.PI / 2);
-    // 	        q.multiply(w);
-    // 	        t[i] = q.x;
-    //             t[i+1] = q.y;
-    //             t[i+2] = q.z;
-    //             t[i+3] = q.w;
-	        // }
-    // console.log(x3dObject._three_obj?.animations[0].tracks);
-    // await x3dObject.importAnimationFromFBXFile("anim/Look Around.fbx", "look-around")
-    // await x3dObject.importAnimationFromFBXFile("anim/Idle.fbx", "idle")
-    console.log(x3dObject._three_obj.animations);
-    // x3dObject._three_obj.animations[0].tracks.shift()
-    // x3dObject._three_obj.animations[1].tracks.shift()
-    // x3dObject._three_obj.animations[2].tracks.shift()
-
-    x3dObject.setRotation( { x: -1.55, y: 0.01, z: -2.60 })
-    x3dObject.playAnimation("angry",THREE.LoopRepeat)
-    X3D.world.setTransformControls(x3dObject)    
-    const helper = new THREE.SkeletonHelper( x3dObject.getThreeObject() );
-    X3D.world.scene.add( helper );
+  
+    await x3dObject.importAnimationFromFBXFile("anim/Rapping.fbx", "Rapping")
+    await x3dObject.importAnimationFromFBXFile("anim/Idle.fbx", "Idle")
+    // x3dObject.setRotation( { x: -1.55, y: 0.01, z: -2.60 })
+    x3dObject.playAnimation("Idle",THREE.LoopRepeat)
+    // X3D.world.setTransformControls(x3dObject)    
+    // const helper = new THREE.SkeletonHelper( x3dObject.getThreeObject() );
+    // X3D.world.scene.add( helper );
     
 })
 
@@ -275,22 +259,26 @@ const btn = XUI.loadControl({
     _id:"changeAnim",
     style:"position:absolute;top:10;right:0",
     _parent_element: "xcontrols",
+    _on_click:(xObject:XUIObject,e) => {
+            const a = animations[aidx]
+            const o:X3DObject = X3D.om.getObject("aime")
+            
+            
+            // o.playAnimation(a)
+            o.playAnimation(a)
+            // o.stopAnimation()
+            aidx++
+            if(aidx>=animations.length) {aidx =0;console.log("reset")}
+
+    }
 })
 
 
-const animations = [ "idle","angry","look-around"]
+const animations = [ "Idle","Injured","Rapping"]
 let aidx = 0
 
-btn.getDOMObject().addEventListener("click",(e) => {
-    const a = animations[aidx]
-    const o = X3D.om.getObject("aime")
-    
-    
-    // o.playAnimation(a)
-    o.playAnimation(a)
-    aidx++
-    if(aidx>=animations.length) {aidx =0;console.log("reset")}
-})
+// btn.getDOMObject().addEventListener("click",(e) => {
+// })
 
 
 

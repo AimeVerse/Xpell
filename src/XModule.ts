@@ -154,7 +154,7 @@ export  class XModule {
         {
             
             const o = this.objectManger.getObjectByName(xCommand.op)
-            console.log(o);
+            // console.log(o);
             if (o) { o.execute(xCommand) }
             else { throw "Xpell Module cant find op:" + xCommand.op }
         }

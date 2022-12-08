@@ -1,4 +1,5 @@
 
+import XEventManager from "./src/XEventManager"
 import { Xpell as _x } from "./src/Xpell"
 import { XUI } from "./src/XUI/XUI"
 
@@ -17,18 +18,14 @@ const view = {
     _type: "label",
     style:"position:relative",
     _on_frame: (xobj, frameNumber) => {
-        xobj.getDOMObject().textContent = frameNumber
+        xobj.getDOMObject().textContent = (new Date()).getMilliseconds()
     },
-    _on_create: (xobj) => {
-        console.log(xobj, "created")
-    },
-    _on_mount: (xobj) => {
-        console.log(xobj, "mounted")
-    },
-    _on_click:(xobj,e) => {
-        console.log("click on " + e.clientX + "," + e.clientY )
-    }
+    _on_create: "info",
+    _on_mount: "fire custom",
+    _on_click:"hide"
 }
 
+document.addEventListener("custom",(e)=>{console.log("custom event fired")})
 
 XUI.loadControl(view)
+
