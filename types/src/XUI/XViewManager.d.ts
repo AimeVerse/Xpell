@@ -48,8 +48,8 @@ export declare class XViewManager {
      * @returns
      */
     hasView(viewName: any): boolean;
-    addViewsMetadataObject(vuz: any): void;
-    addRawView(viewName: string, viewData: IXObjectData): void;
+    addViewPack(vuz: any): void;
+    addRawView(viewName: string, viewData: any): void;
     /**
      * Load page (entire screen) on top of the active page
      * This method handles the first routing where the view name is in the url (http://server:port/#view-name)
@@ -65,6 +65,16 @@ export declare class XViewManager {
      * @param {*} viewName
      */
     showView(viewName: string): void;
+    /**
+         * Show view on screen
+         * @param {*} viewName
+         */
+    hideView(viewName: string): void;
+    /**
+    * Hide the active page and the page URL
+    * @param {*} viewName
+    */
+    hidePage(viewName: string): void;
     /**
      * Show view as page (set as active view and dismiss former active)
      * @param {*} viewName

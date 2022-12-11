@@ -34,22 +34,6 @@ export declare class X3DObject extends XObject {
     private _current_action;
     private _positional_audio;
     private _positional_audio_source;
-    xNanoCommands: {
-        move: (ns_cmd: any) => void;
-        position: (ns_cmd: any) => void;
-        scale: (ns_cmd: any) => void;
-        rotation: (ns_cmd: any) => void;
-        spin: (ns_cmd: any) => void;
-        "stop-spin": (ns_cmd: any) => void;
-        log: (ns_cmd: any) => void;
-        rotate: (ns_cmd: any) => void;
-        "rotate-toward": (ns_cmd: any) => void;
-        play: (ns_cmd: any) => void;
-        "follow-joystick": (ns_cmd: any) => void;
-        "follow-keypoint": (ns_cmd: any) => void;
-        "follow-path": (ns_cmd: any) => void;
-        hover: (ns_cmd: any) => void;
-    };
     static getXData(threeObj: THREE.Object3D, defaults: any): {
         _id: string;
         _type: string;
@@ -100,7 +84,7 @@ export declare class X3DObject extends XObject {
     /**
      * @override
      */
-    getThreeObject(): THREE.Object3D<THREE.Event>;
+    getThreeObject(): THREE.Object3D;
     getCannonObject(): CANNON.Body;
     createPositionalAudio(source: any, data?: any): Promise<THREE.PositionalAudio>;
     setPositionalAudioSource(source?: string, data?: any): Promise<void>;
@@ -114,16 +98,6 @@ export declare class X3DObject extends XObject {
      * @param {number} frameNumber
      */
     onFrame(frameNumber: any): Promise<void>;
-    /**
-    * this method triggered after the THREE 3d object has been created
-    * override to implement
-    */
-    onCreate(): Promise<void>;
-    /**
-     * execute spell command in the local 3d object
-     * @param {JSON} spell command (json format)
-     */
-    execute(jcmd: any): Promise<void>;
     append(x3dObject: any): void;
     show(): void;
     hide(): void;
@@ -131,8 +105,18 @@ export declare class X3DObject extends XObject {
      * Import animation from a THREE Object3D to the current object
      * @param threeObj ThreeJs Object3D to import the animations from
      * @param newName optional - change the animation name to a new name
+     *                           (if there are more than one animation they
+     *                            will be added with index: Idle, Idle-2, Idle -3 ...)
      */
     importAnimations(threeObj: THREE.Object3D, newName?: string): Promise<void>;
+    /**
+     * Loads a new 3D model to the X3DObject from a GLTF/GLB file
+     * @param modelUrl - url of the model file
+     * @returns Promise<THREE.Object3D>
+     */
+    loadThreeObjectFromGLTF(modelUrl: string): Promise<THREE.Object3D>;
+    loadModel(modelUrl: string): Promise<void>;
+    importAnimationFromGLTF(modelUrl: string, newName: string | undefined): Promise<void>;
     /**
      * Import animations from an FBX file (compatible with maximo.com animations)
      * @param url - url of the FBX file
@@ -144,6 +128,7 @@ export declare class X3DObject extends XObject {
      */
     loadAnimations(): Promise<void>;
     stopAllAnimations(): void;
+    playRandomStateAnimation(state: string): void;
     playAnimation(clipName: string, loop?: THREE.AnimationActionLoopStyles): void;
     stopAnimation(): void;
 }

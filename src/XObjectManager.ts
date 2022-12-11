@@ -1,4 +1,5 @@
 import XEM from "./XEventManager"
+import XLogger from "./XLogger";
 import XObject, { XObjectPack } from "./XObject";
 
 /**
@@ -88,7 +89,7 @@ export class XObjectManager {
             XEM.fire("xpell-on-change")
         }
         else {
-            console.log("unable to add object")
+            XLogger.log("unable to add object")
         }
     }
 

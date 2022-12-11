@@ -14,20 +14,22 @@ import XUICoreObjects from "./XUICoreObjects"
 //  import SpellDashboardObjects from "./spell-dashboard"
 //  import SpellMoveControls  from "./sui-objects/spell-move-controls";
 import XParser from "../XParser";
+import * as _xc from "../XConst"
 import { IX3DObjectData } from "../X3D/X3DObject"
+import { IXObjectData } from "../XObject"
 
 
 export interface XUIApp {
     xpell?: {
         version?: number //minimum xpell version for the app
     }
-    views_tag:string, //id of the view manager html tag 
-    views:{
-        [name:string] : IX3DObjectData
+    _views?:{
+        _parent_element:string | {}, //id of the view manager html tag 
+        [k:string] : {} | string
     },
-    controls_tag:string, //id of the controls (static objects) html tag 
-    controls:{
-        [name:string] : IX3DObjectData
+    _controls?:{
+        _parent_element:string |{} , //id of the controls (static objects) html tag 
+        [k:string] : {} | string
     }
 }
 
@@ -36,6 +38,7 @@ export const FIRST_USER_GESTURE = "first-user-gesture"
 export class XUIModule extends XModule {
     vm: XViewManager
     firstGestureOccured : boolean
+    private _controls_element: string
 
     /**
      * @fires "xui-loaded" event
@@ -62,12 +65,17 @@ export class XUIModule extends XModule {
      * @param xuiApp 
      */
     loadApp(xuiApp:XUIApp) {
-        if (xuiApp["views_tag"]) {
-            this.vm["parentHTMLElement"] = xuiApp["views_html_tag"]
+        if(xuiApp._views){
+            this.vm.addViewPack(xuiApp._views);
         }
-        this.vm.addViewsMetadataObject(xuiApp.views);
+        if(xuiApp._controls){
+            this.addControlsPack(xuiApp._controls)
+        }
         XEventManager.fire(XEventList.app_loaded)
     }
+
+
+    
 
     openUrl(url, target = null) {
         if (!target) {
@@ -90,14 +98,21 @@ export class XUIModule extends XModule {
 
 
 
-
+    addControlsPack(controls: {}) {
+        Object.keys(controls).forEach(ctrl => {
+            if(ctrl == _xc.NODES.parent_element) {this._controls_element = <string>controls[ctrl];console.log("controls parent element " + controls[ctrl])}
+            else {this.loadControl(controls[ctrl])}
+        })
+    }
 
     loadControl(data): XUIObject {
         const xobj = this.create(data)
         const ctrl = xobj.getDOMObject()
         
         
-        const pe = (xobj._parent_element) ? xobj._parent_element : "xcontrols";
+        const pe = (xobj._parent_element) ? xobj._parent_element : this._controls_element;
+        // console.log(xobj);
+        
         document.querySelector("#" + pe)?.append(ctrl)
         if (xobj.onMount && typeof xobj.onMount === 'function') {
             xobj.onMount()

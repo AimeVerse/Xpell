@@ -38,9 +38,10 @@ export declare class XUIObject extends XObject {
     show(): void;
     hide(): void;
     /**
-     * this method triggered after the HTML DOM object has been created and added to the parent element
+     * this method triggered after the HTML DOM object has been mounted by the super
+     * it implemented in this class to support the following events for XUIObject:
+     * _on_click: (XUIObject,event) => {}
      */
-    onCreate(): Promise<void>;
     onMount(): Promise<void>;
     /**
      * triggers from Xpell main engine onFrame

@@ -47,7 +47,7 @@ class CardPack extends XUIObject  {
                 iplayer["lastSeen"] = frameNumber
                 this["_players"][player.id] = iplayer
                 
-                console.log("adding player " + iplayer.id);
+                // console.log("adding player " + iplayer.id);
                 const crd = {
                             _type:"card",
                             _id:"crd-" + player.id,

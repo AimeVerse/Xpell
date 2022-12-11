@@ -7,14 +7,13 @@
 
 import * as _XEM from "../XEventManager"
 import { XLogger as _xlog } from "../XLogger"
-import { Xpell as _X } from "../Xpell"
-import * as _XC from "../XConst"
+import { Xpell as _x } from "../Xpell"
+import * as _xc from "../XConst"
 import XUI from "./XUI"
-import { XUtils as _XU } from "../XUtils"
+import { XUtils as _xu } from "../XUtils"
 import XView from "./XUICoreObjects"
 import XUIObject from "./XUIObject"
 import IXObjectData from "../XObject"
-
 
 
 
@@ -94,12 +93,16 @@ export class XViewManager {
         return this.views.hasOwnProperty(viewName)
     }
 
-    addViewsMetadataObject(vuz): void {
+    addViewPack(vuz): void {
         let rvuz = Object.keys(vuz);
-        rvuz.forEach((vu) => this.viewMetadata[vu] = vuz[vu]);
+        rvuz.forEach((vu) => {
+        
+            if(vu == _xc.NODES.parent_element) {this.parentHTMLElement = vuz[vu]}
+            else {this.viewMetadata[vu] = vuz[vu]}
+        });
     }
 
-    addRawView(viewName: string, viewData: IXObjectData): void {
+    addRawView(viewName: string, viewData): void {
         this.viewMetadata[viewName] = viewData
     }
 
@@ -156,6 +159,28 @@ export class XViewManager {
 
 
     /**
+         * Show view on screen
+         * @param {*} viewName 
+         */
+    hideView(viewName: string): void {
+
+        if (this.hasView(viewName)) {
+            (<XUIObject>this.getView(viewName)).hide()
+        }
+    }
+
+
+    /**
+    * Hide the active page and the page URL
+    * @param {*} viewName 
+    */
+    hidePage(viewName: string): void {
+        if (this.activeView == viewName) this.activeView = null
+        this.hideView(viewName)
+        XUI.openUrl("#");
+    }
+
+    /**
      * Show view as page (set as active view and dismiss former active)
      * @param {*} viewName 
      */
@@ -172,7 +197,7 @@ export class XViewManager {
             oncreate = true;
         }
 
-        //get the active view
+        //get the active (former) view hide it
         let activeView = this.getView(this.activeView);
         if (activeView) {
             activeView["hide"]();

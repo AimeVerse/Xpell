@@ -24,7 +24,7 @@ export class XTransformControls extends XUIObject {
             class: "xtransform-controls",
             _title: "Transform",
             _id: "xtransform-controls",
-            _parent_element: "body",
+            // _parent_element: "body",
         }
         super(data, defaults);
 

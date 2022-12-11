@@ -125,7 +125,7 @@ class X3DLoader {
         }
 
         const _onerror = (error) => {
-            console.log(error);
+            _xlog.error(error);
             this.loading = false
 
         }
@@ -184,7 +184,7 @@ class X3DLoader {
             }
 
             const _onerror = (error) => {
-                console.log(error);
+                _xlog.error(error);
                 reject(error)
             }
 

@@ -1,3 +1,10 @@
+1.0.42:
+----------
+- XUI view manager (show/hide page/view)
+- XAPP json new format (_views & _controls in one json)
+
+
+
 1.0.4
 -------
 - Xpell 3D (X3D) 

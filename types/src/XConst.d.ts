@@ -7,5 +7,6 @@
 export declare const NODES: {
     type: string;
     children: string;
+    parent_element: string;
 };
 export default NODES;

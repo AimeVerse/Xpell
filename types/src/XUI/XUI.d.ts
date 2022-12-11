@@ -8,18 +8,37 @@ import XUIObject from "./XUIObject";
 import XViewManager from "./XViewManager";
 import XModule, { ModuleData } from "../XModule";
 import XUICoreObjects from "./XUICoreObjects";
+export interface XUIApp {
+    xpell?: {
+        version?: number;
+    };
+    _views?: {
+        _parent_element: string | {};
+        [k: string]: {} | string;
+    };
+    _controls?: {
+        _parent_element: string | {};
+        [k: string]: {} | string;
+    };
+}
 export declare const FIRST_USER_GESTURE = "first-user-gesture";
 export declare class XUIModule extends XModule {
     vm: XViewManager;
     firstGestureOccured: boolean;
+    private _controls_element;
+    /**
+     * @fires "xui-loaded" event
+     * @param data module data
+     */
     constructor(data: ModuleData);
     /**
      * Loads Xpell application object
-     * @param xpellApp
+     * @param xuiApp
      */
-    loadApp(xpellApp: any): void;
+    loadApp(xuiApp: XUIApp): void;
     openUrl(url: any, target?: any): void;
     remove(objectId: any): void;
+    addControlsPack(controls: {}): void;
     loadControl(data: any): XUIObject;
     createFromTemplate(xpell2json: any): any;
     /**

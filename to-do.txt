@@ -1,8 +1,4 @@
 
-- docs
-
-- add support for text with children (if the view has text the interpreter ignore the children tag)
-
 - add 3rd person camera + avatar moving
 
 
@@ -12,7 +8,5 @@
 -- NPC Controller
 -- Smart Objects Controller
 -- Scene Editor
--- joystick speed (add to parameters)
 
 
--- x3dobject add load from gltf

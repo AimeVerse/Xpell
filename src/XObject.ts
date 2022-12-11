@@ -31,7 +31,7 @@ export interface IXObjectData extends IXData {
     id?: string | null
     name?: string
     _type?: string
-    _children: Array<XObject>
+    _children?: Array<XObject>
 
 }
 
@@ -43,7 +43,7 @@ export interface IXObjectData extends IXData {
 export class XObject implements IXObjectData {
     [k: string]: string | null | [] | undefined | Function | boolean | number | {}
     _children: Array<XObject>
-    _nano_commands:{[k:string]:Function}
+    private _nano_commands:{[k:string]:Function}
     /**
      * XObject constructor is creating the object and adding all the data keys to the XObject instance
      * @param data constructor input data (object)
@@ -240,9 +240,13 @@ export class XObject implements IXObjectData {
         // run nano commands
 
         if (this._nano_commands[xCommand.op]) {
-            this._nano_commands[xCommand.op](xCommand,this)
+            try {
+                this._nano_commands[xCommand.op](xCommand,this)
+            } catch (err) {
+                _xlog.error(this._id + " has error with command name " + xCommand.op + " "+ err)
+            }
         } else {
-            _xlog.error(this._id + " has no op name " + xCommand.op)
+            _xlog.error(this._id + " has no command name " + xCommand.op)
         }
     }
 }

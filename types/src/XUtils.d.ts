@@ -1,4 +1,4 @@
-export interface IXData {
+interface IXData {
     [k: string]: string | null | [] | undefined | Function | boolean | number | {};
 }
 export declare class XUtils {
@@ -33,6 +33,14 @@ export declare class XUtils {
      * @returns {string}
      */
     static decode(str: string): string;
+    /**
+         * Returns a random integer between min (inclusive) and max (inclusive).
+         * The value is no lower than min (or the next integer greater than min
+         * if min isn't an integer) and no greater than max (or the next integer
+         * lower than max if max isn't an integer).
+         * Using Math.round() will give you a non-uniform distribution!
+         */
+    static getRandomInt(min: any, max: any): any;
 }
 /**
  * FPS Calculator

@@ -57,7 +57,6 @@ export class X3DObject extends XObject {
     private _current_action: string
     private _positional_audio: THREE.PositionalAudio | undefined
     private _positional_audio_source: string
-    _nano_commands: { move: (ns_cmd: any) => void; position: (ns_cmd: any) => void; scale: (ns_cmd: any) => void; rotation: (ns_cmd: any) => void; spin: (ns_cmd: any) => void; "stop-spin": (ns_cmd: any) => void; log: (ns_cmd: any) => void; rotate: (ns_cmd: any) => void; "rotate-toward": (ns_cmd: any) => void; play: (ns_cmd: any) => void; "follow-joystick": (ns_cmd: any) => void; "follow-keypoint": (ns_cmd: any) => void; "follow-path": (ns_cmd: any) => void; hover: (ns_cmd: any) => void }
 
     static getXData(threeObj: THREE.Object3D, defaults) {
         let _xdata = {
@@ -125,12 +124,9 @@ export class X3DObject extends XObject {
 
 
         if (data._position) {
-            console.log("1,1,pos", data);
             this._position = new THREE.Vector3(data._position.x, data._position.y, data._position.z)
             this.setPosition(data._position)
         } else {
-            console.log("0,0-,pos", data, this._three_obj);
-
             this._position = new THREE.Vector3(0, 0, 0)
         }
 
@@ -327,8 +323,6 @@ export class X3DObject extends XObject {
         const snd = <THREE.PositionalAudio>this._positional_audio
         if (snd) {
             if (loop) snd.setLoop(true)
-            console.log("play");
-
             snd.play()
         }
     }
@@ -588,8 +582,6 @@ export class X3DObject extends XObject {
 
     stopAnimation() {
         if (this._current_action) {
-            console.log(this._fade_duration);
-            
             this._animation_clips[<any>this._current_action].fadeOut(this._fade_duration)
             this._current_action = null
         }
