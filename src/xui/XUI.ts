@@ -37,6 +37,10 @@ export class XUIModule extends XModule {
     vm: XViewManager
     firstGestureOccured : boolean
 
+    /**
+     * @fires "xui-loaded" event
+     * @param data module data
+     */
     constructor(data: ModuleData) {
 
         super(data)
@@ -55,13 +59,13 @@ export class XUIModule extends XModule {
 
     /**
      * Loads Xpell application object 
-     * @param xpellApp 
+     * @param xuiApp 
      */
-    loadApp(xpellApp:XUIApp) {
-        if (xpellApp["views_tag"]) {
-            this.vm["parentHTMLElement"] = xpellApp["views_html_tag"]
+    loadApp(xuiApp:XUIApp) {
+        if (xuiApp["views_tag"]) {
+            this.vm["parentHTMLElement"] = xuiApp["views_html_tag"]
         }
-        this.vm.addViewsMetadataObject(xpellApp.views);
+        this.vm.addViewsMetadataObject(xuiApp.views);
         XEventManager.fire(XEventList.app_loaded)
     }
 
