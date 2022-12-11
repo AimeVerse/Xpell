@@ -14,11 +14,20 @@ import XUICoreObjects from "./XUICoreObjects"
 //  import SpellDashboardObjects from "./spell-dashboard"
 //  import SpellMoveControls  from "./sui-objects/spell-move-controls";
 import XParser from "../XParser";
+import { IX3DObjectData } from "../X3D/X3DObject"
 
 
-interface IXpellApp {
-    spell: {
-        version: number
+export interface XUIApp {
+    xpell?: {
+        version?: number //minimum xpell version for the app
+    }
+    views_tag:string, //id of the view manager html tag 
+    views:{
+        [name:string] : IX3DObjectData
+    },
+    controls_tag:string, //id of the controls (static objects) html tag 
+    controls:{
+        [name:string] : IX3DObjectData
     }
 }
 
@@ -48,9 +57,9 @@ export class XUIModule extends XModule {
      * Loads Xpell application object 
      * @param xpellApp 
      */
-    loadApp(xpellApp) {
-        if (xpellApp["html-tag-id"]) {
-            this.vm["parentHTMLElement"] = xpellApp["html-tag-id"]
+    loadApp(xpellApp:XUIApp) {
+        if (xpellApp["views_tag"]) {
+            this.vm["parentHTMLElement"] = xpellApp["views_html_tag"]
         }
         this.vm.addViewsMetadataObject(xpellApp.views);
         XEventManager.fire(XEventList.app_loaded)

@@ -4,7 +4,7 @@
 - XWorld
 - X3DCoreObjects
 - X3DPrimitives
-- XNanoCommands
+- XNanoCommands (+ XUI + X3D)
 - Positional Audio
 - XJoystick
 - XDashboard
@@ -12,9 +12,10 @@
 - Cannon JS physics engine support
 - Object Manager remove objects (remove method)
 - X3D Raycast fires "raycast-data" event 
-- X3D Object importAnimationFromFBX
+- X3D Object importAnimationFromFBX/importAnimationFromGLTF 
 - XObject + XUIObjects + X3D Objects "_on_frame", "_on_mount", "_on_create" support for anonymous function in json
 - XUIObjects supports also "_on_click" anonymous function
+
 
 1.0.3
 -------
