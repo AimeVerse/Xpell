@@ -90,6 +90,9 @@ export class X3DWorld {
         addObject:boolean,
         removeObject:boolean,
         
+    } = {
+        addObject:true,
+        removeObject:false
     }
     private cannonDebugRenderer: CannonDebugRenderer;
 
@@ -113,10 +116,7 @@ export class X3DWorld {
         this.lights = {}
         this.x3dObjects = {}
         this.defaultCamera = null
-        this.logger = {
-            addObject:false,
-            removeObject:false
-        }
+        
         
         this.enablePhysics = (xworld.physics) ? xworld.physics._active : false
         if(this.enablePhysics) {
@@ -225,12 +225,15 @@ export class X3DWorld {
 
 
         //get x3d-objects
-        Object.keys(xworld["x3d-objects"]).forEach(async s3dobj => {
-            let ob = xworld["x3d-objects"][s3dobj]
-            ob.name = s3dobj
-            let obj = X3D.create(ob)
-            await this.addX3DObject(obj)
-        })
+        if(xworld["x3d-objects"]) {
+
+            Object.keys(xworld["x3d-objects"]).forEach(async s3dobj => {
+                let ob = xworld["x3d-objects"][s3dobj]
+                ob.name = s3dobj
+                let obj = X3D.create(ob)
+                await this.addX3DObject(obj)
+            })
+        }
 
         document.getElementById(xworld["html-tag-id"]).appendChild(this.renderer["domElement"]);
 

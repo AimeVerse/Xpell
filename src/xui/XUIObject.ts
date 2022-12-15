@@ -26,7 +26,7 @@ export class XUIObject extends XObject {
 
 
     constructor(data, defaults) {
-        super(data,defaults)
+        super(data,defaults,true)
         this._html_tag = "div";
         this._html_ns = null
         this._dom_object = null;
@@ -131,16 +131,31 @@ export class XUIObject extends XObject {
         return this._html;
     }
 
+    /**
+     * Attach the object to HTML element
+     * @param parentElementId 
+     * @deprecated use "mount" function instead
+     */
     attach(parentElementId:string){
         document.getElementById(parentElementId)?.append(this.getDOMObject())
         this.onMount()
     }
    
+    /**
+     * Mount the object to HTML element
+     * @param parentElementId 
+     * 
+     */
+    mount(parentElementId:string){
+        document.getElementById(parentElementId)?.append(this.getDOMObject())
+        this.onMount()
+    }
     
 
   
     /**
-     * return the do
+     * return the dom element
+     * @deprecated
      */
     get DOMElementFromHTML():HTMLElement {
         return document.getElementById(<string>this._id)
@@ -155,10 +170,8 @@ export class XUIObject extends XObject {
 
     setText(text)
     {
-        this.text = text;
-        if(this.DOMElementFromHTML) {
-            this.DOMElementFromHTML.innerHTML = text
-        }
+        this._text = text
+        this.getDOMObject().textContent = text
     }
 
     setStyle(attr, val) {

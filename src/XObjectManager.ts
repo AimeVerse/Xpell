@@ -82,10 +82,10 @@ export class XObjectManager {
     addObject(xObjects) {
         if (xObjects && xObjects._id) {
             this.xObjects[xObjects._id] = xObjects
-            if (!xObjects.name || xObjects.name.length==0) {
-                xObjects.name = xObjects._id
+            if (!xObjects._name || xObjects._name.length==0) {
+                xObjects._name = xObjects._id
             }
-            this.namesIndex[xObjects.name] = xObjects._id
+            this.namesIndex[xObjects._name] = xObjects._id
             XEM.fire("xpell-on-change")
         }
         else {

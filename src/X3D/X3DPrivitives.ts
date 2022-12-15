@@ -46,7 +46,7 @@ export class XPlane extends XMesh {
         }
         data._geometry._threes_class_args = [data._geometry.width, data._geometry.height, data._geometry.widthSegments, data._geometry.heightSegments]
         super(data, defaults)
-        this._cannon_shape = new CANNON.Box(new CANNON.Vec3(data._geometry.width/2, data._geometry.height/2, 0.01))
+        // this._cannon_shape = new CANNON.Box(new CANNON.Vec3(data._geometry.width/2, data._geometry.height/2, 0.01))
 
         // var slipperyMat = new CANNON.Material();
         // var friction = 0.0;
@@ -312,148 +312,148 @@ export class XCone extends XMesh {
 
 }
 
-export class XFloor extends X3DObject {
+// export class XFloor extends X3DObject {
 
-    _geometry: XGeometry
-    _material: XMaterial
-    _num_of_blocks_x: number
-    _num_of_blocks_z: number
-    constructor(data) {
-        const defaults = {
-            _three_class: THREE.Group,
-            _base_color_map: null,
-            _normal_map: null,
-            _height_map: null,
-            _block_width: 0,
-            _block_height: 0,
-            _num_of_blocks_x: 0,
-            _num_of_blocks_z: 0,
-            _geometry: null,
-            _material: null
-
-
-        }
+//     // _geometry: XGeometry
+//     // _material: XMaterial
+//     // _num_of_blocks_x: number
+//     // _num_of_blocks_z: number
+//     constructor(data) {
+//         const defaults = {
+//             _three_class: THREE.Group,
+//             _base_color_map: null,
+//             _normal_map: null,
+//             _height_map: null,
+//             _block_width: 0,
+//             _block_height: 0,
+//             _num_of_blocks_x: 0,
+//             _num_of_blocks_z: 0,
+//             _geometry: null,
+//             _material: null
 
 
-        super(data, defaults)
+//         }
 
 
+//         super(data, defaults)
 
 
 
-    }
-
-    getThreeObject() {
-
-        const plane = {
-            _type: "plane",
-            _geometry: this._geometry,
-            _material: this._material,
-            _grid: 10,
-            _position: {
-                x: 0,
-                y: 0,
-                z: 0
-            },
-            _rotation: {
-                x: 0,
-                y: 0,
-                z: 0
-            },
-            receiveShadow: true
-            // onframe:"rotate y up 0.01"
-        }
 
 
-        //const so = new SpellPlane(plane)
-        // const geometry = new THREE.PlaneGeometry(this._block_width, this._block_length, 12, 12);
-        // const material = new THREE.MeshStandardMaterial(
-        //     {
-        //         map: sandBaseColor, normalMap: sandNormalMap,
-        //         displacementMap: sandHeightMap, displacementScale: 0.1,
-        //         aoMap: sandAmbientOcclusion
-        //     })
+//     }
 
-        let basic_floor = (new XPlane(plane)).getThreeObject()
+//     getThreeObject() {
 
-        this._three_obj = new this._three_class()
-
-        for (let i = 0; i < this._num_of_blocks_x; i++) {
-            for (let j = 0; j < this._num_of_blocks_z; j++) {
-                const floor = basic_floor.clone()
-                floor.receiveShadow = true
-                floor.rotation.x = -Math.PI / 2
-
-                floor.position.x = i * this._geometry.width - (this._num_of_blocks_x / 2) * this._geometry.width
-                //floor.position.y = j * this._geometry.width - (this._num_of_blocks_x / 2) * this._geometry.width
-                floor.position.z = j * this._geometry.height - (this._num_of_blocks_z / 2) * this._geometry.height
-
-                this._three_obj.add(floor)
-            }
-        }
-
-        return super.getThreeObject()
-    }
+//         const plane = {
+//             _type: "plane",
+//             _geometry: this._geometry,
+//             _material: this._material,
+//             _grid: 10,
+//             _position: {
+//                 x: 0,
+//                 y: 0,
+//                 z: 0
+//             },
+//             _rotation: {
+//                 x: 0,
+//                 y: 0,
+//                 z: 0
+//             },
+//             receiveShadow: true
+//             // onframe:"rotate y up 0.01"
+//         }
 
 
+//         //const so = new SpellPlane(plane)
+//         // const geometry = new THREE.PlaneGeometry(this._block_width, this._block_length, 12, 12);
+//         // const material = new THREE.MeshStandardMaterial(
+//         //     {
+//         //         map: sandBaseColor, normalMap: sandNormalMap,
+//         //         displacementMap: sandHeightMap, displacementScale: 0.1,
+//         //         aoMap: sandAmbientOcclusion
+//         //     })
 
-}
+//         let basic_floor = (new XPlane(plane)).getThreeObject()
 
+//         this._three_obj = new this._three_class()
 
-export class XSkeleton extends X3DObject {
+//         for (let i = 0; i < this._num_of_blocks_x; i++) {
+//             for (let j = 0; j < this._num_of_blocks_z; j++) {
+//                 const floor = basic_floor.clone()
+//                 floor.receiveShadow = true
+//                 floor.rotation.x = -Math.PI / 2
 
+//                 floor.position.x = i * this._geometry.width - (this._num_of_blocks_x / 2) * this._geometry.width
+//                 //floor.position.y = j * this._geometry.width - (this._num_of_blocks_x / 2) * this._geometry.width
+//                 floor.position.z = j * this._geometry.height - (this._num_of_blocks_z / 2) * this._geometry.height
 
-    _bones: Array<THREE.Bone>
+//                 this._three_obj.add(floor)
+//             }
+//         }
 
-    constructor(data, defaults = {
-        _type: "bone",
-        _three_class: THREE.SkinnedMesh,
-        _three_obj: null,
-        _geometry: null,
-        _material: null
-    }) {
-        super(data, defaults)
-
-        this._bones = [];
-
-        const shoulder = new THREE.Bone();
-        const elbow = new THREE.Bone();
-        const hand = new THREE.Bone();
-
-        shoulder.add(elbow);
-        elbow.add(hand);
-
-        this._bones.push(shoulder);
-        this._bones.push(elbow);
-        this._bones.push(hand);
-
-        shoulder.position.y = -5;
-        elbow.position.y = 0;
-        hand.position.y = 5;
-        this._skeleton = new THREE.Skeleton(this._bones)
+//         return super.getThreeObject()
+//     }
 
 
 
-        if (!this._three_obj) {
-            this._geometry = new XGeometry(data._geometry)
-            this._material = new XMaterial(data._material)
-        }
+// }
 
 
-        //this._threes_class_args = [this._skeleton]
+// export class XSkeleton extends X3DObject {
 
-    }
 
-    /**
-   * this method triggered after the THREE 3d object has been created
-   * override to implement
-   */
-    async onCreate() {
-        //console.log("skeleton created");
-        //this.
-    }
+//     // _bones: Array<THREE.Bone>
 
-}
+//     constructor(data, defaults = {
+//         _type: "bone",
+//         _three_class: THREE.SkinnedMesh,
+//         _three_obj: null,
+//         _geometry: null,
+//         _material: null
+//     }) {
+//         super(data, defaults)
+
+//         this._bones = [];
+
+//         const shoulder = new THREE.Bone();
+//         const elbow = new THREE.Bone();
+//         const hand = new THREE.Bone();
+
+//         shoulder.add(elbow);
+//         elbow.add(hand);
+
+//         this._bones.push(shoulder);
+//         this._bones.push(elbow);
+//         this._bones.push(hand);
+
+//         shoulder.position.y = -5;
+//         elbow.position.y = 0;
+//         hand.position.y = 5;
+//         this._skeleton = new THREE.Skeleton(this._bones)
+
+
+
+//         if (!this._three_obj) {
+//             this._geometry = new XGeometry(data._geometry)
+//             this._material = new XMaterial(data._material)
+//         }
+
+
+//         //this._threes_class_args = [this._skeleton]
+
+//     }
+
+//     /**
+//    * this method triggered after the THREE 3d object has been created
+//    * override to implement
+//    */
+//     async onCreate() {
+//         //console.log("skeleton created");
+//         //this.
+//     }
+
+// }
 
 
 export class X3DPrimitives extends XObjectPack {
@@ -469,10 +469,10 @@ export class X3DPrimitives extends XObjectPack {
             "cylinder": XCylinder,
             "torus": XTorus,
             "cone": XCone,
-            "floor": XFloor,
+            // "floor": XFloor,
             "perspective-camera": XCamera,
             "light": XLight,
-            "skeleton": XSkeleton
+            // "skeleton": XSkeleton
         }
     }
 }

@@ -39,12 +39,17 @@ export class XParser {
      * convert text command to Xpell json command
      * @param {string} txt 
      */
-    static parse(txt:string):XCommand {        
+    static parse(txt:string,module?:string):XCommand {        
         const carr:string[] = txt.split(" ")
         let rv = new XCommand()
-        
-        rv["module"]= carr[0],
-        rv["op"] =  carr[1],
+        if(module){
+
+            rv["module"]= module
+            rv["op"] =  carr[0]
+        } else {
+            rv["module"]= carr[0]
+            rv["op"] =  carr[1]
+        }
         rv["params"] = {}
         
         if(carr.length>1){

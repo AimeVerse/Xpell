@@ -29,7 +29,7 @@ export interface IXObjectData extends IXData {
     [k: string]: string | null | [] | undefined | Function | boolean | number | {}
     _id?: string | null
     id?: string | null
-    name?: string
+    _name?: string
     _type?: string
     _children?: Array<XObject>
 
@@ -48,22 +48,28 @@ export class XObject implements IXObjectData {
      * XObject constructor is creating the object and adding all the data keys to the XObject instance
      * @param data constructor input data (object)
      * @param defaults - defaults to merge with data
+     * @param skipParse - skip data parsing 
+     * 
      */
-    constructor(data: IXObjectData, defaults?: IXObjectData) {
+    constructor(data: IXObjectData, defaults?: any,skipParse?:boolean) {
         if (defaults) {
             XUtils.mergeDefaultsWithData(data, defaults)
         }
-
+        
         this._id = (data && data._id) ? data._id : "so-" + XUtils.guid();
         this._type = "object" //default type
         this._children = []
-        this._nano_commands ={}
+        this._nano_commands ={} 
         this.addNanoCommandPack(_xobject_basic_nano_commands)
         
         if (data) {
-            delete data._id // delete the _id field to remove duplication by the parse function
-            this.parse(data, reservedWords);
+            if(!skipParse) {
+                delete data._id // delete the _id field to remove duplication by the parse function
+                this.parse(data, reservedWords);
+            } 
+            
         }
+        
     }
 
 
@@ -105,10 +111,11 @@ export class XObject implements IXObjectData {
      * @param ignore - lis of words to ignore in the parse process
      */
     parse(data: IXObjectData, ignore = reservedWords) {
+        
         let cdata = Object.keys(data);
         cdata.forEach(field => {
             if (!ignore.hasOwnProperty(field) && data.hasOwnProperty(field)) {
-                this[field] = <string>data[field];
+                this[field] = <any>data[field];
             }
         });
     }

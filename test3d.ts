@@ -29,7 +29,7 @@ _x.start()
 
 
 
-const world = {
+export const world = {
     "html-tag-id": "x3d-player",
     helper: {
         //axes: 5
@@ -47,16 +47,14 @@ const world = {
             "main": {
                 _type: "light",
                 _light: "ambient",
-                color: 0xffffff
+                color: 0x444466
             },
-
             "p1": {
                 _type: "light",
                 _light: "directional",
-                color: "hsl(200, 100%, 50%)",
-                //_helper:true,
+                color: "hsl(0, 100%, 100%)",
                 intensity: 1,
-                _position: { x: 0, y: 1, z: 0 },
+                _position: { x: 0, y: 5, z: 0 },
 
             }
         },
@@ -64,18 +62,17 @@ const world = {
             "main-cam": {
                 _id: "main-cam",
                 _type: "perspective-camera",
-                _helper: false,
-                fov: 40,
+                fov: 30,
                 ratio: window.innerWidth / window.innerHeight,
                 _clipping: {
                     far: 5000,
                     close: 0.01
                 },
-                _position: { x: 0, y: 1.5, z: -5 },
+                _position: { x: 0, y: 0, z: 5 },
                 _rotation: { x: 0, y: 0, z: 0 },
-                _disable_frame_3d_state: true, //set true for cam-controls
+                _disable_frame_3d_state: true,
                 _3d_set_once: true,
-                _add_audio_listener: true
+                //_add_audio_listener: false
             }
         },
         controls: {
@@ -84,11 +81,17 @@ const world = {
                 _active: true,
                 _params: {
                     enableDamping: true,
-                    minPolarAngle: Math.PI / 3.5,
-                    maxPolarAngle: Math.PI,
-                    minDistance: 2,
-                    maxDistance: 10,
+                    minPolarAngle: Math.PI / 2.5,
+                    maxPolarAngle: Math.PI / 1.5,
+                    minZoom: 1,
+                    minDistance: 1,
+                    maxDistance: 30,
                     rotateSpeed: 0.3,
+                    // minDistance: 5,
+                    // maxDistance: 15,
+                    // enablePan: false,
+                    // maxPolarAngle: Math.PI / 2 - 0.05,
+                    // enablePan:true
                 }
             }
         }
@@ -107,64 +110,41 @@ const world = {
             _material: {
                 _type: "basic-material",
                 color: 0xff99ff,
-                side: 2,
+                side: 1,
                 // roughness: 0.5,
             },
-            _position: { x: 0, y: 1.5, z: 0 },
+            _position: { x: 0, y: 0.75, z: 0 },
             _rotation: { x: 0, y: 0, z: 0 },
-            castShadow: true,
+            // castShadow: true,
             _on_frame: `follow-joystick`
         },
-        // "spr": {
-        //     _type: "sphere",
-        //     _id: "spr",
-        //     _geometry: {
-        //         _type: "sphere-geometry",
-        //         widthSegments: 16,
-        //         heightSegments: 16,
-        //         radius: 0.5
-        //     },
-        //     _material: {
-        //         _type: "basic-material",
-        //         color: 0x00bb00,
-        //         side: 2,
-        //         // _normal_map:{
-        //         //     texture:"/normal-map.gif"
-        //         // },
-        //         // roughness: 0.5,
-        //     },
-        //     _position: { x: 2, y: 0, z: -1 },
-        //     _rotation: { x: 0, y: 0, z: 0 },
-        //     _enable_physics: true,
-        //     _mass: 0.5
-        // },
-
-
-        "floor": {
+        floor: {
             _id: "floor",
-
-            _type: "box",
+            _type: "plane",
             _geometry: {
-                _type: "box-geometry",
+                _type: "plane-geometry",
                 width: 10,
                 height: 10,
-                depth: 0.3,
                 widthSegments: 50,
                 heightSegments: 50,
-                depthSegments: 50
+
             },
             _material: {
                 _type: "standard-material",
-                color: 0xff00ff,
-                side: 2
+                color: "#6b35d0",
+                side: 1,
+                wireframe: true
             },
-            _position: { x: 0, y: -0.2, z: 0 },
+            _position: { x: 0, y: -0.01, z: 0 },
             _rotation: { x: Math.PI / 2, y: 0, z: 0 },
-            _enable_physics: true,
-            _mass: 0,
+            _enable_physics: false,
+            _mass: 0
         }
+
     }
 }
+
+
 
 
 await X3D.loadWorld(world)
@@ -177,50 +157,50 @@ const topBar = XUI.create({
 })
 
 
-topBar.attach("player")
+topBar.mount("player")
 
 
 
-XUI.loadControl({
-    _id: "joystick-1",
-    _type: "joystick",
-    _parent_element: "xcontrols",
-    _move_speed: 0.2,
-    _joy_options: {
-        size: 120,
-        multitouch: true,
-        maxNumberOfNipples: 1,
-        mode: 'static',
-        restJoystick: true,
-        shape: 'circle',
-        position: { bottom: '90px', left: '90px' },
-        dynamicPage: true,
-        color: "green"
-    }
-})
+// XUI.loadControl({
+//     _id: "joystick-1",
+//     _type: "joystick",
+//     _parent_element: "xcontrols",
+//     _move_speed: 0.2,
+//     _joy_options: {
+//         size: 120,
+//         multitouch: true,
+//         maxNumberOfNipples: 1,
+//         mode: 'static',
+//         restJoystick: true,
+//         shape: 'circle',
+//         position: { bottom: '90px', left: '90px' },
+//         dynamicPage: true,
+//         color: "green"
+//     }
+// })
 
-XUI.loadControl({
-    _id: "transform",
-    _type: "transform-controls",
-    _parent_element: "xcontrols",
-    style: "position:absolute;width:200px;height:100px;left:50px;top:50px;border:1px solid white;background-color:rgba(0,0,0,0.4);color:white"
-})
+// XUI.loadControl({
+//     _id: "transform",
+//     _type: "transform-controls",
+//     _parent_element: "xcontrols",
+//     style: "position:absolute;width:200px;height:100px;left:50px;top:50px;border:1px solid white;background-color:rgba(0,0,0,0.4);color:white"
+// })
 
-//XUI.enableFirstUserGestureEvent()
-
-
-
-//document.addEventListener("first-user-gesture", async (e) => {
+// //XUI.enableFirstUserGestureEvent()
 
 
 
-//console.log(X3D.world)
+// //document.addEventListener("first-user-gesture", async (e) => {
 
-const stage = {
-    x: 0,
-    y: 1.5,
-    z: 0,
-}
+
+
+// //console.log(X3D.world)
+
+// const stage = {
+//     x: 0,
+//     y: 1.5,
+//     z: 0,
+// }
 
 
 _loader.loadGLTF("/keren-av.glb", {
@@ -246,67 +226,67 @@ _loader.loadGLTF("/keren-av.glb", {
     await x3dObject.importAnimationFromFBXFile("anim/Rapping.fbx", "Rapping")
     await x3dObject.importAnimationFromFBXFile("anim/Idle.fbx", "Idle")
     // x3dObject.setRotation( { x: -1.55, y: 0.01, z: -2.60 })
-    x3dObject.playAnimation("Idle",THREE.LoopRepeat)
+    x3dObject.playAnimation("Rapping",THREE.LoopRepeat)
     // X3D.world.setTransformControls(x3dObject)    
     // const helper = new THREE.SkeletonHelper( x3dObject.getThreeObject() );
     // X3D.world.scene.add( helper );
     
 })
 
-const btn = XUI.loadControl({
-    _type:"button",
-    text:"change",
-    _id:"changeAnim",
-    style:"position:absolute;top:10;right:0",
-    _parent_element: "xcontrols",
-    _on_click:(xObject:XUIObject,e) => {
-            const a = animations[aidx]
-            const o:X3DObject = X3D.om.getObject("aime")
+// const btn = XUI.loadControl({
+//     _type:"button",
+//     text:"change",
+//     _id:"changeAnim",
+//     style:"position:absolute;top:10;right:0",
+//     _parent_element: "xcontrols",
+//     _on_click:(xObject:XUIObject,e) => {
+//             const a = animations[aidx]
+//             const o:X3DObject = X3D.om.getObject("aime")
             
             
-            // o.playAnimation(a)
-            o.playAnimation(a)
-            // o.stopAnimation()
-            aidx++
-            if(aidx>=animations.length) {aidx =0;console.log("reset")}
+//             // o.playAnimation(a)
+//             o.playAnimation(a)
+//             // o.stopAnimation()
+//             aidx++
+//             if(aidx>=animations.length) {aidx =0;console.log("reset")}
 
-    }
-})
-
-
-const animations = [ "Idle","Injured","Rapping"]
-let aidx = 0
-
-// btn.getDOMObject().addEventListener("click",(e) => {
+//     }
 // })
 
 
+// const animations = [ "Idle","Injured","Rapping"]
+// let aidx = 0
 
-document.addEventListener('dblclick', (e) => {
-    X3D.raycast(e)
-}, false)
-
-
-
-
-document.addEventListener("raycast-data", (e) => {
-    console.log(e);
-}, false)
-
-
-XData.variables["my-label"] = "This is a label"
-
-const lbl = {
-    _type:"label",
-    _id:"my-label",
-    text:"hey",
-    _data_source:"my-label",
-    _parent_element: "xcontrols",
-    style:"color:white;background-color:black;position:absolute;top:200"
-}
-
-XUI.loadControl(lbl)
+// // btn.getDOMObject().addEventListener("click",(e) => {
+// // })
 
 
 
-//})
+// document.addEventListener('dblclick', (e) => {
+//     X3D.raycast(e)
+// }, false)
+
+
+
+
+// document.addEventListener("raycast-data", (e) => {
+//     console.log(e);
+// }, false)
+
+
+// XData.variables["my-label"] = "This is a label"
+
+// const lbl = {
+//     _type:"label",
+//     _id:"my-label",
+//     text:"hey",
+//     _data_source:"my-label",
+//     _parent_element: "xcontrols",
+//     style:"color:white;background-color:black;position:absolute;top:200"
+// }
+
+// XUI.loadControl(lbl)
+
+
+
+// //})

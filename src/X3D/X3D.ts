@@ -17,6 +17,13 @@ import XData from "../XData";
 import X3DWorld from './X3DWorld'
 import {XLogger as _xlog} from '../XLogger'
 
+/**
+ * 
+ */
+const _log_rules = {
+
+}
+
 const X3DEngineStatus = {
     New: 0,
     Ready: 1,
@@ -32,6 +39,14 @@ export class X3DModule extends XModule {
     world: X3DWorld;
     x3dObjects: {};
     status: number;
+    logger:{
+        createObject:boolean,
+        removeObject:boolean,
+        
+    } = {
+        createObject:false,
+        removeObject:false
+    }
     
     constructor() {
         super({ name: "x3d" })
@@ -73,9 +88,14 @@ export class X3DModule extends XModule {
     create(data) {
 
         if (this.om.hasObjectClass(data._type)) {
-            const spell_class = this.om.getObjectClass(data._type)
-            const obj = new spell_class(data)
+            if(this.logger.createObject) {
+                _xlog.log("X3D | creating " + data._type);
+            }
+            
+            const xclass = this.om.getObjectClass(data._type)
+            const obj = new xclass(data)
             this.om.addObject(obj)
+            
             return obj
         } else return null
     }

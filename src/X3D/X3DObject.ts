@@ -37,9 +37,9 @@ export class X3DObject extends XObject {
     _cannon_shape: CANNON.Shape | undefined
     _mass: number
     _enable_physics: boolean
-    private _position: THREE.Vector3
+     _position: THREE.Vector3
     _rotation: THREE.Euler
-    private _scale: THREE.Vector3
+     _scale: THREE.Vector3
     private _visible: boolean
     private _animation: boolean
     private _animation_clips: {}
@@ -49,10 +49,10 @@ export class X3DObject extends XObject {
     _threes_class_args: Array<any>
     _animation_mixer: THREE.AnimationMixer
     private _frame_number: number
-    _on_frame: any
+    _on_frame: string | Function | undefined
     private _cache_cmd_txt: string | null
     private _cache_jcmd: any
-    private _disable_frame_3d_state: boolean
+    private _disable_frame_3d_state!: boolean
     private _3d_set_once: boolean
     private _current_action: string
     private _positional_audio: THREE.PositionalAudio | undefined
@@ -64,14 +64,14 @@ export class X3DObject extends XObject {
             _type: "x3d-object",
             _children: [],
             _three_obj: threeObj,
-            name: threeObj.name,
+            _name: threeObj.name,
             _position: threeObj.position,
             _rotation: threeObj.rotation,
             _scale: threeObj.scale,
             _enable_physics: false
         }
         if (defaults) {
-            if (defaults.name) { threeObj.name = defaults.name }
+            if (defaults._name) { threeObj.name = defaults._name }
             _XU.mergeDefaultsWithData(<IXObjectData>_xdata, defaults, true)
         }
         return _xdata
@@ -85,9 +85,9 @@ export class X3DObject extends XObject {
 
 
     constructor(data: IX3DObjectData, defaults?: any) {
-        super(data, defaults)
+        super(data, defaults,true)
+        this.parse3d(data)
 
-        this._children = [];
         this._animation = true
         this._animation_clips = {}
         // this._fade_duration = 0.25
@@ -101,7 +101,7 @@ export class X3DObject extends XObject {
         }
 
         this.addNanoCommandPack(_x3dobject_nano_commands)
-
+        
     }
 
 
@@ -116,27 +116,25 @@ export class X3DObject extends XObject {
     }
 
 
-    parse(data, ignore = reservedWords) {
+    parse3d(data) {
 
-        ignore = reservedWords
-        //x,y,z
-
-
-
+        
+        
         if (data._position) {
+            
             this._position = new THREE.Vector3(data._position.x, data._position.y, data._position.z)
             this.setPosition(data._position)
         } else {
             this._position = new THREE.Vector3(0, 0, 0)
         }
-
+        
         if (data._scale) {
             this._scale = new THREE.Vector3(data._scale.x, data._scale.y, data._scale.z)
             this.setScale(data._scale)
         } else {
             this._scale = new THREE.Vector3(1, 1, 1) //x,y,z
         }
-
+        
         if (data._rotation) {
             this._rotation = new THREE.Euler(data._rotation.x, data._rotation.y, data._rotation.z, data._rotation?.w)
             this.setRotation(data._rotation)
@@ -144,26 +142,28 @@ export class X3DObject extends XObject {
             this._rotation = new THREE.Euler(0, 0, 0) //x,y,z
         }
         
-        let cdata = Object.keys(data);
-        
-        
-        cdata.forEach(field => {
-            if (!ignore.hasOwnProperty(field) && data.hasOwnProperty(field)) {
-                this[field] = data[field];
-            }
-        });
-        if (!this.name) {
-            this.name = this._id
+        if (!this._name) {
+            this._name = this._id
         }
         
         if(!data._fade_duration) {
             this._fade_duration = 0.25
         }
 
+        // this._disable_frame_3d_state = <boolean>data["_disable_frame_3d_state"]
+
+        let cdata = Object.keys(data);
+        cdata.forEach(field => {
+            if (!reservedWords.hasOwnProperty(field) ) {
+                this[field] = <any>data[field];
+            }
+        });
+       
     }
 
     setPosition(positionObject: { x: number, y: number, z: number }) {
         this._position.set(positionObject.x, positionObject.y, positionObject.z) //incase Xpell engine controls the position
+        
         this._cannon_obj?.position.set(this._position.x, this._position.y, this._position.z)
         // const srcObj = (this._cannon_obj) ? this._cannon_obj : this._three_obj
         // srcObj?.position.set(positionObject.x, positionObject.y, positionObject.z) //in case that other engine (like physics) controls the position
@@ -233,7 +233,7 @@ export class X3DObject extends XObject {
         if (!this._three_obj && this._three_class) {
             this._three_obj = new this._three_class(...this._threes_class_args)
             if (this._three_obj) {
-                this._three_obj.name = <string>this.name
+                this._three_obj.name = <string>this._name
                 this._clock.start()
 
 
@@ -399,7 +399,7 @@ export class X3DObject extends XObject {
     //     if (this._nano_commands[jcmd.op]) {
     //         jcmd.s3d_object = this
     //         this._nano_commands[jcmd.op](jcmd)
-    //     } else throw this.name + " has no op name " + jcmd.op
+    //     } else throw this._name + " has no op name " + jcmd.op
     // }
 
     append(x3dObject) {

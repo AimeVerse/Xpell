@@ -40,22 +40,18 @@ const threeMaterials = {
 
 
 export class XCamera extends X3DObject {
-    _clipping : {
-        close:number,
-        far:number
-    }
+   
 
     constructor(data, defaults) {
         if (!defaults) {
             defaults = {
                 _type: "perspective-camera",
-                _three_class: threeCameras[data._type],
                 _three_obj: null,
-                _is_camera: true,
                 fov: 20,
                 ratio: window.innerWidth / window.innerHeight,
+                _is_camera:true,
                 _clipping: {
-                    far: 5000,
+                    far: 4000,
                     close: 0.01
                 }
 
@@ -63,17 +59,20 @@ export class XCamera extends X3DObject {
         }
         
         super(data, defaults)
-        this._threes_class_args = [this.fov, this.ratio, this._clipping.close, this._clipping.far]
+        this._three_class = threeCameras[data._type]
+        this._threes_class_args = [this.fov, this.ratio, this["_clipping"]?.["close"], (<any>this["_clipping"]).far]
         
     }
+
+
 
 
 }
 
 
 export class XLight extends X3DObject {
-    color:string 
-    intensity:number
+    // color:string 
+    // intensity:number
     constructor(data, defaults) {
         if (!defaults) {
             defaults = {
@@ -93,22 +92,25 @@ export class XLight extends X3DObject {
 }
 
 export class XGeometry extends X3DObject {
-    width:number
-    height:number
+    // width:number
+    // height:number
     constructor(data, defaults?) {
         if (!defaults) {
             defaults = {
                 _type: "geometry",
-                _three_class: threeGeometries[data._type],
-                _three_obj: null,
-                width: data.width,
-                height: data.height,
-                depth: data.depth,
-                _threes_class_args: [data.width, data.height, data.depth]
+                width: 0,
+                height: 0,
+                depth: 0,
             }
         }
         super(data, defaults)
-        
+        this._three_class = threeGeometries[data._type]
+        if(data._threes_class_args) {
+            this._threes_class_args = data._threes_class_args
+        } else {
+            this._threes_class_args = [data.width, data.height, data.depth]
+        }
+
     }
     
     
@@ -119,14 +121,14 @@ export class XGeometry extends X3DObject {
 export class XMaterial extends X3DObject {
     constructor(data) {
         const defaults = {
-            _three_class: threeMaterials[data._type],
-            color: (data.color) ? data.color : 0xffffff,
-            side: THREE.DoubleSide,
             // roughness: (data.roughness) ? data.roughness : 1,
         }
 
 
         super(data, defaults)
+        this._three_class=  threeMaterials[data._type],
+        this.color =  (data.color) ? data.color : 0xffffff,
+        this.side = (data.side)  ? data.side : THREE.DoubleSide
 
         //Spell 2 Three
         const s2t = {
@@ -217,8 +219,8 @@ export class XMesh extends X3DObject {
         return new XMesh(_xdata)
     }
 
-    _geometry:XGeometry
-    _material:XMaterial
+    // _geometry:XGeometry
+    // _material:XMaterial
 
 
     constructor(data, defaults = {
@@ -230,7 +232,9 @@ export class XMesh extends X3DObject {
         _positional_audio_source:null
     }) {
         super(data, defaults)
+        this._three_class = THREE.Mesh
         if(!this._three_obj) {
+            
             this._geometry = new XGeometry(data._geometry)
             this._material = new XMaterial(data._material)
         }
@@ -239,7 +243,7 @@ export class XMesh extends X3DObject {
 
     getThreeObject() {
         if(!this._three_obj) {
-            this._threes_class_args = [this._geometry.getThreeObject(), this._material.getThreeObject()]
+            this._threes_class_args = [(<any>this._geometry).getThreeObject(), (<any>this._material).getThreeObject()]
         }
         return  super.getThreeObject()
 
