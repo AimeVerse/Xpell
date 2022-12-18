@@ -195,8 +195,9 @@ export class X3DWorld {
                     this.defaultCamera = await this.addX3DObject(cam)
                     
                 }
-                if(camera["_add_audio_listener"]) {
-                    document.addEventListener("first-user-gesture",(e) => X3D.world.setAudioListener())
+                if(camera["_positional_audio_listener"]) {
+                    // document.addEventListener("first-user-gesture",(e) => X3D.world.setAudioListener())
+                    X3D.world.setAudioListener()
                 }
             }
         } else {
@@ -272,15 +273,16 @@ export class X3DWorld {
                     this.controls.verticalMax = 1.5;
                     this.controls.autoForward = false;
                 }
+                else if (control._type == "transforms" && control._active) {
+                    this.transformControls = new TransformControls(this.defaultCamera, this.renderer["domElement"])
+                    this.transformControls.addEventListener("dragging-changed", (e) => {
+                        this.controls["enabled"] = ! e.value
+                    })
+                }
             })
         }
 
-        if(xworld.transformControls?._active){
-            this.transformControls = new TransformControls(this.defaultCamera, this.renderer["domElement"])
-            this.transformControls.addEventListener("dragging-changed", (e) => {
-                this.controls["enabled"] = ! e.value
-            })
-        }
+      
         
 
         

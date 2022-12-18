@@ -22,12 +22,31 @@ const xpell_object_html_fields_mapping = {
 };
 
 
+export type XVector3 = {
+    x:number,
+    y:number,
+    z:number
+}
 
 /**
  * @interface IX3DObjectData
  */
 export interface IX3DObjectData extends IXObjectData {
-    _three_obj: THREE.Object3D
+    _cannon_shape?: CANNON.Shape | undefined,
+    _enable_physics?: boolean,
+    _mass?: number,
+    _position?: XVector3,
+    _rotation?: XVector3,
+    _scale?: XVector3,
+    _visible?: boolean,
+    _fade_duration?: number,
+    _three_class ?: any,
+    _threes_class_args?: Array<any>,
+    _on_frame?: string | Function | undefined,
+    _disable_frame_3d_state?: boolean,
+    _3d_set_once?: boolean,
+    _positional_audio_source?: string,
+
 }
 
 export class X3DObject extends XObject {
@@ -40,7 +59,7 @@ export class X3DObject extends XObject {
      _position: THREE.Vector3
     _rotation: THREE.Euler
      _scale: THREE.Vector3
-    private _visible: boolean
+    protected _visible: boolean
     private _animation: boolean
     private _animation_clips: {}
     private _fade_duration: number
@@ -152,12 +171,14 @@ export class X3DObject extends XObject {
 
         // this._disable_frame_3d_state = <boolean>data["_disable_frame_3d_state"]
 
-        let cdata = Object.keys(data);
-        cdata.forEach(field => {
-            if (!reservedWords.hasOwnProperty(field) ) {
-                this[field] = <any>data[field];
-            }
-        });
+        // let cdata = Object.keys(data);
+        // cdata.forEach(field => {
+        //     if (!reservedWords.hasOwnProperty(field) ) {
+        //         this[field] = <any>data[field];
+        //     }
+        // });
+
+        this.parse(data,reservedWords)
        
     }
 
@@ -387,20 +408,6 @@ export class X3DObject extends XObject {
 
 
 
-    // MOVED TO XObject
-    // /**
-    //  * execute spell command in the local 3d object
-    //  * @param {JSON} spell command (json format)
-    //  */
-    // async execute(jcmd) {
-
-    //     //limited xpell 
-
-    //     if (this._nano_commands[jcmd.op]) {
-    //         jcmd.s3d_object = this
-    //         this._nano_commands[jcmd.op](jcmd)
-    //     } else throw this._name + " has no op name " + jcmd.op
-    // }
 
     append(x3dObject) {
         this._children.push(x3dObject);

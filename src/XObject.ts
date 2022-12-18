@@ -24,6 +24,7 @@ const xpell_object_html_fields_mapping = { "_id": "id", "css-class": "class", "a
 /**
  * XObject constructor data interface 
  * @interface IXObjectData
+ * @param _xversion - minimum Xpell interpreter version (optional default value is 1.0)
  */
 export interface IXObjectData extends IXData {
     [k: string]: string | null | [] | undefined | Function | boolean | number | {}
@@ -32,7 +33,7 @@ export interface IXObjectData extends IXData {
     _name?: string
     _type?: string
     _children?: Array<XObject>
-
+    _xversion?: number 
 }
 
 
@@ -118,6 +119,52 @@ export class XObject implements IXObjectData {
                 this[field] = <any>data[field];
             }
         });
+    }
+
+    /**
+     * Parse data to the XObject
+     * @param data data to parse
+     * @param {object} fields- object with fields and default values (IXData format)
+     * 
+     * fields example = {
+     *  _name : "default-name",
+     * ...
+     * }
+     */
+    parseFieldsFromXDataObject(data: IXObjectData, fields:{}) {
+        
+        let cdata = Object.keys(fields);
+        cdata.forEach(field => {
+            if (data.hasOwnProperty(field)) {
+                this[field] = <any>data[field];
+            } else {
+                this[field] = fields[field]
+            }
+        })
+    }
+
+
+    /**
+     * Parse list of fields from IXObjectData to the class
+     * @param {IXObjectData} data -  the data
+     * @param {Array<string>} fields - array of field names (string)
+     * @param checkNonXParams - also check non Xpell fields (fields that not starting with "_" sign)
+     */
+    parseFields(data: IXObjectData, fields:Array<string>,checkNonXParams?:boolean) {
+        
+        fields.forEach(field => {
+            if (data.hasOwnProperty(field)) {
+                // console.log("parsing field " + field + " v " + data[field])
+                this[field] = <any>data[field];
+            } else if(checkNonXParams && field.startsWith("_")) { 
+                const choppedField = field.substring(1) // remove "_" from field name "_id" = "id"
+                if(data.hasOwnProperty(choppedField)) {
+                    // console.log("parsing field " + choppedField + " v " + data[choppedField])
+                    this[field] = <any>data[choppedField]
+                    this[choppedField] = <any>data[choppedField] //add both to support Three arguments
+                }
+            }
+        })
     }
 
 

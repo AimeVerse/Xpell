@@ -17,18 +17,46 @@ import XData from "../XData";
 import X3DWorld from './X3DWorld'
 import {XLogger as _xlog} from '../XLogger'
 
-/**
- * 
- */
-const _log_rules = {
-
-}
 
 const X3DEngineStatus = {
     New: 0,
     Ready: 1,
     Running: 2,
     Stopped: 3
+}
+
+export type X3DSceneControl = {
+    _type: "orbit"  | "pointer" | "first-person" | "transform",
+    _active : boolean,
+    params:{}
+}
+
+
+export type X3DApp = {
+    _parent_element:string | {}, //id of the view manager html tag 
+    //"html-tag-id": "x3d-player", //deprecated
+    helper?: {[k:string] : {} | string},
+    physics: {
+        engine:string,
+        _active: boolean,
+        _debug: boolean
+    },
+    scene: {
+        
+        lights: {
+            [k:string] : {} | string
+        },
+        cameras: {
+            [k:string] : {} | string
+        },
+        controls: {
+            [k:string] : X3DSceneControl
+        }
+
+    },
+    "x3d-objects": {
+        [k:string] : {} | string
+    }
 }
 
 
@@ -63,10 +91,17 @@ export class X3DModule extends XModule {
     /**
      * Loads XWorld from world data object
      * @param x3dWorldData World Data object
-     * @param autoRun 
+     * @param autoRun - start world running automatically 
+     * @deprecated - use loadApp function instead
      */
     async loadWorld(x3dWorldData, autoRun = true) {
-        this.world = new X3DWorld(x3dWorldData)
+        
+        await this.loadApp(x3dWorldData)
+    }
+
+
+    async loadApp(x3dApp, autoRun = true) {
+        this.world = new X3DWorld(x3dApp)
         this.status = X3DEngineStatus.Ready
 
         window.addEventListener('resize', () => {

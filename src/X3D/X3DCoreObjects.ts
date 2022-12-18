@@ -1,8 +1,12 @@
 import * as THREE from 'three'
-import X3DObject from './X3DObject'
+import X3DObject, { IX3DObjectData } from './X3DObject'
 
 const threeCameras = {
-    "perspective-camera": THREE.PerspectiveCamera
+    "perspective-camera": THREE.PerspectiveCamera,
+    "perspective": THREE.PerspectiveCamera, //alias 
+    "camera": THREE.PerspectiveCamera, //alias for default camera
+    "orthographic-camera":THREE.OrthographicCamera,
+    "orthographic":THREE.OrthographicCamera // alias
 }
 
 const threeLights = {
@@ -36,56 +40,75 @@ const threeMaterials = {
 
 
 
+export type  XCameraTypes = "perspective-camera" | "perspective" | "camera" | "orthographic-camera" | "orthographic"
+
+export interface XCameraData extends IX3DObjectData {
+    _camera?:XCameraTypes, //type of Three camera 
+    _fov? : number, // Camera frustum vertical field of view (default = 20)
+    _ratio?: number //Camera frustum aspect ratio (default = 16:9 (1.799)),
+    _far?:number, // Camera frustum far plane (clipping - default = 2000)
+    _near?:number, // Camera frustum near plane (clipping - default = 0.01)
+    _positional_audio_listener?:boolean // set true to support positional audio (default is false)
+}
 
 
 
 export class XCamera extends X3DObject {
    
+    static xtype:string = "camera"
 
-    constructor(data, defaults) {
-        if (!defaults) {
-            defaults = {
-                _type: "perspective-camera",
-                _three_obj: null,
-                fov: 20,
-                ratio: window.innerWidth / window.innerHeight,
-                _is_camera:true,
-                _clipping: {
-                    far: 4000,
-                    close: 0.01
-                }
+    readonly _is_camera:boolean = true
+    
+    _fov:number = 20
+    _ratio:number = 1.7999 //16:9
+    _far:number = 2000
+    _close:number = 0.01
+    _positional_audio_listener:boolean = false
+    _camera:XCameraTypes = "perspective-camera"
+    
 
-            }
-        }
-        
-        super(data, defaults)
-        this._three_class = threeCameras[data._type]
-        this._threes_class_args = [this.fov, this.ratio, this["_clipping"]?.["close"], (<any>this["_clipping"]).far]
-        
+    constructor(data:XCameraData) {
+        const fieldsToParse = ["_fov","_ratio","_far","_close","_positional_audio_listener","_camera"]
+
+        super(data) // parse parent class fields (X3dDObject & XObject)
+        this.parseFields(data,fieldsToParse,true) //parse Camera fields
+        this._three_obj = null  // reset THREE object 
+        this._three_class = threeCameras[data._type] // define THREE class 
+        this._threes_class_args = [this._fov, this._ratio, this._close, this._far] // define THREE class arguments 
     }
+}
 
+/**
+ * supported Three light type 
+ */
+export type  XLightTypes = "ambient" | "directional" | "spotlight" 
 
-
-
+/**
+ * XLight Data 
+ */
+export interface XLightData extends IX3DObjectData {
+    _light:XLightTypes, //xlight type
+    _color? : number | string | THREE.Color, // light color
+    _intensity?: number // light intensity (float value range 0 - 1 default 1.0 )
 }
 
 
+/**
+ * XLight - Xpell wrapper for Three Light
+ */
 export class XLight extends X3DObject {
-    // color:string 
-    // intensity:number
-    constructor(data, defaults) {
-        if (!defaults) {
-            defaults = {
-                _type: "light",
-                _light: "ambient",
-                _three_obj: null,
-                color: 0xffffff,
-                intensity: 1.0,
-                _is_light: true,
-            }
-        }
-        super(data, defaults)
+    static xtype = "light"
+    readonly _is_light:boolean = true 
+    _light:XLightTypes = "ambient"
+    _color? :THREE.Color | number =  0xffffff
+    _intensity?:number = 1.0
 
+    constructor(data:XLightData) {
+        
+        const fieldsToParse = ["_light","_color","_intensity"]
+        super(data) // parse parent class fields (X3dDObject & XObject)
+        this.parseFields(data,fieldsToParse,true) //parse Camera fields
+        this._type = XLight.xtype
         this._three_class = threeLights[data._light]
         this._threes_class_args = [this.color, this.intensity]
     }

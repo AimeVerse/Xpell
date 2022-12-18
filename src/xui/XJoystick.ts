@@ -51,7 +51,8 @@ export class XJoystick extends XUIObject {
                 dynamicPage: true,
             }
         }
-        super(data, defaults);
+        super(data, defaults,true);
+        this.parse(data)
 
 
 

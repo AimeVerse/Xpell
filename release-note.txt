@@ -2,7 +2,7 @@
 ----------
 - XUI view manager (show/hide page/view)
 - XAPP json new format (_views & _controls in one json)
-
+- XAI - Local TTS (browser o/s voice)
 
 
 1.0.4

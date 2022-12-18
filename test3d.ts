@@ -52,27 +52,42 @@ export const world = {
             "p1": {
                 _type: "light",
                 _light: "directional",
-                color: "hsl(0, 100%, 100%)",
+                color: "#ffffff",
                 intensity: 1,
-                _position: { x: 0, y: 5, z: 0 },
+                _position: { x: 2, y: 5, z: 0 },
+
+            },
+            "p2": {
+                _type: "light",
+                _light: "directional",
+                color: "#ffffff",
+                intensity: 1,
+                _position: { x: -2, y: 5, z: 0 },
+
+            },
+            "p3": {
+                _type: "light",
+                _light: "directional",
+                color: "#ffffff",
+                intensity: 1,
+                _position: { x: 2, y: 5, z: -2},
 
             }
         },
         cameras: {
             "main-cam": {
                 _id: "main-cam",
-                _type: "perspective-camera",
-                fov: 30,
-                ratio: window.innerWidth / window.innerHeight,
-                _clipping: {
-                    far: 5000,
-                    close: 0.01
-                },
-                _position: { x: 0, y: 0, z: 5 },
+                _type: "camera",
+                _camera:"perspective",
+                _position: { x: 0, y: 1.75, z: 10 },
                 _rotation: { x: 0, y: 0, z: 0 },
                 _disable_frame_3d_state: true,
                 _3d_set_once: true,
-                //_add_audio_listener: false
+                fov: 30,
+                ratio: window.innerWidth / window.innerHeight,
+                far: 3000,
+                close: 0.01,
+                //_positio_audio_listener: false
             }
         },
         controls: {
@@ -87,11 +102,7 @@ export const world = {
                     minDistance: 1,
                     maxDistance: 30,
                     rotateSpeed: 0.3,
-                    // minDistance: 5,
-                    // maxDistance: 15,
-                    // enablePan: false,
-                    // maxPolarAngle: Math.PI / 2 - 0.05,
-                    // enablePan:true
+                    
                 }
             }
         }
@@ -125,15 +136,15 @@ export const world = {
                 _type: "plane-geometry",
                 width: 10,
                 height: 10,
-                widthSegments: 50,
-                heightSegments: 50,
+                widthSegments: 100,
+                heightSegments: 100,
 
             },
             _material: {
                 _type: "standard-material",
-                color: "#6b35d0",
-                side: 1,
-                wireframe: true
+                color: "#ffffff",
+                side: 2,
+                // wireframe: true
             },
             _position: { x: 0, y: -0.01, z: 0 },
             _rotation: { x: Math.PI / 2, y: 0, z: 0 },
@@ -161,23 +172,23 @@ topBar.mount("player")
 
 
 
-// XUI.loadControl({
-//     _id: "joystick-1",
-//     _type: "joystick",
-//     _parent_element: "xcontrols",
-//     _move_speed: 0.2,
-//     _joy_options: {
-//         size: 120,
-//         multitouch: true,
-//         maxNumberOfNipples: 1,
-//         mode: 'static',
-//         restJoystick: true,
-//         shape: 'circle',
-//         position: { bottom: '90px', left: '90px' },
-//         dynamicPage: true,
-//         color: "green"
-//     }
-// })
+XUI.loadControl({
+    _id: "joystick-1",
+    _type: "joystick",
+    _parent_element: "xcontrols",
+    _move_speed: 0.2,
+    _joy_options: {
+        size: 120,
+        multitouch: true,
+        maxNumberOfNipples: 1,
+        mode: 'static',
+        restJoystick: true,
+        shape: 'circle',
+        position: { bottom: '90px', left: '90px' },
+        dynamicPage: true,
+        color: "green"
+    }
+})
 
 // XUI.loadControl({
 //     _id: "transform",
@@ -203,7 +214,7 @@ topBar.mount("player")
 // }
 
 
-_loader.loadGLTF("/keren-av.glb", {
+_loader.loadGLTF("/porsche.glb", {
     _id: "aime",
     name: "aime",
     _position: { x: 0, y: 0, z: 0.00 },
@@ -217,19 +228,23 @@ _loader.loadGLTF("/keren-av.glb", {
     //     xobj._rotation.z += 0.01
     // },
     _collider: "box",
-    _mass: 50
+    _mass: 50,
+    _on_frame:"rotation x:0 y:++0.01 z:0"
 }, async (x3dObject: X3DObject) => {
     
-    await x3dObject.importAnimationFromFBXFile("anim/Injured.fbx", "Injured")
+
+
+
+    // await x3dObject.importAnimationFromFBXFile("anim/Injured.fbx", "Injured")
     
   
-    await x3dObject.importAnimationFromFBXFile("anim/Rapping.fbx", "Rapping")
-    await x3dObject.importAnimationFromFBXFile("anim/Idle.fbx", "Idle")
-    // x3dObject.setRotation( { x: -1.55, y: 0.01, z: -2.60 })
-    x3dObject.playAnimation("Rapping",THREE.LoopRepeat)
-    // X3D.world.setTransformControls(x3dObject)    
-    // const helper = new THREE.SkeletonHelper( x3dObject.getThreeObject() );
-    // X3D.world.scene.add( helper );
+    // await x3dObject.importAnimationFromFBXFile("anim/Rapping.fbx", "Rapping")
+    // await x3dObject.importAnimationFromFBXFile("anim/Idle.fbx", "Idle")
+    // // x3dObject.setRotation( { x: -1.55, y: 0.01, z: -2.60 })
+    // x3dObject.playAnimation("Rapping",THREE.LoopRepeat)
+    // // X3D.world.setTransformControls(x3dObject)    
+    // // const helper = new THREE.SkeletonHelper( x3dObject.getThreeObject() );
+    // // X3D.world.scene.add( helper );
     
 })
 

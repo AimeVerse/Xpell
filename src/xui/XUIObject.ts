@@ -25,7 +25,7 @@ export class XUIObject extends XObject {
     
 
 
-    constructor(data, defaults) {
+    constructor(data, defaults,skipParse?:boolean) {
         super(data,defaults,true)
         this._html_tag = "div";
         this._html_ns = null
@@ -37,10 +37,8 @@ export class XUIObject extends XObject {
         
         //this._base_display = "block"
 
-        if (data) {
-            if (data.hasOwnProperty("_ignore")) {
-                this._ignore = XUtils.createIgnoreList(data["_ignore"],reservedWords)
-            }
+        if (data && !skipParse) {
+           
             this.parse(data, this._ignore);
         }
 

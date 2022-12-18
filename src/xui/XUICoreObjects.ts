@@ -8,7 +8,7 @@ import { IXObjectData,XObjectPack } from "../XObject";
 export class XView extends XUIObject {
     constructor(data) {
         const defaults =  {
-            [_XC.NODES.type] : "view",
+            _type: "view",
             "class":"xview"
         };
         super(data,defaults);
@@ -20,7 +20,7 @@ export class XHeader extends XUIObject {
     constructor(data:IXObjectData) {
         const tag = "header"
         const defaults = {
-            [_XC.NODES.type] : tag,
+            _type: tag,
             class:"x" + tag,
             _html_tag:tag
         }
@@ -32,7 +32,7 @@ export class XNavBar extends XUIObject {
     constructor(data:IXObjectData) {
         const tag = "navbar"
         const defaults = {
-            [_XC.NODES.type] : tag,
+            _type: tag,
             class:"x" + tag,
             _html_tag:"nav"
         }
@@ -44,7 +44,7 @@ export class XForm extends XUIObject {
     constructor(data) {
         const tag = "form"
         const defaults = {
-            [_XC.NODES.type] : tag,
+            _type: tag,
             class:"x" + tag,
             _html_tag:tag
         }
@@ -59,7 +59,7 @@ export class XImage extends XUIObject {
     constructor(data) {
         const tag = "image"
         const defaults = {
-            [_XC.NODES.type] : tag,
+            _type: tag,
             class:"x" + tag,
             _html_tag:"img"
         }
@@ -71,7 +71,7 @@ export class XVideo extends XUIObject {
     constructor(data) {
         const tag = "video"
         const defaults = {
-            [_XC.NODES.type] : tag,
+            _type: tag,
             class:"x" + tag,
             _html_tag:tag
         }
@@ -88,14 +88,12 @@ export class XWebcam extends XUIObject {
     constructor(data) {
         const tag = "webcam"
         const defaults = {
-            [_XC.NODES.type] : tag,
+            _type: tag,
             class:"x" + tag,
             _html_tag:"video"
         }
-        super(data,defaults);
-
-        
-        super(data,defaults)
+        super(data,defaults,true)
+        this.parse(data)
         
         this.autoplay = true
         this.muted = true
@@ -150,18 +148,33 @@ export class XTextField extends XUIObject {
     constructor(data) {
         const tag = "text"
         const defaults = {
-            [_XC.NODES.type] : tag,
+            _type : tag,
             class:"x" + tag,
             _html_tag:"input"
         }
         super(data,defaults);
     }
 }
+
+export class XPassword extends XUIObject {
+    constructor(data) {
+        const tag = "text"
+        const defaults = {
+            _type : tag,
+            type:"password",
+            class:"x" + tag,
+            _html_tag:"input"
+        }
+        super(data,defaults);
+    }
+}
+
+
 export class XInput extends XUIObject {
     constructor(data) {
         const tag = "input"
         const defaults = {
-            [_XC.NODES.type] : tag,
+            _type : tag,
             class:"x" + tag,
             _html_tag:"input"
         }
@@ -172,7 +185,7 @@ export class XInput extends XUIObject {
 export class XTextArea extends XUIObject {
     constructor(data) {
         const defs = {
-            [_XC.NODES.type]:"textarea",
+            _type:"textarea",
             "class":"form-control",
             "_html_tag":"textarea"
         }
@@ -191,7 +204,7 @@ export class XLink extends XUIObject {
     constructor(data:IXObjectData) {
         const tag = "link"
         const defaults = {
-            [_XC.NODES.type] : tag,
+            _type : tag,
             class:"x" + tag,
             _html_tag:"a"
         }
@@ -202,7 +215,7 @@ export class XLink extends XUIObject {
 export class XLabel extends XUIObject {    
     constructor(data) {
         const defaults = {
-            [_XC.NODES.type]:"label",
+            _type:"label",
             _html_tag:"label",
             class:"xlabel"
         }
@@ -213,7 +226,7 @@ export class XLabel extends XUIObject {
 export class XHTML extends XUIObject {    
     constructor(data) {
         const defaults = {
-            [_XC.NODES.type]:"xhtml",
+            _type:"xhtml",
             _html_tag: (data["_html_tag"]) ?data["_html_tag"] : "div"
 
         }
@@ -226,7 +239,7 @@ export class XSVG extends XUIObject {
 
     constructor(data) {
         const defaults = {
-            [_XC.NODES.type]:"svg",
+            _type:"svg",
             _html_tag: "svg",
             _svg_data: ""
 
@@ -236,7 +249,6 @@ export class XSVG extends XUIObject {
 }
 
 export class XButton extends XUIObject {
-    onClick: CallableFunction;
     constructor(data) {
         const defs = {
             _type : "button",
@@ -248,7 +260,7 @@ export class XButton extends XUIObject {
     
     setOnclick(fun:CallableFunction)
     {
-        this.onClick = fun;
+        this._on_click = fun;
     }
 }
 
@@ -258,12 +270,13 @@ export class XList extends XUIObject {
     constructor(data) {
     
         const defaults = {
-            [_XC.NODES.type]:"list",
+            _type:"list",
             _html_tag:"div",
             class:"xlist",
             _items:[]
         }
-        super(data,defaults);
+        super(data,defaults,true);
+        super.parse(data)
         if(this._items.length>0) {
             this._items.forEach(item => {
                 const si = new XView(item)
@@ -284,6 +297,7 @@ export class XUIObjects extends XObjectPack {
             "link" :XLink,
             "button" :XButton,
             "text" : XTextField,
+            "password" : XPassword,
             "input":XInput,
             "textarea":XTextArea,
             "video" : XVideo,

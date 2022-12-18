@@ -90,7 +90,7 @@ const ttso = XAI.create({_type:"tts",_voice:"Samantha"})
 
 
 document.addEventListener("tts-voices-loaded",(e)=>{
-    ttso.speak("hey my name is bond, James Bond")
+    ttso.speak("The name is samantha, the first ai voice" )
     // console.log(ttso.getVoices());
 
 })

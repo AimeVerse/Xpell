@@ -83,7 +83,7 @@ const world = {
                 _position: { x: 0, y: 1.75, z: -40 },
                 _rotation: { x: 0, y: 0, z: 0 },
                 _disable_frame_3d_state: true,
-                _add_audio_listener:true
+                _positional_audio_listener:true
             }
         },
         controls: {

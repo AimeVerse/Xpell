@@ -4,7 +4,9 @@ import { XObjectPack } from "../XObject";
 import XAIObject from "./XAIObject";
 
 
-
+/**
+ * Xpell Web TTS (Text to Speech)
+ */
 export class XTTS extends XAIObject {
 
     static xtype = "tts"
@@ -12,7 +14,7 @@ export class XTTS extends XAIObject {
     voices:Array<SpeechSynthesisVoice> = [];
 
     constructor(data) {
-        super(data, { _type: XTTS.xtype, _voice: "samantha" })
+        super(data, { _type: XTTS.xtype, _voice: "Kathy" })
         this.defaults_voice = null;
         this.defaults_voice_name = this._voice;
         this.speach_rate = 1;

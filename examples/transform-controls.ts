@@ -99,7 +99,7 @@ const world = {
                 _rotation: { x: 0, y: 0, z: 0 },
                 _disable_frame_3d_state: true, //set true for cam-controls
                 _3d_set_once: true,
-                _add_audio_listener: true
+                _positional_audio_listener: true
             }
         },
         controls: {

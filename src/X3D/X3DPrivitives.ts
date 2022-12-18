@@ -471,7 +471,8 @@ export class X3DPrimitives extends XObjectPack {
             "cone": XCone,
             // "floor": XFloor,
             "perspective-camera": XCamera,
-            "light": XLight,
+            "camera": XCamera, //alias to perspective-camera
+            "light": XLight, // alias to ambient-light
             // "skeleton": XSkeleton
         }
     }
