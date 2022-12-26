@@ -14,7 +14,7 @@ export class XTTS extends XAIObject {
     voices:Array<SpeechSynthesisVoice> = [];
 
     constructor(data) {
-        super(data, { _type: XTTS.xtype, _voice: "Kathy" })
+        super(data, { _type: XTTS.xtype, _voice: "Samantha" })
         this.defaults_voice = null;
         this.defaults_voice_name = this._voice;
         this.speach_rate = 1;

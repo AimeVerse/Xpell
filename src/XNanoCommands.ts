@@ -20,17 +20,17 @@ export const _xobject_basic_nano_commands:XNanoCommandPack = {
         _xlog.log("XObject id " + xObject._id)
     },
     "log": (xCommand: XCommand, xObject?: XObject) => {
-        if (xCommand.params["1"]) {
-            _xlog.log(xCommand.params["1"])
+        if (xCommand._params["1"]) {
+            _xlog.log(xCommand._params["1"])
         } else {
             _xlog.log(xObject)
         }
     },
     "fire":(xCommand: XCommand, xObject ?: XObject) => {
-        if (xCommand.params["1"]) {
-            _xem.fire(xCommand.params["1"])
-        } else if (xCommand.params["event"]) {
-            _xem.fire(xCommand.params["event"])
+        if (xCommand._params["1"]) {
+            _xem.fire(xCommand._params["1"])
+        } else if (xCommand._params["event"]) {
+            _xem.fire(xCommand._params["event"])
         }
     }
 }

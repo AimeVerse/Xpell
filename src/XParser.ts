@@ -44,13 +44,13 @@ export class XParser {
         let rv = new XCommand()
         if(module){
 
-            rv["module"]= module
-            rv["op"] =  carr[0]
+            rv["_module"]= module
+            rv["_op"] =  carr[0]
         } else {
-            rv["module"]= carr[0]
-            rv["op"] =  carr[1]
+            rv["_module"]= carr[0]
+            rv["_op"] =  carr[1]
         }
-        rv["params"] = {}
+        rv["_params"] = {}
         
         if(carr.length>1){
             for (let i=2;i<carr.length;++i){
@@ -58,11 +58,11 @@ export class XParser {
                 const dl = v.indexOf(":")
                 if(dl>-1){
                     const mc = v.split(":")
-                    rv.params[mc[0]] = mc[1]
+                    rv._params[mc[0]] = mc[1]
                 }
                 else
                 {
-                    rv.params[i-1] = carr[i]
+                    rv._params[i-1] = carr[i]
                 }
                 
             }
@@ -83,9 +83,9 @@ export class XParser {
         let args:Array<string> = XParser.parseArguments(code);
 
         let cmd = new XCommand();
-        cmd.module = args[0];
-        cmd.op = args[1];
-        cmd.params = {};
+        cmd._module = args[0];
+        cmd._op = args[1];
+        cmd._params = {};
 
 
         // start params from index 2
@@ -99,11 +99,11 @@ export class XParser {
             let paramValue = XParser.fixArgumentValue(paramStr.substring(finalDelimiter + 1));
 
             if (paramName === "frame")
-                cmd.executeOnFrame = paramValue;
+                cmd._run_on_frame = paramValue;
             else if (paramName === "on")
-                cmd.executeOnEvent = paramValue;
+                cmd._run_on_event = paramValue;
             else
-                cmd.params[paramName] = paramValue
+                cmd._params[paramName] = paramValue
         }
 
 

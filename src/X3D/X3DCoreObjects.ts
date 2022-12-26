@@ -1,7 +1,7 @@
 import * as THREE from 'three'
 import X3DObject, { IX3DObjectData } from './X3DObject'
 
-const threeCameras = {
+export const threeCameras = {
     "perspective-camera": THREE.PerspectiveCamera,
     "perspective": THREE.PerspectiveCamera, //alias 
     "camera": THREE.PerspectiveCamera, //alias for default camera
@@ -9,13 +9,13 @@ const threeCameras = {
     "orthographic":THREE.OrthographicCamera // alias
 }
 
-const threeLights = {
+export const threeLights = {
     "ambient": THREE.AmbientLight,
     "directional": THREE.DirectionalLight,
     "spotlight":THREE.SpotLight
 }
 
-const threeGeometries = {
+export const threeGeometries = {
     // 2D
     "plane-geometry": THREE.PlaneGeometry,
     "circle-geometry": THREE.CircleBufferGeometry,
@@ -30,7 +30,7 @@ const threeGeometries = {
 }
 
 
-const threeMaterials = {
+export const threeMaterials = {
     "standard-material": THREE.MeshPhysicalMaterial,
     "basic-material": THREE.MeshBasicMaterial,
     "shader-material": THREE.ShaderMaterial,
@@ -52,7 +52,9 @@ export interface XCameraData extends IX3DObjectData {
 }
 
 
-
+/**
+ * XCamera - Three Camera wrapper
+ */
 export class XCamera extends X3DObject {
    
     static xtype:string = "camera"
@@ -73,7 +75,7 @@ export class XCamera extends X3DObject {
         super(data) // parse parent class fields (X3dDObject & XObject)
         this.parseFields(data,fieldsToParse,true) //parse Camera fields
         this._three_obj = null  // reset THREE object 
-        this._three_class = threeCameras[data._type] // define THREE class 
+        this._three_class = threeCameras[data._camera] // define THREE class 
         this._threes_class_args = [this._fov, this._ratio, this._close, this._far] // define THREE class arguments 
     }
 }
@@ -87,7 +89,7 @@ export type  XLightTypes = "ambient" | "directional" | "spotlight"
  * XLight Data 
  */
 export interface XLightData extends IX3DObjectData {
-    _light:XLightTypes, //xlight type
+    _light?:XLightTypes, //xlight type
     _color? : number | string | THREE.Color, // light color
     _intensity?: number // light intensity (float value range 0 - 1 default 1.0 )
 }
@@ -99,7 +101,7 @@ export interface XLightData extends IX3DObjectData {
 export class XLight extends X3DObject {
     static xtype = "light"
     readonly _is_light:boolean = true 
-    _light:XLightTypes = "ambient"
+    _light?:XLightTypes = "ambient"
     _color? :THREE.Color | number =  0xffffff
     _intensity?:number = 1.0
 
@@ -248,13 +250,12 @@ export class XMesh extends X3DObject {
 
     constructor(data, defaults = {
         _type: "mesh",
-        _three_class: THREE.Mesh,
-        _three_obj:null,
         _geometry: null,
         _material: null,
         _positional_audio_source:null
     }) {
         super(data, defaults)
+        this._three_class = THREE.Mesh
         this._three_class = THREE.Mesh
         if(!this._three_obj) {
             
@@ -292,11 +293,11 @@ export class XGroup extends X3DObject {
         _three_obj:null,
     }) {
         super(data, defaults)
-    }
-
-   
-
+    }   
 }
+
+export default {XCamera}
+
 
 
 

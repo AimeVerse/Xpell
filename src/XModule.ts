@@ -30,6 +30,7 @@ import {XLogger as _xl} from "./XLogger";
 import XObjectManager from "./XObjectManager";
 import * as _XC from "./XConst"
 import {XObject,XObjectPack} from "./XObject";
+import XCommand from "./XCommand";
 
 
 
@@ -135,31 +136,24 @@ export  class XModule {
      * @param {XCommand} XCommand input (JSON)
      * @returns command execution result
      */
-    async execute(xCommand) {
+    async execute(xCommand:XCommand) {
 
 
         //search for xpell wrapping functions (starts with _ "underscore" example -> _start() , async _spell_async_func() )
-        const lop = "_" + xCommand.op.replaceAll('-', '_') //search for local op = lop
+        const lop = "_" + xCommand._op.replaceAll('-', '_') //search for local op = lop
         if (this[lop] && typeof this[lop] === 'function') {
             return this[lop](xCommand)
         } 
-        // else if (this.engine && this.engine.om) //direct spell injection to specific module -> deprecated rem
-        // {
-        //     _xl.log("STILL RUNNING FROM ENGINE -- DEPRECATED");
-        //      const o = this.engine.om.getObjectByName(xCommand.op)
-        //     if (o) { o.execute(xCommand) }
-        //     else { throw "Xpell Module cant find op:" + xCommand.op }
-        // }
         else if (this.objectManger) //direct xpell injection to specific module
         {
             
-            const o = this.objectManger.getObjectByName(xCommand.op)
+            const o = this.objectManger.getObjectByName(xCommand._op)
             // console.log(o);
             if (o) { o.execute(xCommand) }
-            else { throw "Xpell Module cant find op:" + xCommand.op }
+            else { throw "Xpell Module cant find op:" + xCommand._op }
         }
         else {
-            throw "Xpell Module cant find op:" + xCommand.op
+            throw "Xpell Module cant find op:" + xCommand._op
         }
 
 
@@ -211,7 +205,7 @@ export  class XModule {
      * @param xObjectName 
      * @param xObject 
      */
-     importObject(xObjectName,xObject) {
+    importObject(xObjectName,xObject) {
         this.objectManger.registerObject(xObjectName,xObject)
     }
 

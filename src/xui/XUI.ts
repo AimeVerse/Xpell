@@ -100,8 +100,10 @@ export class XUIModule extends XModule {
 
     addControlsPack(controls: {}) {
         Object.keys(controls).forEach(ctrl => {
-            if(ctrl == _xc.NODES.parent_element) {this._controls_element = <string>controls[ctrl];console.log("controls parent element " + controls[ctrl])}
-            else {this.loadControl(controls[ctrl])}
+            if(ctrl == _xc.NODES.parent_element) {this._controls_element = <string>controls[ctrl]}
+            else {
+                this.loadControl(controls[ctrl])
+            }
         })
     }
 

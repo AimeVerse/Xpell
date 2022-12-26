@@ -51,31 +51,31 @@ export interface IX3DObjectData extends IXObjectData {
 
 export class X3DObject extends XObject {
     _three_class: any
+    _threes_class_args: Array<any>
     _three_obj: THREE.Object3D | null
     _cannon_obj: CANNON.Body | undefined
     _cannon_shape: CANNON.Shape | undefined
     _mass: number
     _enable_physics: boolean
-     _position: THREE.Vector3
+    _position: THREE.Vector3
     _rotation: THREE.Euler
-     _scale: THREE.Vector3
+    _scale: THREE.Vector3
+    _on_frame: string | Function | undefined
     protected _visible: boolean
     private _animation: boolean
-    private _animation_clips: {}
-    private _fade_duration: number
-    private _clock: THREE.Clock
-    _fraction: number
-    _threes_class_args: Array<any>
-    _animation_mixer: THREE.AnimationMixer
+    protected _animation_clips: {}
+    protected _fade_duration: number
+    protected _clock: THREE.Clock
+    protected _fraction: number
+    protected _animation_mixer: THREE.AnimationMixer
     private _frame_number: number
-    _on_frame: string | Function | undefined
-    private _cache_cmd_txt: string | null
-    private _cache_jcmd: any
-    private _disable_frame_3d_state!: boolean
-    private _3d_set_once: boolean
-    private _current_action: string
-    private _positional_audio: THREE.PositionalAudio | undefined
-    private _positional_audio_source: string
+    protected _cache_cmd_txt: string | null
+    protected _cache_jcmd: any
+    protected _disable_frame_3d_state!: boolean
+    protected _3d_set_once: boolean
+    protected _current_action: string
+    protected _positional_audio: THREE.PositionalAudio | undefined
+    protected _positional_audio_source: string
 
     static getXData(threeObj: THREE.Object3D, defaults) {
         let _xdata = {
@@ -228,6 +228,8 @@ export class X3DObject extends XObject {
     set3DState() {
         if (this._three_obj) {
             if (this._scale) this._three_obj.scale.copy(this._scale) //in case that other engine (like physics) controls the position
+            // console.log(this._id,this._rotation);
+            
             if (this._rotation) this._three_obj.rotation.copy(this._rotation)
             if (this._position) this._three_obj.position.copy(this._position)
         }

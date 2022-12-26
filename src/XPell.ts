@@ -128,10 +128,10 @@ export class XpellEngine {
      * @param {XCommand} 
      */
     execute(xcmd:XCommand):any {
-        if(xcmd && xcmd.module && this.#modules[xcmd.module]) {
-            return this.#modules[xcmd.module].execute(xcmd)
+        if(xcmd && xcmd._module && this.#modules[xcmd._module]) {
+            return this.#modules[xcmd._module].execute(xcmd)
         } else {
-            throw "Xpell module " + xcmd.module + " not loaded"
+            throw "Xpell module " + xcmd._module + " not loaded"
         }
     }
 

@@ -13,9 +13,12 @@ import XModule from "../XModule"
 import X3DObject, { IX3DObjectData } from "./X3DObject"
 import { XEventManager, XEventList } from "../XEventManager"
 import X3DPrimitives from "./X3DPrivitives"
+import { XCameraData, XLightData } from './X3DCoreObjects'
 import XData from "../XData";
 import X3DWorld from './X3DWorld'
-import {XLogger as _xlog} from '../XLogger'
+import { XLogger as _xlog } from '../XLogger'
+import X3DNPC from './X3DNPC'
+
 
 
 const X3DEngineStatus = {
@@ -26,37 +29,68 @@ const X3DEngineStatus = {
 }
 
 export type X3DSceneControl = {
-    _type: "orbit"  | "pointer" | "first-person" | "transform",
-    _active : boolean,
-    params:{}
+    _type: "orbit" | "pointer" | "first-person" | "transform",
+    _active: boolean,
+    _params?: {
+        [k: string]: any
+    }
 }
 
 
-export type X3DApp = {
-    _parent_element:string | {}, //id of the view manager html tag 
-    //"html-tag-id": "x3d-player", //deprecated
-    helper?: {[k:string] : {} | string},
-    physics: {
-        engine:string,
-        _active: boolean,
-        _debug: boolean
-    },
-    scene: {
-        
-        lights: {
-            [k:string] : {} | string
-        },
-        cameras: {
-            [k:string] : {} | string
-        },
-        controls: {
-            [k:string] : X3DSceneControl
-        }
 
-    },
-    "x3d-objects": {
-        [k:string] : {} | string
+
+export type X3DPhysicsEngines = "cannon.js"
+export type X3DHelpers = "axes" | "skeleton"
+
+
+
+/**
+ * X3DHelper Data 
+ */
+
+
+export type X3AxesHelper = {
+    size:number
+}
+
+
+/**
+ * X3DHelper Data 
+ */
+
+export type XHelperData<Type> ={
+    _type: X3DHelpers, //helper type
+    _active: boolean, 
+    _params?: {
+        [Property in keyof Type]: Type[Property]
     }
+}
+
+export type X3DApp = {
+    _parent_element: string , //id of the 3d player html tag 
+    _physics: {
+        _engine?: X3DPhysicsEngines,
+        _active: boolean,
+        _debug?: boolean //enable engine debugging by showing the cannon body shape
+    },
+    _scene: {
+        _helpers?: {
+            [k: string]: XHelperData<X3AxesHelper>
+        },
+        _lights: {
+            [k: string]: XLightData
+        },
+        _cameras: {
+            [k: string]: XCameraData
+        },
+        _controls: {
+            [k: string]: X3DSceneControl
+        }
+        _objects: {
+            [k: string]: IX3DObjectData
+        }
+    },
+
 }
 
 
@@ -67,18 +101,19 @@ export class X3DModule extends XModule {
     world: X3DWorld;
     x3dObjects: {};
     status: number;
-    logger:{
-        createObject:boolean,
-        removeObject:boolean,
-        
+    logger: {
+        createObject: boolean,
+        removeObject: boolean,
+
     } = {
-        createObject:false,
-        removeObject:false
-    }
-    
+            createObject: false,
+            removeObject: false
+        }
+
     constructor() {
         super({ name: "x3d" })
         this.importObjectPack(X3DPrimitives)
+        this.importObjectPack(X3DNPC)
 
         //SpellObjects.load(this)
         XData.objects["x3d-om"] = this.om
@@ -95,12 +130,12 @@ export class X3DModule extends XModule {
      * @deprecated - use loadApp function instead
      */
     async loadWorld(x3dWorldData, autoRun = true) {
-        
+
         await this.loadApp(x3dWorldData)
     }
 
 
-    async loadApp(x3dApp, autoRun = true) {
+    async loadApp(x3dApp:X3DApp, autoRun = true) {
         this.world = new X3DWorld(x3dApp)
         this.status = X3DEngineStatus.Ready
 
@@ -123,14 +158,13 @@ export class X3DModule extends XModule {
     create(data) {
 
         if (this.om.hasObjectClass(data._type)) {
-            if(this.logger.createObject) {
+            if (this.logger.createObject) {
                 _xlog.log("X3D | creating " + data._type);
             }
-            
+
             const xclass = this.om.getObjectClass(data._type)
             const obj = new xclass(data)
             this.om.addObject(obj)
-            
             return obj
         } else return null
     }
@@ -140,23 +174,23 @@ export class X3DModule extends XModule {
      * Removes X3DObject from X3D engine (including world and X3D object manager)
      * @param objectId th e_id of the X3D object to remove
      */
-    async remove(objectId:string){
+    async remove(objectId: string) {
         const xobj = this.om.getObject(objectId)
         this.om.removeObject(objectId)
         await this.world.removeX3DObject(objectId)
         xobj.dispose()
-        // console.log(xobj);
-        
-        //xobj.dispose()
+        if (this.logger.removeObject) {
+            _xlog.log("X3D remove object " + objectId)
+        }
     }
 
     //get spell3d object
-    add(x3dObject:X3DObject) {
+    add(x3dObject: X3DObject) {
         this.om.addObject(x3dObject)
         this.world.addX3DObject(x3dObject)
     }
 
-    addRaw(x3dJson:IX3DObjectData):X3DObject {
+    addRaw(x3dJson: IX3DObjectData): X3DObject {
         const obj = X3D.create(x3dJson)
         X3D.add(obj)
         return obj
@@ -205,7 +239,7 @@ export class X3DModule extends XModule {
 
 
         const intersects = this.world.raycaster.intersectObjects(this.world.scene.children);
-        
+
         intersects.forEach((ints) => {
 
             if (ints?.object) {
@@ -214,12 +248,12 @@ export class X3DModule extends XModule {
                 //search all child objects to find the root object
                 while (obj.parent && !found) {
                     if (obj.parent.type == "Scene") {
-                        
-                        const x3dObject  = X3D.om.getObjectByName(obj.name)
-                        if(x3dObject){
+
+                        const x3dObject = X3D.om.getObjectByName(obj.name)
+                        if (x3dObject) {
                             //console.log(x3dObject);
                             //X3D.world.setTransformControls(x3dObject)
-                            XEventManager.fire("raycast-data",{detail:{x3dObject:x3dObject}})
+                            XEventManager.fire("raycast-data", { detail: { x3dObject: x3dObject } })
                         }
                         found = true
                     }
@@ -229,7 +263,7 @@ export class X3DModule extends XModule {
                 }
             }
         })
-        
+
     }
 
     set_world_control_target(cameraTarget) {
@@ -242,21 +276,21 @@ export class X3DModule extends XModule {
     }
 
 
- // document.addEventListener('keydown', (event) => {
-        //     // const world = this.world;
+    // document.addEventListener('keydown', (event) => {
+    //     // const world = this.world;
 
-        //     switch (event.code) {
-        //         case 'KeyG':
-        //             this.world.widgetControlls.setMode('translate')
-        //             break
-        //         case 'KeyR':
-        //             this.world.widgetControlls.setMode('rotate')
-        //             break
-        //         case 'KeyS':
-        //             this.world.widgetControlls.setMode('scale')
-        //             break
-        //     }
-        // })
+    //     switch (event.code) {
+    //         case 'KeyG':
+    //             this.world.widgetControlls.setMode('translate')
+    //             break
+    //         case 'KeyR':
+    //             this.world.widgetControlls.setMode('rotate')
+    //             break
+    //         case 'KeyS':
+    //             this.world.widgetControlls.setMode('scale')
+    //             break
+    //     }
+    // })
 
 
     /**
@@ -265,9 +299,9 @@ export class X3DModule extends XModule {
      * @param images - optional images array like ["px.jpg","nx.jpg","py.jpg","ny.jpg","pz.jpg","nz.jpg"]
      */
     addEnvironmentMap(path, images?) {
-       
 
-        if(!images) images = ["px.jpg","nx.jpg","py.jpg","ny.jpg","pz.jpg","nz.jpg"]
+
+        if (!images) images = ["px.jpg", "nx.jpg", "py.jpg", "ny.jpg", "pz.jpg", "nz.jpg"]
         const loader = new THREE.CubeTextureLoader();
         const environmentMap = loader
             .setPath(path)

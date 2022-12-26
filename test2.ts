@@ -20,6 +20,9 @@ XUI.importObjectPack(XEditor)
 _x.start()
 
 
+
+
+
 const xapp:XUIApp = {
     _views: {
         _parent_element:"player",
@@ -32,13 +35,13 @@ const xapp:XUIApp = {
                     _text:"menu1",
                     style:"text-align:center",
                     _on_click:(menu,e) => {
-                        XUI.vm.hidePage("left-menu")
+                        XUI.vm.showPage("page-2")
                     },
                     _on_mount:(menu) => {
                         console.log("mounted")
                     },
                     _on_frame:(menu,frameNumber:number) => {
-                        menu.getDOMObject().textContent = frameNumber
+                        //menu.getDOMObject().textContent = frameNumber
                     }
 
                 },
@@ -56,7 +59,7 @@ const xapp:XUIApp = {
         },
         "page-2":{
             _type:"view",
-            style:"left:50px;width:50px;position:absolute;height:300px;background-color:green"
+            style:"left:150px;width:50px;position:absolute;height:300px;background-color:green"
         }
     },
     // _controls:{
@@ -78,19 +81,26 @@ XUI.loadApp(xapp)
 // XUI.loadControl(view)
 
 
+XUI.vm.addRawView("third-view",{
+    _type:"view",
+    style:"left:200px;width:50px;position:absolute;height:300px;background-color:brown"
+})
+
+
+
 XUI.vm.showPage("left-menu")
-// XUI.vm.showView("page-2")
+ XUI.vm.showView("third-view")
 // XUI.vm.hidePage("menu")
 // XUI.vm.showPage("page-2")
 // XUI.vm.hidePage("page-2")
 
 
 
-const ttso = XAI.create({_type:"tts",_voice:"Samantha"})
+const ttso = XAI.create({_type:"tts",_voice:"Kathy"})
 
 
 document.addEventListener("tts-voices-loaded",(e)=>{
-    ttso.speak("The name is samantha, the first ai voice" )
+    ttso.speak("Hey, my name is samantha,[[slnc 1000]] I am the voice of the local operating system " )
     // console.log(ttso.getVoices());
 
 })

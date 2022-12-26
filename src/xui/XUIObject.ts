@@ -17,7 +17,8 @@ export class XUIObject extends XObject {
     _type:string  //[_SC.NODES.type]
     _html: string | undefined
     _base_display: string | undefined | null  
-    text: string
+    text: string //depracted
+    _text: string
     _data_source: string | null 
     _on_frame_skip_data_source: any
     _format: string | null

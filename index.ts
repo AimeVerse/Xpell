@@ -36,13 +36,27 @@ export {TopBar} from "./src/XUI/XDashboard"
 export {XJoystick} from "./src/XUI/XJoystick"
 export {XViewManager} from "./src/XUI/XViewManager"
 export {X3D} from "./src/X3D/X3D"
-import IX3DObjectData from "./src/X3D/X3DObject"
-export {IX3DObjectData}
 export {X3DObject} from "./src/X3D/X3DObject"
 export {XCamera,XGeometry,XGroup,XLight,XMaterial,XMesh} from "./src/X3D/X3DCoreObjects"
-export {X3DPrimitives,XBox,XCone,XCylinder,XFloor,XPlane,XSkeleton,XSphere,XTorus} from "./src/X3D/X3DPrivitives"
+export {X3DPrimitives,XBox,XCone,XCylinder,XPlane,XSphere,XTorus} from "./src/X3D/X3DPrivitives"
 export {X3DWorld,XWorldStatus} from "./src/X3D/X3DWorld"
 export {XEditor,XTransformControls } from "./src/XUI/XEditor"
 export {X3DLoader} from "./src/X3D/X3DLoader"
 
 
+/**
+ * Interface and Types
+ * -- should be in a single line for each to prevent build errors
+ */
+import IX3DObjectData from "./src/X3D/X3DObject"
+import XCameraTypes from "./src/X3D/X3DCoreObjects"
+import XCameraData from "./src/X3D/X3DCoreObjects"
+import XLightData from "./src/X3D/X3DCoreObjects"
+import XLightTypes from "./src/X3D/X3DCoreObjects"
+export {IX3DObjectData}
+export {XCameraTypes}
+export {XCameraData}
+export {XLightData}
+export {XLightTypes}
+
+export * from "./src/X3D/X3DCoreObjects"

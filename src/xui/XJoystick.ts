@@ -10,7 +10,7 @@ import XData from "../XData"
 
 import nipplejs from 'nipplejs';
 //import {JoystickManagerOptions} from 'nipplejs';
-//import * as nipplejs from 'nipplejs';
+// import * as nipplejs from 'nipplejs';
 // unmark for creating types
 
 

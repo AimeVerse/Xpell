@@ -19,7 +19,7 @@ export type wordsList = {
 }
 
 const reservedWords: wordsList = { _children: "child nodes" }
-const xpell_object_html_fields_mapping = { "_id": "id", "css-class": "class", "animation": "xyz", "input-type": "type" };
+// const xpell_object_html_fields_mapping = { "_id": "id", "css-class": "class", "animation": "xyz", "input-type": "type" };
 
 /**
  * XObject constructor data interface 
@@ -293,14 +293,14 @@ export class XObject implements IXObjectData {
     async execute(xCommand: XCommand) {
         // run nano commands
 
-        if (this._nano_commands[xCommand.op]) {
+        if (this._nano_commands[xCommand._op]) {
             try {
-                this._nano_commands[xCommand.op](xCommand,this)
+                this._nano_commands[xCommand._op](xCommand,this)
             } catch (err) {
-                _xlog.error(this._id + " has error with command name " + xCommand.op + " "+ err)
+                _xlog.error(this._id + " has error with command name " + xCommand._op + " "+ err)
             }
         } else {
-            _xlog.error(this._id + " has no command name " + xCommand.op)
+            _xlog.error(this._id + " has no command name " + xCommand._op)
         }
     }
 }

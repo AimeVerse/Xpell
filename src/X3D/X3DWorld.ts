@@ -14,7 +14,7 @@ import { CannonDebugRenderer } from './X3DUtils';
 import XUtils from '../XUtils';
 import XData from '../XData';
 import {XLogger as _xlog} from '../XLogger'
-import {X3D,X3DObject} from "./X3D"
+import {X3D,X3DApp,X3DObject} from "./X3D"
 
 
 
@@ -69,7 +69,7 @@ const xWorldDefaults = {
 
 export class X3DWorld {
     status: number;
-    worldRowData: any;
+    worldRowData: X3DApp;
     scene: THREE.Scene;
     clock: THREE.Clock;
     renderer: THREE.WebGLRenderer;
@@ -79,24 +79,24 @@ export class X3DWorld {
     private transformControlX3dObject:X3DObject
     private transformControlsListenerAdded: boolean;
     lights: {};
-    x3dObjects: {};
+    x3dObjects: {[k:string]:X3DObject};
     defaultCamera: any;
     controls: OrbitControls | PointerLockControls | FirstPersonControls;
     frameProcessTime: number;
     audioListener:THREE.AudioListener
     enablePhysics:boolean = true
-    cWorld:CANNON.World
+    private physicsWorld:CANNON.World
     logger:{
         addObject:boolean,
         removeObject:boolean,
         
     } = {
-        addObject:true,
+        addObject:false,
         removeObject:false
     }
     private cannonDebugRenderer: CannonDebugRenderer;
 
-    constructor(xworld) {
+    constructor(xworld:X3DApp) {
 
         XUtils.mergeDefaultsWithData(xworld, xWorldDefaults)
 
@@ -118,32 +118,32 @@ export class X3DWorld {
         this.defaultCamera = null
         
         
-        this.enablePhysics = (xworld.physics) ? xworld.physics._active : false
+        this.enablePhysics = (xworld._physics) ? xworld._physics._active : false
         if(this.enablePhysics) {
             _xlog.log("Physics engine (Cannon.JS) is active")
-            this.cWorld = new CANNON.World()
+            this.physicsWorld = new CANNON.World()
             
             // Tweak contact properties.
             // Contact stiffness - use to make softer/harder contacts
-            this.cWorld.defaultContactMaterial.contactEquationStiffness = 1e9
+            this.physicsWorld.defaultContactMaterial.contactEquationStiffness = 1e9
             
             // Stabilization time in number of timesteps
-            this.cWorld.defaultContactMaterial.contactEquationRelaxation = 4
+            this.physicsWorld.defaultContactMaterial.contactEquationRelaxation = 4
             
             const solver = new CANNON.GSSolver()
             solver.iterations = 7
             solver.tolerance = 0.1
-            this.cWorld.solver = new CANNON.SplitSolver(solver)
+            this.physicsWorld.solver = new CANNON.SplitSolver(solver)
             // use this to test non-split solver
             // cWorld.solver = solver
             
-            this.cWorld.gravity.set(0, -9.83, 0)
+            this.physicsWorld.gravity.set(0, -9.83, 0)
             
-            this.cWorld.broadphase = new CANNON.NaiveBroadphase();
+            this.physicsWorld.broadphase = new CANNON.NaiveBroadphase();
 
-            if(xworld.physics._debug) {
+            if(xworld._physics._debug) {
                 
-                this.cannonDebugRenderer = new CannonDebugRenderer(this.scene,this.cWorld)
+                this.cannonDebugRenderer = new CannonDebugRenderer(this.scene,this.physicsWorld)
             }
 
         } else {
@@ -164,22 +164,25 @@ export class X3DWorld {
 
         const xworld = this.worldRowData
 
-        //get cameras
 
         let idx = 0
 
-        // this.default_camera = new THREE.PerspectiveCamera(20, window.innerWidth / window.innerHeight, 0.01, 5000 );
-        // this.default_camera.position.set(0,0,55)
-        // this.scene.add(this.default_camera)
-
-        if(xworld.helper && xworld.helper.axes){
-            const axesHelper = new THREE.AxesHelper( xworld.helper.axes );
-            this.scene.add( axesHelper );
+        if(xworld._scene._helpers){
+            Object.keys(xworld._scene._helpers).forEach(async helperIndex => {
+                let helper = xworld._scene._helpers[helperIndex]
+                if (helper._type == "axes" && helper._active) {
+                    const  axesLength = (helper._params && helper._params["size"]) ?  helper._params["size"] : 5
+                    
+                    const axesHelper = new THREE.AxesHelper( axesLength );
+                    this.scene.add( axesHelper )
+                }
+               
+            })
         }
-        if (xworld.scene.cameras) {
-            const keys = Object.keys(xworld.scene.cameras)
+        if (xworld._scene._cameras) {
+            const keys = Object.keys(xworld._scene._cameras)
             for (let i = 0; i < keys.length; ++i) {
-                const camera = xworld.scene.cameras[keys[i]]
+                const camera = xworld._scene._cameras[keys[i]]
                 camera.name = keys[i]
 
                 
@@ -205,9 +208,9 @@ export class X3DWorld {
         }
 
         //get lights
-        if (xworld.scene.lights) {
-            Object.keys(xworld.scene.lights).forEach(light_name => {
-                const lgt = xworld.scene.lights[light_name]
+        if (xworld._scene._lights) {
+            Object.keys(xworld._scene._lights).forEach(light_name => {
+                const lgt = xworld._scene._lights[light_name]
                 let light = X3D.create(lgt)
                 light.name = light_name
                 
@@ -226,27 +229,25 @@ export class X3DWorld {
 
 
         //get x3d-objects
-        if(xworld["x3d-objects"]) {
+        if(xworld._scene._objects) {
 
-            Object.keys(xworld["x3d-objects"]).forEach(async s3dobj => {
-                let ob = xworld["x3d-objects"][s3dobj]
+            Object.keys(xworld._scene._objects).forEach(async s3dobj => {
+                let ob = xworld._scene._objects[s3dobj]
                 ob.name = s3dobj
                 let obj = X3D.create(ob)
                 await this.addX3DObject(obj)
             })
         }
 
-        document.getElementById(xworld["html-tag-id"]).appendChild(this.renderer["domElement"]);
+        document.getElementById(xworld._parent_element).appendChild(this.renderer["domElement"]);
 
         //this.gui = new dat.GUI();
 
-        // Helpers
-        //this.scene.add(new THREE.AxesHelper(5))
+        
 
-
-        if (xworld.scene.controls) {
-            Object.keys(xworld.scene.controls).forEach(async ctrl => {
-                let control = xworld.scene.controls[ctrl]
+        if (xworld._scene._controls) {
+            Object.keys(xworld._scene._controls).forEach(async ctrl => {
+                let control = xworld._scene._controls[ctrl]
                 if (control._type == "orbit" && control._active) {
                     this.controls = new OrbitControls(this.defaultCamera, this.renderer["domElement"]);
                     if (control._params) {
@@ -273,7 +274,8 @@ export class X3DWorld {
                     this.controls.verticalMax = 1.5;
                     this.controls.autoForward = false;
                 }
-                else if (control._type == "transforms" && control._active) {
+                else if (control._type == "transform" && control._active) {
+                    _xlog.log("Transforms controls enabled")
                     this.transformControls = new TransformControls(this.defaultCamera, this.renderer["domElement"])
                     this.transformControls.addEventListener("dragging-changed", (e) => {
                         this.controls["enabled"] = ! e.value
@@ -304,36 +306,44 @@ export class X3DWorld {
         this.renderer["setSize"](w, h);
     }
 
-    async addX3DObject(x3dObject) {
+    /**
+     * Adds X3DObject to the world scene
+     * @param {X3DObject}x3dObject - the X3DObject to add
+     * @returns {X3DObject}X3DObject 
+     */
+    async addX3DObject(x3dObject:X3DObject) {
         if (x3dObject && !x3dObject._ignore_world) {
             if(this.logger.addObject) {_xlog.log("XWorld adding ", x3dObject._id)}
 
-            this.x3dObjects[x3dObject._id] = x3dObject
-            
-            const tobj = x3dObject.getThreeObject()
-            
-            this.scene.add(tobj)
+            this.x3dObjects[<string>x3dObject._id] = x3dObject
+            const threeObject = x3dObject.getThreeObject()
+            this.scene.add(threeObject)
+
+            // if physics engine is on and the X3DObject supports physics 
+            // create new physics object (rigid body) and add it to the physics world
             if(this.enablePhysics && x3dObject._enable_physics) {
-                
                 const cannonObject = x3dObject.getCannonObject()
-                
                 if(cannonObject) {
-                    this.cWorld.addBody(cannonObject)
+                    this.physicsWorld.addBody(cannonObject)
                 }
             }
 
-            return tobj
+            //call the X3DObject onMount function 
+            x3dObject.onMount()
+            return threeObject
         }
     }
 
     async removeX3DObject(objectId:string) {
-        
         if(this.logger.removeObject) _xlog.log("XWorld Removing " + objectId)
-        const tobj = this.x3dObjects[objectId]
-        tobj._three_obj.removeFromParent()
-        if(tobj._cannon_obj) this.cWorld.removeBody(tobj._cannon_obj)
-        
-        delete this.x3dObjects[objectId] 
+        if(this.x3dObjects.hasOwnProperty(objectId)) {
+            const x3dObject = this.x3dObjects[objectId]
+            x3dObject.getThreeObject().removeFromParent()
+            if(x3dObject._cannon_obj) this.physicsWorld.removeBody(x3dObject._cannon_obj)
+            delete this.x3dObjects[objectId] 
+        } else {
+            if(this.logger.removeObject) _xlog.log("XWorld has no X3DObject => " + objectId)
+        }
     
     }
 
@@ -378,14 +388,7 @@ export class X3DWorld {
         if (this.status == XWorldStatus.Running) {
             this.clock.start()
             this.frameNumber = frameNumber
-            // Object.keys(this.x3dObjects).forEach(obj_name => {
-
-            //     const off = this.x3dObjects[obj_name].onFrame
-            //     if (off && (typeof off === 'function')) {
-            //         this.x3dObjects[obj_name].onFrame(frameNumber)
-            //     }
-            // })
-            //update object move
+          
             this.render()
             if (this.controls && this.controls["update"]) {
                 
@@ -412,8 +415,8 @@ export class X3DWorld {
                 }
             }
 
-            if(this.enablePhysics && this.cWorld) {
-                this.cWorld.step(CWORLD_STEP);
+            if(this.enablePhysics && this.physicsWorld) {
+                this.physicsWorld.step(CWORLD_STEP);
                 if(this.cannonDebugRenderer) this.cannonDebugRenderer.update()
             }
 

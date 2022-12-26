@@ -3,7 +3,8 @@ import * as THREE from 'three'
 import { IXObjectData, XObjectPack } from "./src/XObject"
 import { Xpell as _x } from "./src/Xpell"
 import { XData } from "./src/XData"
-import { X3D, X3DObject } from "./src/X3D/X3D"
+import { X3D, X3DApp, X3DObject } from "./src/X3D/X3D"
+import { XCameraData,XLightData } from './src/X3D/X3DCoreObjects'
 import { XLabel } from "./src/XUI/XUICoreObjects"
 import { X3DLoader as _loader, } from "./src/X3D/X3DLoader"
 
@@ -12,6 +13,8 @@ import { XUIObject } from "./src/XUI/XUIObject"
 import XJoystick from "./src/XUI/XJoystick"
 import { TopBar } from "./src/XUI/XDashboard"
 import { XEditor, XTransformControls } from "./src/XUI/XEditor"
+import { NPCStates } from './src/X3D/X3DNPC'
+
 
 //display Xpell engine info
 _x.verbose()
@@ -29,52 +32,37 @@ _x.start()
 
 
 
-export const world = {
-    "html-tag-id": "x3d-player",
-    helper: {
-        //axes: 5
-    },
-    transformControls: {
-        _active: true
-    },
-    physics: {
-        engine: "cannon.js",
+export const world:X3DApp = {
+    _parent_element: "x3d-player",
+    _physics: {
+        _engine: "cannon.js",
         _active: true,
         _debug: true
     },
-    scene: {
-        "lights": {
-            "main": {
+    _scene: {
+        _helpers:{
+            "axes":{
+                _type:"axes",
+                _active:true,
+                _params:{size:5}
+            }
+        },
+        _lights: {
+            "main":{
                 _type: "light",
-                _light: "ambient",
-                color: 0x444466
+                _light:"ambient"
             },
             "p1": {
                 _type: "light",
                 _light: "directional",
                 color: "#ffffff",
                 intensity: 1,
-                _position: { x: 2, y: 5, z: 0 },
-
-            },
-            "p2": {
-                _type: "light",
-                _light: "directional",
-                color: "#ffffff",
-                intensity: 1,
-                _position: { x: -2, y: 5, z: 0 },
-
-            },
-            "p3": {
-                _type: "light",
-                _light: "directional",
-                color: "#ffffff",
-                intensity: 1,
-                _position: { x: 2, y: 5, z: -2},
+                _position: { x: 0, y: 5, z: 0 },
 
             }
+
         },
-        cameras: {
+        _cameras: {
             "main-cam": {
                 _id: "main-cam",
                 _type: "camera",
@@ -86,11 +74,11 @@ export const world = {
                 fov: 30,
                 ratio: window.innerWidth / window.innerHeight,
                 far: 3000,
-                close: 0.01,
+                close: 0.01
                 //_positio_audio_listener: false
             }
         },
-        controls: {
+        _controls: {
             "cam-control": {
                 _type: "orbit",
                 _active: true,
@@ -104,61 +92,67 @@ export const world = {
                     rotateSpeed: 0.3,
                     
                 }
-            }
-        }
+            },
+            "transform": {
+                _type:"transform",
+                _active: true
+            },
 
-    },
-    "x3d-objects": {
-        "pointer": {
-            _type: "sphere",
-            _id: "pointer",
-            _geometry: {
-                _type: "sphere-geometry",
-                widthSegments: 8,
-                heightSegments: 8,
-                radius: 0.01
-            },
-            _material: {
-                _type: "basic-material",
-                color: 0xff99ff,
-                side: 1,
-                // roughness: 0.5,
-            },
-            _position: { x: 0, y: 0.75, z: 0 },
-            _rotation: { x: 0, y: 0, z: 0 },
-            // castShadow: true,
-            _on_frame: `follow-joystick`
         },
-        floor: {
-            _id: "floor",
-            _type: "plane",
-            _geometry: {
-                _type: "plane-geometry",
-                width: 10,
-                height: 10,
-                widthSegments: 100,
-                heightSegments: 100,
+        _objects: {
+                "pointer": {
+                    
+                    _type: "sphere",
+                    _id: "pointer",
+                    _geometry: {
+                        _type: "sphere-geometry",
+                        widthSegments: 8,
+                        heightSegments: 8,
+                        radius: 0.01
+                    },
+                    _material: {
+                        _type: "basic-material",
+                        color: 0xff99ff,
+                        side: 1,
+                        // roughness: 0.5,
+                    },
+                    _position: { x: 0, y: 0.75, z: 0 },
+                    _rotation: { x: 0, y: 0, z: 0 },
+                    // castShadow: true,
+                    _on_frame: `follow-joystick`
+                },
+                floor: {
+                    _id: "floor",
+                    _type: "plane",
+                    _geometry: {
+                        _type: "plane-geometry",
+                        width: 10,
+                        height: 10,
+                        widthSegments: 100,
+                        heightSegments: 100,
 
-            },
-            _material: {
-                _type: "standard-material",
-                color: "#ffffff",
-                side: 2,
-                // wireframe: true
-            },
-            _position: { x: 0, y: -0.01, z: 0 },
-            _rotation: { x: Math.PI / 2, y: 0, z: 0 },
-            _enable_physics: false,
-            _mass: 0
-        }
+                    },
+                    _material: {
+                        _type: "standard-material",
+                        color: "#ffffff",
+                        side: 2,
+                        // wireframe: true
+                    },
+                    _position: { x: 0, y: -0.01, z: 0 },
+                    _rotation: { x: Math.PI / 2, y: 0, z: 0 },
+                    _enable_physics: false,
+                    _mass: 0
+                }
 
-    }
+            }
+    },
+    
 }
 
 
 
 
-await X3D.loadWorld(world)
+await X3D.loadApp(world)
 //X3D.world.logger.addObject = true
 XUI.importObject("top-bar", TopBar)
 
@@ -190,6 +184,60 @@ XUI.loadControl({
     }
 })
 
+
+const getAnimationFileUrl = (name: string) => { return `public/anim/${name}.fbx` }
+
+const gafu = (arr) => {
+    const rv:Array<string> = []
+    arr.forEach((item: string) => rv.push(<string>getAnimationFileUrl(item)))
+    return rv
+}
+
+let npcData = {
+    _type: "npc",
+    _id: "smart-npc",
+    _first_name: "smart",
+    _last_name: "npc",
+    _nick_name: "snpc",
+    _voice: "Amy",
+    _role: "just another smart npc",
+    _general_information: "oooo yehhh",
+    _motivation: "not at all",
+    _avatar: {
+        name: "Ginger*",
+        modelUrl: "/public/637c949a5f29a9ec1a2df3dd_ginger_blendshapes.glb",
+        profilePicture: "N/A"
+    },
+    _npc_state_animations: {
+        Idle: gafu(["Idle",/* "Idle-2", "Standing-Idle"*/]),
+         Talking: gafu(["Idle"/*, "Talking-2"*/]),
+        // Floating: gafu(["Floating"]),
+    },
+    _position: { x: 0, y: 0, z: 0 },
+    _fade_duration: 0.6,
+    //_rotation: { x: 2.75, y: 0.16, z: 3.13 },
+    _rotation: { x: 0, y: 0, z: 0 },
+    _scale: { x: 1, y: 1, z: 1 },
+    _physics: false,
+    _show_controls: true,
+    _disable_frame_3d_state: false,
+    // _3d_set_once: true,
+}
+
+
+const myNpc = X3D.create(npcData)
+
+
+await myNpc.load()
+console.log(myNpc);
+
+
+X3D.world.addX3DObject(myNpc)
+
+myNpc.changeState(NPCStates.Talking)
+
+// myNpc.speakAnimation()
+
 // XUI.loadControl({
 //     _id: "transform",
 //     _type: "transform-controls",
@@ -214,39 +262,40 @@ XUI.loadControl({
 // }
 
 
-_loader.loadGLTF("/porsche.glb", {
-    _id: "aime",
-    name: "aime",
-    _position: { x: 0, y: 0, z: 0.00 },
-    _rotation: { x: 0, y: 0, z: 0 },
-    _visible: false,
-    _enable_physics: false,
-    _fade_duration:0.3,
-    //example how to spin X3DObject with text command / JS functions
-    // _on_frame:"spin z:0.01",
-    // _on_frame:(xobj:X3DObject,frame) => {
-    //     xobj._rotation.z += 0.01
-    // },
-    _collider: "box",
-    _mass: 50,
-    _on_frame:"rotation x:0 y:++0.01 z:0"
-}, async (x3dObject: X3DObject) => {
+
+// _loader.loadGLTF("/keren-av.glb", {
+//     _id: "aime",
+//     name: "aime",
+//     _position: { x: 0, y: 0, z: 0.00 },
+//     _rotation: { x: 0, y: 0, z: 0 },
+//     _visible: false,
+//     _enable_physics: false,
+//     _fade_duration:0.3,
+//     //example how to spin X3DObject with text command / JS functions
+//     // _on_frame:"spin z:0.01",
+//     // _on_frame:(xobj:X3DObject,frame) => {
+//     //     xobj._rotation.z += 0.01
+//     // },
+//     _collider: "box",
+//     _mass: 50,
+//     _on_frame:"rotation x:0 y:++0.01 z:0"
+// }, async (x3dObject: X3DObject) => {
     
+//     X3D.world.setTransformControls(x3dObject)
 
 
-
-    // await x3dObject.importAnimationFromFBXFile("anim/Injured.fbx", "Injured")
+//     // await x3dObject.importAnimationFromFBXFile("anim/Injured.fbx", "Injured")
     
   
-    // await x3dObject.importAnimationFromFBXFile("anim/Rapping.fbx", "Rapping")
-    // await x3dObject.importAnimationFromFBXFile("anim/Idle.fbx", "Idle")
-    // // x3dObject.setRotation( { x: -1.55, y: 0.01, z: -2.60 })
-    // x3dObject.playAnimation("Rapping",THREE.LoopRepeat)
-    // // X3D.world.setTransformControls(x3dObject)    
-    // // const helper = new THREE.SkeletonHelper( x3dObject.getThreeObject() );
-    // // X3D.world.scene.add( helper );
+//     // await x3dObject.importAnimationFromFBXFile("anim/Rapping.fbx", "Rapping")
+//     // await x3dObject.importAnimationFromFBXFile("anim/Idle.fbx", "Idle")
+//     // // x3dObject.setRotation( { x: -1.55, y: 0.01, z: -2.60 })
+//     // x3dObject.playAnimation("Rapping",THREE.LoopRepeat)
+//     // // X3D.world.setTransformControls(x3dObject)    
+//     // // const helper = new THREE.SkeletonHelper( x3dObject.getThreeObject() );
+//     // // X3D.world.scene.add( helper );
     
-})
+// })
 
 // const btn = XUI.loadControl({
 //     _type:"button",

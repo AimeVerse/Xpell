@@ -1,9 +1,9 @@
 
 
 /**
- * spell3d object nano-spells
+ * X3D Nano Commands
  * 
- * nano-spells are spell(3d) objects commands that can be triggered by invoking the object.execute method
+ * nano-commands are small xcommands that can be triggered by invoking the object.execute method
  */
 
 
@@ -23,29 +23,25 @@ import X3DObject from "./X3DObject"
 
 
 
-const get_param = (pos, name, cmd) => {
-    return (cmd.params[name]) ? cmd.params[name] : cmd.params[pos]
-}
-
 
 /**
  * change axis value
  * @param {axis root/parent} root -> this._position / this._rotation / this._scale
- * @param {JSON} scmd - spell command 
+ * @param {JSON} xCommand - spell command 
  * 
  * spell command parameters: 
  * - axis -> the axis to change (x/y/z)
  * - dir -> change direction (up/down)
  * - step -> step to move
  */
-const change_axis = (root, scmd) => {
-    const axis = get_param(0, "axis", scmd) // (scmd.params.axis) ? scmd.params.axis : scmd.params[0]
-    const direction = get_param(1, "dir", scmd).toLowerCase()
-    const step = parseFloat(get_param(2, "step", scmd))
+const change_axis = (root, xCommand:XCommand) => {
+    const axis = xCommand.getParam(0, "axis") 
+    const direction = (<string>xCommand.getParam(1, "dir")).toLowerCase()
+    const step = parseFloat(<string>xCommand.getParam(2, "step"))
     if (direction == "up") {
-        root[axis] += step
+        root[<string>axis] += step
     } else if (direction == "down") {
-        root[axis] -= step
+        root[<string>axis] -= step
     }
 }
 
@@ -100,25 +96,25 @@ export const _x3dobject_nano_commands:XNanoCommandPack = {
     "rotation":  (xCommand:XCommand,x3dObject:X3DObject) => {
         
         //rotation x:0.01 y:++0.01 z:--0.01
-        const x = get_param(0, "x", xCommand)
+        const x = xCommand.getParam(0, "x")
 
         if (x) { set_axis(x3dObject._rotation, "x", x) }
 
-        const y = get_param(1, "y", xCommand)
+        const y = xCommand.getParam(1, "y")
         if (y) { set_axis(x3dObject._rotation, "y", y) }
 
-        const z = get_param(2, "z", xCommand)
+        const z = xCommand.getParam(2, "z")
         set_axis(x3dObject._rotation, "z", z)
     },
     "spin": (xCommand:XCommand,x3dObject:X3DObject) => {
 
-        const x = get_param(0, "x", xCommand)
+        const x = xCommand.getParam(0, "x")
         const x_str = (x) ? "x:++" + x : ""
 
-        const y = get_param(0, "y", xCommand)
+        const y = xCommand.getParam(0, "y")
         const y_str = (y) ? "y:++" + y : ""
 
-        const z = get_param(0, "z", xCommand)
+        const z = xCommand.getParam(0, "z")
         const z_str = (z) ? "z:++" + z : ""
         const sstr = `rotation ${x_str} ${y_str} ${z_str}`
 
@@ -255,10 +251,10 @@ export const _x3dobject_nano_commands:XNanoCommandPack = {
     // "follow-keypoint": (ns_cmd) => {
 
 
-    //     if (ns_cmd.params) {
-    //         const data = XData?.objects[ns_cmd.params.detector]
+    //     if (ns_cmd._params) {
+    //         const data = XData?.objects[ns_cmd._params.detector]
     //         if (data) {
-    //             const kp = data[ns_cmd.params.index]?.landmarks[ns_cmd.params.keypoint]
+    //             const kp = data[ns_cmd._params.index]?.landmarks[ns_cmd._params.keypoint]
     //             ns_cmd.s3d_object._disable_frame_3d_state = false
     //             ns_cmd.s3d_object._position.x = kp[0]
     //             ns_cmd.s3d_object._position.y = kp[1]
@@ -309,9 +305,9 @@ export const _x3dobject_nano_commands:XNanoCommandPack = {
     //     const axis = get_param(0, "axis", ns_cmd)
     //     const step = get_param(1, "step", ns_cmd)
     //     const radius = get_param(2, "radius", ns_cmd)
-    //     ns_cmd.params["dir"] = ns_cmd.s3d_object._hover_move_direction
-    //     ns_cmd.params["axis"] = axis
-    //     ns_cmd.params["step"] = step
+    //     ns_cmd._params["dir"] = ns_cmd.s3d_object._hover_move_direction
+    //     ns_cmd._params["axis"] = axis
+    //     ns_cmd._params["step"] = step
     //     if (!ns_cmd.s3d_object._hovering) {
     //         ns_cmd.s3d_object._disable_frame_3d_state = false;
     //         ns_cmd.s3d_object._hovering = true

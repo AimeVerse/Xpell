@@ -161,7 +161,7 @@ class X3DLoader {
     }
 
 
-    async loadModelFromGLTF(modelUrl: string): Promise<THREE.Object3D> {
+    static async loadModelFromGLTF(modelUrl: string): Promise<THREE.Object3D> {
         return new Promise(function (resolve, reject) {
             const _onload = (gltf) => {
 
