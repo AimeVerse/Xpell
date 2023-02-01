@@ -99,8 +99,8 @@ XUI.vm.showPage("left-menu")
 const ttso = XAI.create({_type:"tts",_voice:"Kathy"})
 
 
-document.addEventListener("tts-voices-loaded",(e)=>{
-    ttso.speak("Hey, my name is samantha,[[slnc 1000]] I am the voice of the local operating system " )
-    // console.log(ttso.getVoices());
+// document.addEventListener("tts-voices-loaded",(e)=>{
+//     ttso.speak("Hey, my name is samantha,[[slnc 1000]] I am the voice of the local operating system " )
+//     // console.log(ttso.getVoices());
 
-})
+// })

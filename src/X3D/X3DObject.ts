@@ -62,7 +62,6 @@ export class X3DObject extends XObject {
     _scale: THREE.Vector3
     _on_frame: string | Function | undefined
     protected _visible: boolean
-    private _animation: boolean
     protected _animation_clips: {}
     protected _fade_duration: number
     protected _clock: THREE.Clock
@@ -76,6 +75,15 @@ export class X3DObject extends XObject {
     protected _current_action: string
     protected _positional_audio: THREE.PositionalAudio | undefined
     protected _positional_audio_source: string
+
+    protected _log_rules:{
+        _import_animation:boolean,
+        _play_animation:boolean,
+        
+    } = {
+        _import_animation:false,
+        _play_animation:false
+    }
 
     static getXData(threeObj: THREE.Object3D, defaults) {
         let _xdata = {
@@ -123,7 +131,7 @@ export class X3DObject extends XObject {
         
     }
 
-
+ 
 
     /**
      * Dispose all object memory (destructor)
@@ -132,6 +140,9 @@ export class X3DObject extends XObject {
         this._three_class = null
         this._three_obj = null
         this._cannon_obj = null
+        this._positional_audio = null
+        this._animation_mixer = null
+        super.dispose()
     }
 
 
@@ -194,15 +205,18 @@ export class X3DObject extends XObject {
         this.setPosition({ x: newPosition.x, y: newPosition.y, z: newPosition.z })
     }
 
-    setRotation(rotationObject: { x: number, y: number, z: number, w?: string }) {
-        this._rotation.set(rotationObject.x, rotationObject.y, rotationObject.z, rotationObject.w) //incase Xpell engine controls the position
+    setRotation(rotationObject: { x: number, y: number, z: number, order?: string }) {
+        this._rotation.set(rotationObject.x, rotationObject.y, rotationObject.z, rotationObject.order) //incase Xpell engine controls the position
         this?._cannon_obj?.quaternion.setFromEuler(this._rotation.x, this._rotation.y, this._rotation.z)
-
-
     }
 
     setRotationFromEuler(newRotation: THREE.Euler) {
-        this.setRotation({ x: newRotation.x, y: newRotation.y, z: newRotation.z, w: newRotation.order })
+        this.setRotation({ x: newRotation.x, y: newRotation.y, z: newRotation.z, order: newRotation.order })
+    }
+
+    setRotationFromQuaternion(newQuaternion: THREE.Quaternion) {
+        this._rotation.setFromQuaternion(newQuaternion)
+        // this.setRotation({ x: newQuaternion.x, y: newQuaternion.y, z: newQuaternion.z, order: newQuaternion.order })
     }
 
 
@@ -338,7 +352,7 @@ export class X3DObject extends XObject {
         const src = (source) ? source : this._positional_audio_source
         this._positional_audio = await this.createPositionalAudio(src, data)
         if (this._three_obj) this._three_obj.add(this._positional_audio)
-        _xlog.log("Sound " + source + " loaded")
+        //_xlog.log("Sound " + source + " loaded")
 
     }
 
@@ -447,7 +461,9 @@ export class X3DObject extends XObject {
             this._three_obj.animations.push(a2)
             a2.optimize()
             this._animation_clips[a2.name] = this._animation_mixer.clipAction(a2)
-            _xlog.log("Animation " + a2.name + " loaded on object " + this._id);
+            if(this._log_rules._import_animation) {
+                _xlog.log("Animation " + a2.name + " loaded on object " + this._id);
+            }
         })
     }
 
@@ -564,7 +580,9 @@ export class X3DObject extends XObject {
             const anim = this._animation_clips[clipName]
 
             if (anim) {
-                _xlog.log("playing animation: " + clipName);
+                if(this._log_rules._play_animation) {
+                    _xlog.log("playing animation: " + clipName);
+                }
 
                 if (loop) { 
                     anim.setLoop(loop) 

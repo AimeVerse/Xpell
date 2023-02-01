@@ -19,7 +19,7 @@ export default {
     rollupOptions: {
       // make sure to externalize deps that shouldn't be bundled
       // into your library
-      external: ["public/"],
+      external: ["three","cannon-es","three-to-cannon","nipplejs"],
       output: {
         // Provide global variables to use in the UMD build
         // for externalized deps

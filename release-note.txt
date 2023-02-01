@@ -1,3 +1,10 @@
+1.0.45:
+----------
+- X3D world support TWEEN update 
+- X3DObject setRotationFromQuaternion
+- X3D new primitive -> circle
+
+
 1.0.42:
 ----------
 - XUI view manager (show/hide page/view)

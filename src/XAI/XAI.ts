@@ -40,7 +40,7 @@ export class XAIModule extends XModule {
     // }
 }
 
-export const XAI = new XAIModule({ name: "xai" })
+export const XAI = new XAIModule({ _name: "xai" })
 
 export default XAI
 export {

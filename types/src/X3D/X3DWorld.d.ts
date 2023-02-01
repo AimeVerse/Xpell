@@ -33,7 +33,7 @@ export declare class X3DWorld {
     audioListener: THREE.AudioListener;
     enablePhysics: boolean;
     private physicsWorld;
-    logger: {
+    _log_rules: {
         addObject: boolean;
         removeObject: boolean;
     };

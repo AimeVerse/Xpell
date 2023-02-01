@@ -83,10 +83,10 @@ export class XpellEngine {
      * @param {XModule} xModule 
      */
     loadModule(xModule:XModule):void {
-        if (this.#modules.hasOwnProperty(xModule.name)) {
-            _xlog.log("Module " + xModule.name + " already loaded")
+        if (this.#modules.hasOwnProperty(xModule._name)) {
+            _xlog.log("Module " + xModule._name + " already loaded")
         } else {
-            this.#modules[xModule.name] = xModule;
+            this.#modules[xModule._name] = xModule;
             xModule.load()
         }
     }

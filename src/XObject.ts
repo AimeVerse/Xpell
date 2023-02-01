@@ -92,7 +92,7 @@ export class XObject implements IXObjectData {
    
 
     async dispose() {
-
+        this._children.forEach(child => child.dispose())
     }
 
     //get _id() {return this.#_id}

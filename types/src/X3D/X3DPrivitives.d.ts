@@ -43,6 +43,9 @@ export declare class XTorus extends XMesh {
 export declare class XCone extends XMesh {
     constructor(data: any, defaults: any);
 }
+export declare class XCircle extends XMesh {
+    constructor(data: any, defaults: any);
+}
 export declare class X3DPrimitives extends XObjectPack {
     static getObjects(): {
         material: typeof XMaterial;
@@ -58,6 +61,7 @@ export declare class X3DPrimitives extends XObjectPack {
         "perspective-camera": typeof XCamera;
         camera: typeof XCamera;
         light: typeof XLight;
+        circle: typeof XCircle;
     };
 }
 export default X3DPrimitives;

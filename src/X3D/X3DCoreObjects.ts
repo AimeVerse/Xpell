@@ -142,6 +142,17 @@ export class XGeometry extends X3DObject {
 }
 
 
+/**
+ * Material
+ * 
+ * maps can be <string>  for file  or object with parameters to the texture
+ * _texture_map : "/public/file-name"
+ * 
+ * _texture_map: {
+ *      texture:"/public/file-name",
+ *      offset:$_v2 X Y //for Three.Vector2
+ *      rotation: 3 //number
+ * } */
 
 export class XMaterial extends X3DObject {
     constructor(data) {
@@ -155,9 +166,13 @@ export class XMaterial extends X3DObject {
         this.color =  (data.color) ? data.color : 0xffffff,
         this.side = (data.side)  ? data.side : THREE.DoubleSide
 
+
+
+
+
         //Spell 2 Three
         const s2t = {
-            "_normal_map": "normalMap",
+            "_normal_map": "normalMap",   
             "_dp_map": "displacementMap",
             "_texture_map": "map"
         }
@@ -167,35 +182,43 @@ export class XMaterial extends X3DObject {
             side: this.side,
             // roughness: this.roughness
         }
-
+        
         const addMap = (name) => {
             const lmap = data[name]
-            
             if (lmap /*check file*/ ) {
-                const keys = Object.keys(lmap)
+                
+                // console.log("creating map ",name,lmap)
 
-                keys.forEach(key => {
-                    
-                    
-                    if (key == "texture") {
-                        try {
-                            // console.log("loading texture " + lmap.texture)
-                            tca_params[s2t[name]] = new THREE.TextureLoader().load(lmap.texture);
-                        } catch (e) {
-                            console.error("XMaterial unable to load texture for " + name + " reason:" + e)
-                        }
-                    } else {
-                        if (typeof lmap[key] == "string" && lmap[key].startsWith("$")) { // spell value
-                            const ks = lmap[key].split(" ")
-                            if (ks[0] == "$v2") { //create vector 2
-                                tca_params[key] = new THREE.Vector2(ks[1], ks[2])
+                if(typeof lmap === "string") {
+                    tca_params[s2t[name]] = new THREE.TextureLoader().load(lmap);
+                }
+                else {
+
+                    const keys = Object.keys(lmap)
+    
+                    keys.forEach(key => {
+                        
+                        
+                        if (key == "texture") {
+                            try {
+                                // console.log("loading texture " + lmap.texture)
+                                tca_params[s2t[name]] = new THREE.TextureLoader().load(lmap.texture);
+                            } catch (e) {
+                                console.error("XMaterial unable to load texture for " + name + " reason:" + e)
                             }
                         } else {
-                            tca_params[key] = lmap[key]
+                            if (typeof lmap[key] == "string" && lmap[key].startsWith("$")) { // spell value
+                                const ks = lmap[key].split(" ")
+                                if (ks[0] == "$_v2") { //create vector 2
+                                    tca_params[key] = new THREE.Vector2(ks[1], ks[2])
+                                }
+                            } else {
+                                tca_params[key] = lmap[key]
+                            }
+    
                         }
-
-                    }
-                })
+                    })
+                }
 
 
             }
@@ -207,7 +230,7 @@ export class XMaterial extends X3DObject {
         addMap("_texture_map")
 
         //dp_map
-        //console.log(tca_params)
+        // console.log(tca_params)
         this._threes_class_args = [tca_params]
 
     }
@@ -255,7 +278,6 @@ export class XMesh extends X3DObject {
         _positional_audio_source:null
     }) {
         super(data, defaults)
-        this._three_class = THREE.Mesh
         this._three_class = THREE.Mesh
         if(!this._three_obj) {
             

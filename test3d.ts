@@ -13,7 +13,7 @@ import { XUIObject } from "./src/XUI/XUIObject"
 import XJoystick from "./src/XUI/XJoystick"
 import { TopBar } from "./src/XUI/XDashboard"
 import { XEditor, XTransformControls } from "./src/XUI/XEditor"
-import { NPCStates } from './src/X3D/X3DNPC'
+import { NPCStates,XNPC } from './src/X3D/X3DNPC'
 
 
 //display Xpell engine info
@@ -22,10 +22,10 @@ _x.verbose()
 _x.info()
 
 //load Xpell UI (XUI) Module
-_x.loadModule(XUI)
+// _x.loadModule(XUI)
 _x.loadModule(X3D)
-XUI.importObject("joystick", XJoystick)
-XUI.importObjectPack(XEditor)
+// XUI.importObject("joystick", XJoystick)
+// XUI.importObjectPack(XEditor)
 
 _x.start()
 
@@ -43,7 +43,7 @@ export const world:X3DApp = {
         _helpers:{
             "axes":{
                 _type:"axes",
-                _active:true,
+                _active:false,
                 _params:{size:5}
             }
         },
@@ -55,9 +55,9 @@ export const world:X3DApp = {
             "p1": {
                 _type: "light",
                 _light: "directional",
-                color: "#ffffff",
+                color: "#aaffff",
                 intensity: 1,
-                _position: { x: 0, y: 5, z: 0 },
+                _position: { x: 0, y: 2, z: 0 },
 
             }
 
@@ -100,27 +100,26 @@ export const world:X3DApp = {
 
         },
         _objects: {
-                "pointer": {
-                    
-                    _type: "sphere",
-                    _id: "pointer",
-                    _geometry: {
-                        _type: "sphere-geometry",
-                        widthSegments: 8,
-                        heightSegments: 8,
-                        radius: 0.01
-                    },
-                    _material: {
-                        _type: "basic-material",
-                        color: 0xff99ff,
-                        side: 1,
-                        // roughness: 0.5,
-                    },
-                    _position: { x: 0, y: 0.75, z: 0 },
-                    _rotation: { x: 0, y: 0, z: 0 },
-                    // castShadow: true,
-                    _on_frame: `follow-joystick`
-                },
+                // "pointer": {
+                //     _type: "sphere",
+                //     _id: "pointer",
+                //     _geometry: {
+                //         _type: "sphere-geometry",
+                //         widthSegments: 8,
+                //         heightSegments: 8,
+                //         radius: 0.01
+                //     },
+                //     _material: {
+                //         _type: "basic-material",
+                //         color: 0xff99ff,
+                //         side: 1,
+                //         // roughness: 0.5,
+                //     },
+                //     _position: { x: 0, y: 0.75, z: 0 },
+                //     _rotation: { x: 0, y: 0, z: 0 },
+                //     // castShadow: true,
+                //     _on_frame: `follow-joystick`
+                // },
                 floor: {
                     _id: "floor",
                     _type: "plane",
@@ -136,13 +135,61 @@ export const world:X3DApp = {
                         _type: "standard-material",
                         color: "#ffffff",
                         side: 2,
+                        roughness:0.2,
+                        _normal_map:{texture:"/public/nmap.png"}
                         // wireframe: true
                     },
                     _position: { x: 0, y: -0.01, z: 0 },
                     _rotation: { x: Math.PI / 2, y: 0, z: 0 },
+                    _enable_physics: true,
+                    _collider:"box",
+                    _mass: 0
+                },
+                box: {
+                    _id: "box",
+                    _type: "box",
+                    _geometry: {
+                        width: 1,
+                        height: 1,
+                        depth:1
+
+                    },
+                    _material: {
+                        _type: "standard-material",
+                        color: "#ffffff",
+                        side: 2,
+                        roughness:0.2,
+                        // wireframe: true
+                    },
+                    _position: { x: 0, y: 2, z: 0 },
+                    _rotation: { x: Math.PI / 2, y: 0, z: 0 },
                     _enable_physics: false,
+                    _collider:"box",
+                    _mass: 0
+                },
+                cir: {
+                    _id: "cir",
+                    _type: "circle",
+                    _geometry: {
+                        radius: 1,
+                        segments: 24,
+
+                    },
+                    _material: {
+                        _type: "standard-material",
+                        color: "#ffffff",
+                        side: 2,
+                        roughness:0.2,
+                        // wireframe: true
+                    },
+                    _position: { x: -1, y: 1, z: 0 },
+                    _rotation: { x: Math.PI / 2, y: 0, z: 0 },
+                    _enable_physics: false,
+                    _collider:"box",
                     _mass: 0
                 }
+
+
 
             }
     },
@@ -153,88 +200,106 @@ export const world:X3DApp = {
 
 
 await X3D.loadApp(world)
+// console.log(X3D.world)
+
+
+
+const box:X3DObject = <X3DObject>X3D.om.getObject("box")
+
+
+// console.log(box._rotation);
+
+box.setRotationFromQuaternion(new THREE.Quaternion(0,0,0.5,1))
+// console.log(box._rotation);
+
+
 //X3D.world.logger.addObject = true
-XUI.importObject("top-bar", TopBar)
+// // XUI.importObject("top-bar", TopBar)
 
-const topBar = XUI.create({
-    _type: "top-bar",
-    _id: "top-bar"
-})
-
-
-topBar.mount("player")
+// // const topBar = XUI.create({
+// //     _type: "top-bar",
+// //     _id: "top-bar"
+// // })
 
 
-
-XUI.loadControl({
-    _id: "joystick-1",
-    _type: "joystick",
-    _parent_element: "xcontrols",
-    _move_speed: 0.2,
-    _joy_options: {
-        size: 120,
-        multitouch: true,
-        maxNumberOfNipples: 1,
-        mode: 'static',
-        restJoystick: true,
-        shape: 'circle',
-        position: { bottom: '90px', left: '90px' },
-        dynamicPage: true,
-        color: "green"
-    }
-})
+// topBar.mount("player")
 
 
-const getAnimationFileUrl = (name: string) => { return `public/anim/${name}.fbx` }
 
-const gafu = (arr) => {
-    const rv:Array<string> = []
-    arr.forEach((item: string) => rv.push(<string>getAnimationFileUrl(item)))
-    return rv
-}
-
-let npcData = {
-    _type: "npc",
-    _id: "smart-npc",
-    _first_name: "smart",
-    _last_name: "npc",
-    _nick_name: "snpc",
-    _voice: "Amy",
-    _role: "just another smart npc",
-    _general_information: "oooo yehhh",
-    _motivation: "not at all",
-    _avatar: {
-        name: "Ginger*",
-        modelUrl: "/public/637c949a5f29a9ec1a2df3dd_ginger_blendshapes.glb",
-        profilePicture: "N/A"
-    },
-    _npc_state_animations: {
-        Idle: gafu(["Idle",/* "Idle-2", "Standing-Idle"*/]),
-         Talking: gafu(["Idle"/*, "Talking-2"*/]),
-        // Floating: gafu(["Floating"]),
-    },
-    _position: { x: 0, y: 0, z: 0 },
-    _fade_duration: 0.6,
-    //_rotation: { x: 2.75, y: 0.16, z: 3.13 },
-    _rotation: { x: 0, y: 0, z: 0 },
-    _scale: { x: 1, y: 1, z: 1 },
-    _physics: false,
-    _show_controls: true,
-    _disable_frame_3d_state: false,
-    // _3d_set_once: true,
-}
+// XUI.loadControl({
+//     _id: "joystick-1",
+//     _type: "joystick",
+//     _parent_element: "xcontrols",
+//     _move_speed: 0.2,
+//     _joy_options: {
+//         size: 120,
+//         multitouch: true,
+//         maxNumberOfNipples: 1,
+//         mode: 'static',
+//         restJoystick: true,
+//         shape: 'circle',
+//         position: { bottom: '90px', left: '90px' },
+//         dynamicPage: true,
+//         color: "green"
+//     }
+// })
 
 
-const myNpc = X3D.create(npcData)
+// const getAnimationFileUrl = (name: string) => { return `public/anim/${name}.fbx` }
+
+// const gafu = (arr) => {
+//     const rv:Array<string> = []
+//     arr.forEach((item: string) => rv.push(<string>getAnimationFileUrl(item)))
+//     return rv
+// }
+
+// let npcData:XNPC = {
+//     _type: "npc",
+//     _id: "smart-npc",
+//     _first_name: "smart",
+//     _last_name: "npc",
+//     _nick_name: "snpc",
+//     _voice: "Amy",
+//     _role: "just another smart npc",
+//     _general_information: "oooo yehhh",
+//     _motivation: "not at all",
+//     _avatar: {
+//         name: "Ginger*",
+//         modelUrl: "/public/637c949a5f29a9ec1a2df3dd_ginger_blendshapes.glb",
+//         profilePicture: "N/A"
+//     },
+//     _npc_state_animations: {
+//         Idle: gafu(["Idle",/* "Idle-2", "Standing-Idle"*/]),
+//          Talking: gafu(["Idle"/*, "Talking-2"*/]),
+//         // Floating: gafu(["Floating"]),
+//     },
+//     _position: { x: 0, y: 1, z: 0 },
+//     _fade_duration: 0.6,
+//     //_rotation: { x: 2.75, y: 0.16, z: 3.13 },
+//     _rotation: { x: 0, y: 0, z: 0 },
+//     _scale: { x: 1, y: 1, z: 1 },
+//     _enable_physics: true,
+//     _mass:1,
+//     _show_controls: true,
+//     _disable_frame_3d_state: false,
+//     // _3d_set_once: true,
+// }
 
 
-await myNpc.load()
-console.log(myNpc);
+// const myNpc = X3D.create(npcData)
 
 
-X3D.world.addX3DObject(myNpc)
+// await myNpc.load()
+// console.log(myNpc);
 
-myNpc.changeState(NPCStates.Talking)
+
+// X3D.world.addX3DObject(myNpc)
+// X3D.world.setTransformControls(myNpc)
+// // const helper = new THREE.SkeletonHelper( myNpc.getThreeObject() );
+// // X3D.world.scene.add( helper );
+
+
+// myNpc.changeState(NPCStates.Idle)
 
 // myNpc.speakAnimation()
 
@@ -260,8 +325,6 @@ myNpc.changeState(NPCStates.Talking)
 //     y: 1.5,
 //     z: 0,
 // }
-
-
 
 // _loader.loadGLTF("/keren-av.glb", {
 //     _id: "aime",

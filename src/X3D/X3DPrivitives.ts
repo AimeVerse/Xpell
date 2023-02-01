@@ -45,6 +45,7 @@ export class XPlane extends XMesh {
             }
         }
         data._geometry._threes_class_args = [data._geometry.width, data._geometry.height, data._geometry.widthSegments, data._geometry.heightSegments]
+        data._geometry._type =  "plane-geometry"
         super(data, defaults)
         // this._cannon_shape = new CANNON.Box(new CANNON.Vec3(data._geometry.width/2, data._geometry.height/2, 0.01))
 
@@ -97,6 +98,7 @@ export class XBox extends XMesh {
             }
         }
         data._geometry._threes_class_args = [data._geometry.width, data._geometry.height, data._geometry.depth, data._geometry.widthSegments, data._geometry.heightSegments, data._geometry.depthSegments]
+        data._geometry._type =  "box-geometry"
         super(data, defaults)
         this._cannon_shape = new CANNON.Box(new CANNON.Vec3(data._geometry.width/2, data._geometry.height/2, data._geometry.depth/2))
     }
@@ -143,6 +145,7 @@ export class XSphere extends XMesh {
         }
         
         data._geometry._threes_class_args = [data._geometry.radius, data._geometry.widthSegments, data._geometry.heightSegments]
+        data._geometry._type =  "sphere-geometry"
         super(data, defaults)
         if(this._enable_physics) {
             this._cannon_shape = new CANNON.Sphere(data._geometry.radius)
@@ -201,7 +204,7 @@ export class XCylinder extends XMesh {
             }
         }
         data._geometry._threes_class_args = [data._geometry.radiusTop, data._geometry.radiusBottom, data._geometry.height, data._geometry.radialSegments]
-
+        data._geometry._type =  "cylinder-geometry"
         super(data, defaults)
         if(this._enable_physics) {
             this._cannon_shape = new CANNON.Cylinder(data._geometry.radiusTop, data._geometry.radiusBottom, data._geometry.height, data._geometry.radialSegments)
@@ -257,7 +260,7 @@ export class XTorus extends XMesh {
             }
         }
         data._geometry._threes_class_args = [data._geometry.radius, data._geometry.tubeRadius, data._geometry.radialSegments, data._geometry.tubularSegments]
-
+        data._geometry._type =  "torus-geometry"
         super(data, defaults)
     }
 
@@ -306,12 +309,33 @@ export class XCone extends XMesh {
             }
         }
         data._geometry._threes_class_args = [data._geometry.radius, data._geometry.height, data._geometry.segments]
-
+        data._geometry._type =  "cone-geometry"
         super(data, defaults)
     }
-
 }
 
+export class XCircle extends XMesh {
+   
+    constructor(data, defaults) {
+        if (!defaults) {
+            defaults = {
+                _type: "circle",
+                _three_class: THREE.Mesh,
+                _three_obj: null,
+                _geometry: null,
+                _material: null
+            }
+        }
+        if(!data._geometry.thetaStart) data._geometry.thetaStart = 0
+        if(!data._geometry.thetaLength) data._geometry.thetaLength = Math.PI * 2
+        // 
+        
+        
+        data._geometry._threes_class_args = [data._geometry.radius, data._geometry.segments,data._geometry.thetaStart,data._geometry.thetaLength]
+        data._geometry._type =  "circle-geometry"
+        super(data, defaults)
+    }
+}
 // export class XFloor extends X3DObject {
 
 //     // _geometry: XGeometry
@@ -473,6 +497,7 @@ export class X3DPrimitives extends XObjectPack {
             "perspective-camera": XCamera,
             "camera": XCamera, //alias to perspective-camera
             "light": XLight, // alias to ambient-light
+            "circle":XCircle,
             // "skeleton": XSkeleton
         }
     }

@@ -98,12 +98,7 @@ export class XParser {
             let paramName = (finalDelimiter === -1) ? i.toString() : paramStr.substring(0, delimiterIdx);
             let paramValue = XParser.fixArgumentValue(paramStr.substring(finalDelimiter + 1));
 
-            if (paramName === "frame")
-                cmd._run_on_frame = paramValue;
-            else if (paramName === "on")
-                cmd._run_on_event = paramValue;
-            else
-                cmd._params[paramName] = paramValue
+            cmd._params[paramName] = paramValue
         }
 
 

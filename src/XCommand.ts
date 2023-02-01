@@ -7,8 +7,6 @@ export type XCommandData = {
     _module?: string | null ,
     _object?:string | null ,
     _op?:string ,
-    _run_on_frame?: string | number ,
-    _run_on_event?: string ,
     _date_created?: number
     _params?: {
         [k:string] : string | number | Function
@@ -29,12 +27,9 @@ export  class XCommand {
     _params: {
         [k:string] : string | number | Function
     }
-    _run_on_frame: string | number = 0
-    _run_on_event: string ;
     _date_created: number;
     
     constructor() {
-        this._run_on_frame = 0;  //frame number/logic to run the command 
         this._date_created = Date.now()
     }
 
@@ -45,11 +40,13 @@ export  class XCommand {
      *  2. <module> <op> param-name:param-value            // name is for this case
      * @param position the position of the parameter if no name is send 
      * @param name the name of the parameter 
-     * @param cmd the XCommand
+     * @param defaultValue the default value if none above exists
      * @returns {any} the actual parameter value
      */
-    getParam = (position, name) => {
-        return (this._params[name]) ? this._params[name] : this._params[position]
+    getParam(position:number, name:string,defaultValue?:any) {
+        if (this._params.hasOwnProperty(name)) return this._params[name]
+        else if (this._params.hasOwnProperty(position)) return this._params[position]
+        else return defaultValue
     }
 }
 

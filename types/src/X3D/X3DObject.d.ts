@@ -27,6 +27,7 @@ export interface IX3DObjectData extends IXObjectData {
 }
 export declare class X3DObject extends XObject {
     _three_class: any;
+    _threes_class_args: Array<any>;
     _three_obj: THREE.Object3D | null;
     _cannon_obj: CANNON.Body | undefined;
     _cannon_shape: CANNON.Shape | undefined;
@@ -35,23 +36,25 @@ export declare class X3DObject extends XObject {
     _position: THREE.Vector3;
     _rotation: THREE.Euler;
     _scale: THREE.Vector3;
-    protected _visible: boolean;
-    private _animation;
-    private _animation_clips;
-    private _fade_duration;
-    private _clock;
-    _fraction: number;
-    _threes_class_args: Array<any>;
-    _animation_mixer: THREE.AnimationMixer;
-    private _frame_number;
     _on_frame: string | Function | undefined;
-    private _cache_cmd_txt;
-    private _cache_jcmd;
-    private _disable_frame_3d_state;
-    private _3d_set_once;
-    private _current_action;
-    private _positional_audio;
-    private _positional_audio_source;
+    protected _visible: boolean;
+    protected _animation_clips: {};
+    protected _fade_duration: number;
+    protected _clock: THREE.Clock;
+    protected _fraction: number;
+    protected _animation_mixer: THREE.AnimationMixer;
+    private _frame_number;
+    protected _cache_cmd_txt: string | null;
+    protected _cache_jcmd: any;
+    protected _disable_frame_3d_state: boolean;
+    protected _3d_set_once: boolean;
+    protected _current_action: string;
+    protected _positional_audio: THREE.PositionalAudio | undefined;
+    protected _positional_audio_source: string;
+    protected _log_rules: {
+        _import_animation: boolean;
+        _play_animation: boolean;
+    };
     static getXData(threeObj: THREE.Object3D, defaults: any): {
         _id: string;
         _type: string;
@@ -80,9 +83,10 @@ export declare class X3DObject extends XObject {
         x: number;
         y: number;
         z: number;
-        w?: string;
+        order?: string;
     }): void;
     setRotationFromEuler(newRotation: THREE.Euler): void;
+    setRotationFromQuaternion(newQuaternion: THREE.Quaternion): void;
     setScale(newScale: {
         x: number;
         y: number;

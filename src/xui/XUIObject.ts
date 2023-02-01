@@ -51,7 +51,7 @@ export class XUIObject extends XObject {
      */
      async dispose(){
         this._dom_object = null
-        this._children = null
+        super.dispose()
     }
 
     /**

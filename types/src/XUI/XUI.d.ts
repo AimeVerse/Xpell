@@ -36,8 +36,18 @@ export declare class XUIModule extends XModule {
      * @param xuiApp
      */
     loadApp(xuiApp: XUIApp): void;
-    openUrl(url: any, target?: any): void;
-    remove(objectId: any): void;
+    /**
+     *
+     * @param url navigate the browser to new url
+     * @param newWindow - if provided and true the url will be opened in a new window/tab
+     */
+    openUrl(url: string, newWindow?: boolean): void;
+    /**
+     * Removes the
+     * @param objectId the XUIObject id to remove
+     * @override
+     */
+    remove(objectId: string): void;
     addControlsPack(controls: {}): void;
     loadControl(data: any): XUIObject;
     createFromTemplate(xpell2json: any): any;

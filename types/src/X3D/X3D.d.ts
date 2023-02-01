@@ -73,10 +73,6 @@ export declare class X3DModule extends XModule {
     world: X3DWorld;
     x3dObjects: {};
     status: number;
-    logger: {
-        createObject: boolean;
-        removeObject: boolean;
-    };
     constructor();
     /**
      * Loads XWorld from world data object
@@ -113,6 +109,6 @@ export declare class X3DModule extends XModule {
     addEnvironmentMap(path: any, images?: any): void;
     onFrame(frameNumber: any): Promise<void>;
 }
-declare let X3D: X3DModule;
+declare const X3D: X3DModule;
 export default X3D;
 export { X3D, X3DEngineStatus, X3DObject };

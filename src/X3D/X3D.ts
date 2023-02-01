@@ -101,17 +101,10 @@ export class X3DModule extends XModule {
     world: X3DWorld;
     x3dObjects: {};
     status: number;
-    logger: {
-        createObject: boolean,
-        removeObject: boolean,
-
-    } = {
-            createObject: false,
-            removeObject: false
-        }
+    
 
     constructor() {
-        super({ name: "x3d" })
+        super({ _name: "x3d" })
         this.importObjectPack(X3DPrimitives)
         this.importObjectPack(X3DNPC)
 
@@ -158,7 +151,7 @@ export class X3DModule extends XModule {
     create(data) {
 
         if (this.om.hasObjectClass(data._type)) {
-            if (this.logger.createObject) {
+            if (this._log_rules.createObject) {
                 _xlog.log("X3D | creating " + data._type);
             }
 
@@ -175,13 +168,12 @@ export class X3DModule extends XModule {
      * @param objectId th e_id of the X3D object to remove
      */
     async remove(objectId: string) {
-        const xobj = this.om.getObject(objectId)
-        this.om.removeObject(objectId)
-        await this.world.removeX3DObject(objectId)
-        xobj.dispose()
-        if (this.logger.removeObject) {
+        if (this._log_rules.removeObject) {
             _xlog.log("X3D remove object " + objectId)
         }
+        await this.world.removeX3DObject(objectId)
+        
+        super.remove(objectId)
     }
 
     //get spell3d object
@@ -394,7 +386,7 @@ export class X3DModule extends XModule {
 
 }
 
-let X3D = new X3DModule()
+const X3D = new X3DModule()
 
 export default X3D
 export { X3D, X3DEngineStatus, X3DObject }

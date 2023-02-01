@@ -8,7 +8,7 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import { FirstPersonControls } from 'three/examples/jsm/controls/FirstPersonControls.js';
 import { PointerLockControls } from 'three/examples/jsm/controls/PointerLockControls.js'
 import { TransformControls } from 'three/examples/jsm/controls/TransformControls'
-
+import {TWEEN} from "three/examples/jsm/libs/tween.module.min.js"
 import { CannonDebugRenderer } from './X3DUtils';
 
 import XUtils from '../XUtils';
@@ -86,7 +86,7 @@ export class X3DWorld {
     audioListener:THREE.AudioListener
     enablePhysics:boolean = true
     private physicsWorld:CANNON.World
-    logger:{
+    _log_rules:{
         addObject:boolean,
         removeObject:boolean,
         
@@ -313,7 +313,7 @@ export class X3DWorld {
      */
     async addX3DObject(x3dObject:X3DObject) {
         if (x3dObject && !x3dObject._ignore_world) {
-            if(this.logger.addObject) {_xlog.log("XWorld adding ", x3dObject._id)}
+            if(this._log_rules.addObject) {_xlog.log("XWorld adding ", x3dObject._id)}
 
             this.x3dObjects[<string>x3dObject._id] = x3dObject
             const threeObject = x3dObject.getThreeObject()
@@ -335,14 +335,14 @@ export class X3DWorld {
     }
 
     async removeX3DObject(objectId:string) {
-        if(this.logger.removeObject) _xlog.log("XWorld Removing " + objectId)
+        if(this._log_rules.removeObject) _xlog.log("XWorld Removing " + objectId)
         if(this.x3dObjects.hasOwnProperty(objectId)) {
             const x3dObject = this.x3dObjects[objectId]
             x3dObject.getThreeObject().removeFromParent()
             if(x3dObject._cannon_obj) this.physicsWorld.removeBody(x3dObject._cannon_obj)
             delete this.x3dObjects[objectId] 
         } else {
-            if(this.logger.removeObject) _xlog.log("XWorld has no X3DObject => " + objectId)
+            if(this._log_rules.removeObject) _xlog.log("XWorld has no X3DObject => " + objectId)
         }
     
     }
@@ -421,6 +421,7 @@ export class X3DWorld {
             }
 
 
+            TWEEN.update()
             this.clock.stop()
             this.frameProcessTime = this.clock.getElapsedTime()
 

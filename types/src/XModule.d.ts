@@ -2,7 +2,7 @@ import XObjectManager from "./XObjectManager";
 import { XObjectPack } from "./XObject";
 import XCommand from "./XCommand";
 export interface ModuleData {
-    name: string;
+    _name: string;
 }
 /**
  * Xpell Base Module
@@ -12,7 +12,11 @@ export interface ModuleData {
  */
 export declare class XModule {
     _id: string;
-    name: string;
+    _name: string;
+    _log_rules: {
+        createObject: boolean;
+        removeObject: boolean;
+    };
     protected objectManger: XObjectManager;
     constructor(data: ModuleData);
     load(): void;
@@ -22,6 +26,11 @@ export declare class XModule {
      * @return {XObject|*}
      */
     create(data: any): any;
+    /**
+     * removes and XObject from the object manager
+     * @param objectId op
+     */
+    remove(objectId: any): void;
     _info(xCommand: any): void;
     /**
      * Run xpell command -

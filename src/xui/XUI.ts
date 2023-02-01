@@ -15,8 +15,7 @@ import XUICoreObjects from "./XUICoreObjects"
 //  import SpellMoveControls  from "./sui-objects/spell-move-controls";
 import XParser from "../XParser";
 import * as _xc from "../XConst"
-import { IX3DObjectData } from "../X3D/X3DObject"
-import { IXObjectData } from "../XObject"
+import {XLogger as _xlog} from "../XLogger"
 
 
 export interface XUIApp {
@@ -76,9 +75,13 @@ export class XUIModule extends XModule {
 
 
     
-
-    openUrl(url, target = null) {
-        if (!target) {
+    /**
+     * 
+     * @param url navigate the browser to new url
+     * @param newWindow - if provided and true the url will be opened in a new window/tab
+     */
+    openUrl(url:string, newWindow?:boolean) {
+        if (!newWindow) {
             document.location = url;
         }
         else {
@@ -87,13 +90,17 @@ export class XUIModule extends XModule {
     }
 
 
-
-    remove(objectId) {
-        const obj = this.objectManger.getObject(objectId)
-        if (obj) {
-            document.getElementById(<string>obj._id).remove()
-            this.objectManger.removeObject(objectId)
+    /**
+     * Removes the 
+     * @param objectId the XUIObject id to remove
+     * @override
+     */
+    remove(objectId:string) {
+        if (this._log_rules.removeObject) {
+            _xlog.log("X3D remove object " + objectId)
         }
+        document.getElementById(objectId)?.remove()
+        super.remove(objectId)
     }
 
 
@@ -150,7 +157,7 @@ export class XUIModule extends XModule {
     }
 }
 
-export const XUI = new XUIModule({ name: "xui" })
+export const XUI = new XUIModule({ _name: "xui" })
 
 export default XUI
 export {

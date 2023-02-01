@@ -26,16 +26,16 @@
  */
 import XUtils from "./XUtils"
 import XParser from "./XParser"
-import {XLogger as _xl} from "./XLogger";
+import { XLogger as _xl } from "./XLogger";
 import XObjectManager from "./XObjectManager";
 import * as _XC from "./XConst"
-import {XObject,XObjectPack} from "./XObject";
+import { XObject, XObjectPack } from "./XObject";
 import XCommand from "./XCommand";
 
 
 
 export interface ModuleData {
-    name:string
+    _name: string
 }
 
 /**
@@ -44,25 +44,33 @@ export interface ModuleData {
  * @class XModule
  * 
  */
-export  class XModule {
+export class XModule {
 
-    _id:string 
-    name: string;
+    _id: string
+    _name: string;
+    _log_rules: {
+        createObject: boolean,
+        removeObject: boolean,
+
+    } = {
+            createObject: false,
+            removeObject: false
+        }
 
     //private object manager instance
     protected objectManger = new XObjectManager()
     //engine: any;  //deprecated remove after spell3d
 
-    
-    constructor(data:ModuleData) {
-        this.name = data.name
+
+    constructor(data: ModuleData) {
+        this._name = data._name
         this._id = XUtils.guid()
 
 
     }
 
     load() {
-        _xl.log("Module " + this.name + " loaded")
+        _xl.log("Module " + this._name + " loaded")
     }
 
     /**
@@ -102,6 +110,20 @@ export  class XModule {
         return xObject;
     }
 
+    /**
+     * removes and XObject from the object manager
+     * @param objectId op
+     */
+    remove(objectId) {
+        const obj:XObject = this.objectManger.getObject(objectId)
+        if (obj) {
+            this.objectManger.removeObject(objectId)
+            if(obj.dispose && typeof obj === "function") {
+                (<XObject>obj).dispose()
+            }
+        }
+    }
+
 
     _info(xCommand) {
         _xl.log("module info")
@@ -118,8 +140,8 @@ export  class XModule {
         if (stringXCommand) {
             let strCmd = stringXCommand.trim()
             //add module name to run command if not exists (in case of direct call from the module)
-            if (!strCmd.startsWith(this.name)) {
-                strCmd = this.name + " " + strCmd
+            if (!strCmd.startsWith(this._name)) {
+                strCmd = this._name + " " + strCmd
             }
             let xCommand = XParser.parse(strCmd)
             return await this.execute(xCommand)
@@ -136,17 +158,17 @@ export  class XModule {
      * @param {XCommand} XCommand input (JSON)
      * @returns command execution result
      */
-    async execute(xCommand:XCommand) {
+    async execute(xCommand: XCommand) {
 
 
         //search for xpell wrapping functions (starts with _ "underscore" example -> _start() , async _spell_async_func() )
         const lop = "_" + xCommand._op.replaceAll('-', '_') //search for local op = lop
         if (this[lop] && typeof this[lop] === 'function') {
             return this[lop](xCommand)
-        } 
+        }
         else if (this.objectManger) //direct xpell injection to specific module
         {
-            
+
             const o = this.objectManger.getObjectByName(xCommand._op)
             // console.log(o);
             if (o) { o.execute(xCommand) }
@@ -164,10 +186,10 @@ export  class XModule {
      * The method can be override by the extending module to support extended onFrame functionality
      * @param frameNumber Current frame number
      */
-    async onFrame(frameNumber:number) {
-        Object.keys(this.objectManger.xObjects).forEach(key=>{
+    async onFrame(frameNumber: number) {
+        Object.keys(this.objectManger.xObjects).forEach(key => {
             const so = this.objectManger.xObjects[key]
-            if(so && so.onFrame && typeof so.onFrame === 'function') {
+            if (so && so.onFrame && typeof so.onFrame === 'function') {
                 so?.onFrame(frameNumber)
             }
         })
@@ -186,7 +208,7 @@ export  class XModule {
      * The object class should be like XObjects with static implementation of getObjects() method
      * @param {XObjects} xObjectPack 
      */
-    importObjectPack(xObjectPack:XObjectPack | any) {
+    importObjectPack(xObjectPack: XObjectPack | any) {
         this.objectManger.registerObjects(xObjectPack.getObjects())
     }
 
@@ -195,7 +217,7 @@ export  class XModule {
      * @deprecated - use importObjectPack instead
      * @param xObjectPack 
      */
-    importObjects(xObjectPack:XObjectPack | any) {
+    importObjects(xObjectPack: XObjectPack | any) {
         this.importObjectPack(xObjectPack)
     }
 
@@ -205,11 +227,11 @@ export  class XModule {
      * @param xObjectName 
      * @param xObject 
      */
-    importObject(xObjectName,xObject) {
-        this.objectManger.registerObject(xObjectName,xObject)
+    importObject(xObjectName, xObject) {
+        this.objectManger.registerObject(xObjectName, xObject)
     }
 
 }
 
 
-export default  XModule
+export default XModule
