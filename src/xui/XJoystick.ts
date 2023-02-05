@@ -4,9 +4,9 @@
  * Based on Nipple.js -  https://github.com/yoannmoinet/nipplejs
  */
 
-import XUtils from "../XUtils"
+import  {XData, _xu, _xem,IXObjectData} from "xpell-core"
+
 import XUIObject from "./XUIObject"
-import XData from "../XData"
 
 import nipplejs from 'nipplejs';
 //import {JoystickManagerOptions} from 'nipplejs';
@@ -24,13 +24,13 @@ type joystickData = {
 export class XJoystick extends XUIObject {
     private _joy_manager: any
     private _joy_options: any
-    private _keyboard_down_listener: Function
-    private _key_down: boolean
-    private _move_speed: number
+    private _keyboard_down_listener!: Function
+    private _key_down!: boolean
+    private _move_speed!: number
 
-    constructor(data) {
+    constructor(data:IXObjectData) {
 
-        const ids = XUtils.guid()
+        const ids = _xu.guid()
         const defaults = {
             _type: "joystick",
             _html_tag: "div",
@@ -64,7 +64,7 @@ export class XJoystick extends XUIObject {
             this._joy_options.zone = document.getElementById(<string>this["_id"])
             this._joy_manager = nipplejs.create(this._joy_options);
             const vel = this._move_speed
-            this._joy_manager['0'].on('move', function (evt, data) {
+            this._joy_manager['0'].on('move', function (evt:any, data:any) {
                 const forward = data.vector.y
                 const turn = data.vector.x
 
@@ -89,7 +89,7 @@ export class XJoystick extends XUIObject {
                 XData.objects["joy-move"] = joy_move
             })
 
-            this._joy_manager['0'].on('end', function (evt) {
+            this._joy_manager['0'].on('end', function (evt:any) {
                 const joy_move = { forward: 0, backward: 0, left: 0, right: 0 }
                 XData.objects["joy-move"] = joy_move
             })

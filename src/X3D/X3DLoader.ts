@@ -4,10 +4,7 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader';
 import X3DObject from './X3DObject';
 import X3D from "./X3D"
-import XEventManager from '../XEventManager';
-import XObject from '../XObject';
-import {XLogger as _xlog} from '../XLogger'
-import XUtils from '../XUtils';
+import {_xlog, _xem} from 'xpell-core';
 
 
 
@@ -18,7 +15,7 @@ class X3DLoader {
 
     static loadGLTF(fileName: string, data: any, onLoadCallBack?: Function) {
 
-        const _onload = (gltf) => {
+        const _onload = (gltf:any) => {
 
             let firstObj = null
             //to-do fix group loading position
@@ -40,17 +37,17 @@ class X3DLoader {
                 }
                 
                 
-                child.traverse((child2) => {
+                child.traverse((child2:THREE.Object3D) => {
                     child2.frustumCulled = false
                     /** add more */
                 })
                 
-                xobject.loadAnimations()
+                xobject?.loadAnimations()
                 // console.log(xobject);
 
                 
 
-                X3D.add(xobject)
+                if(xobject) X3D.add(xobject)
                 // if(!firstObj) {
                 //     firstObj=xobject
                 //     data._id = XUtils.guid()
@@ -58,17 +55,17 @@ class X3DLoader {
 
             //})
 
-            if (data["_id"]) XEventManager.fire(data["_id"] + "-loaded", {})
+            if (data["_id"]) _xem.fire(data["_id"] + "-loaded", {})
             if (onLoadCallBack) onLoadCallBack(xobject)
         }
 
-        const _onprogress = (data) => {
+        const _onprogress = (data:any) => {
             //console.log(data);
             // this.loading=false
 
         }
 
-        const _onerror = (error) => {
+        const _onerror = (error:any) => {
             console.log(error);
             this.loading = false
 
@@ -81,7 +78,7 @@ class X3DLoader {
 
     static loadFBX(fileName: string, data: any, onLoadCallBack?: Function) {
         
-        const _onload = (obj) => {
+        const _onload = (obj:THREE.Object3D) => {
             
             //to-do fix group loading position
             // obj.children.forEach(child => {
@@ -91,22 +88,22 @@ class X3DLoader {
             // console.log("tye:" + child.type);
 
             if (obj.type == "Mesh") {
-                xobject = XMesh.getFromThreeObject(obj, data)
+                xobject = XMesh.getFromThreeObject(<THREE.Mesh>obj, data)
             }
             else if (obj.type == "Group") {
-                xobject = XGroup.getFromThreeObject(obj, data)
+                xobject = XGroup.getFromThreeObject(<THREE.Group>obj, data)
             }
             else if (obj.type == "Object3D") {
                 xobject = X3DObject.getFromThreeObject(obj, data)
             }
-            xobject.loadAnimations()
+            xobject?.loadAnimations()
             // console.log(xobject);
 
-            X3D.add(xobject)
+            if(xobject) X3D.add(xobject)
 
             // })
 
-            if (data["_id"]) XEventManager.fire(data["_id"] + "-loaded", {})
+            if (data["_id"]) _xem.fire(data["_id"] + "-loaded", {})
             if (onLoadCallBack) onLoadCallBack(xobject)
 
             // console.log(obj);
@@ -118,13 +115,13 @@ class X3DLoader {
 
         }
 
-        const _onprogress = (data) => {
+        const _onprogress = (data:any) => {
             //console.log(data);
             // this.loading=false
 
         }
 
-        const _onerror = (error) => {
+        const _onerror = (error:any) => {
             _xlog.error(error);
             this.loading = false
 
@@ -136,21 +133,21 @@ class X3DLoader {
 
     static loadFBXAnimation(fileName: string, x3dObject:X3DObject,onLoadCallBack?:Function) {
 
-        const _onload = (obj) => {
+        const _onload = (obj:THREE.Object3D) => {
             
            x3dObject.importAnimations(obj)
-           onLoadCallBack()
+           if(onLoadCallBack ) onLoadCallBack()
 
 
         }
 
-        const _onprogress = (data) => {
+        const _onprogress = (data:any) => {
             //console.log(data);
             // this.loading=false
 
         }
 
-        const _onerror = (error) => {
+        const _onerror = (error:any) => {
             _xlog.error(error);
             this.loading = false
 
@@ -163,7 +160,7 @@ class X3DLoader {
 
     static async loadModelFromGLTF(modelUrl: string): Promise<THREE.Object3D> {
         return new Promise(function (resolve, reject) {
-            const _onload = (gltf) => {
+            const _onload = (gltf:any) => {
 
                 const child = gltf.scene
 
@@ -177,13 +174,13 @@ class X3DLoader {
                 resolve(child)
             }
 
-            const _onprogress = (data) => {
+            const _onprogress = (data:any) => {
                 //console.log(data);
                 // this.loading=false
 
             }
 
-            const _onerror = (error) => {
+            const _onerror = (error:any) => {
                 _xlog.error(error);
                 reject(error)
             }

@@ -1,6 +1,7 @@
-import XEventManager from "../XEventManager";
-import XLogger from "../XLogger";
-import { XObjectPack } from "../XObject";
+// import _xem from "../XEventManager";
+// import _xlog from "../XLogger";
+// import { XObjectPack } from "../XObject";
+import {_xem,_xlog,XObjectPack,IXObjectData } from "xpell-core"
 import XAIObject from "./XAIObject";
 
 
@@ -10,10 +11,10 @@ import XAIObject from "./XAIObject";
 export class XTTS extends XAIObject {
 
     static xtype = "tts"
-    synth:SpeechSynthesis = null
+    synth!:SpeechSynthesis 
     voices:Array<SpeechSynthesisVoice> = [];
 
-    constructor(data) {
+    constructor(data:IXObjectData) {
         super(data, { _type: XTTS.xtype, _voice: "Samantha" })
         this.defaults_voice = null;
         this.defaults_voice_name = this._voice;
@@ -25,12 +26,12 @@ export class XTTS extends XAIObject {
 
     async onCreate(): Promise<void> {
         await this.loadVoices()
-        XEventManager.fire("tts-voices-loaded")
+        _xem.fire("tts-voices-loaded")
         
         
     }
 
-    setPron(pron_dict) {
+    setPron(pron_dict:any) {
         this.pron = pron_dict;
     }
 
@@ -40,7 +41,7 @@ export class XTTS extends XAIObject {
         // this.voices.forEach(voice => console.log(voice.name))
         if (this.defaults_voice_name) {
             
-            this.setVoiceByName(this.defaults_voice_name);
+            this.setVoiceByName(<any>this.defaults_voice_name);
             this.defaults_voice_name = null;
         }
     }
@@ -66,36 +67,36 @@ export class XTTS extends XAIObject {
 
     }
 
-    setVoice(index) {
+    setVoice(index:any) {
         this.default_voice = index;
     }
 
-    setVoiceByName(voiceName) {
+    setVoiceByName(voiceName:string) {
         if (this.voices) {
             for (let i = 0; i < this.voices.length; i++) {
                 //console.log("bot voice " + this.voices[i].name + ' (' + this.voices[i].lang + ')')
                 if (this.voices[i].name.toLowerCase() == voiceName.toLowerCase()) {
-                    XLogger.log("xai tts default voice is set to " + this.voices[i].name + ' (' + this.voices[i].lang + ')')
+                    _xlog.log("xai tts default voice is set to " + this.voices[i].name + ' (' + this.voices[i].lang + ')')
                     this.setVoice(i)
                 }
             }
         }
     }
 
-    speak(text, on_speech_word = null, on_speech_end = null) {
+    speak(text:string, on_speech_word?:any, on_speech_end?:any) {
         if (this.synth) {
             let utter = new SpeechSynthesisUtterance();
             if (this.default_voice) {
-                utter.voice = this.voices[<string>this.default_voice];
+                utter.voice = this.voices[<any>this.default_voice];
             }
             utter.pitch = <number>this.speach_pitch;
             utter.rate = <number>this.speach_rate;
 
             let l_txt = text.toLowerCase();
-            let pkeys = Object.keys(this.pron);
+            let pkeys = Object.keys(<any>this.pron);
             pkeys.forEach(word => {
                 while (l_txt.indexOf(word) > -1) {
-                    l_txt = l_txt.replace(word, this.pron[word]);
+                    l_txt = l_txt.replace(word, (<any>this.pron)[<any>word]);
                 }
             });
             utter.text = l_txt;

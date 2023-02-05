@@ -7,10 +7,8 @@
  */
 
 // import XUIObject from "./XUIObject"
-import XModule, { ModuleData } from "../XModule"
-import { XEventManager, XEventList } from "../XEventManager"
-import XParser from "../XParser";
-import * as _xc from "../XConst"
+import {XModule,XModuleData,_xem,XParser } from "xpell-core"
+// import * as _xc from "../XConst"
 import {XAIObjects} from "./XAICoreObjects"
 
 export class XAIModule extends XModule {
@@ -19,11 +17,11 @@ export class XAIModule extends XModule {
      * @fires "xai-loaded" event
      * @param data module data
      */
-    constructor(data: ModuleData) {
+    constructor(data: XModuleData) {
 
         super(data)
         this.importObjectPack(XAIObjects)
-        XEventManager.fire("xai-loaded")
+        _xem.fire("xai-loaded")
         
     }
 

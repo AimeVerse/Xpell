@@ -7,25 +7,22 @@
  */
 
 import XUIObject from "./XUIObject"
-import XViewManager from "./XViewManager"
-import XModule, { ModuleData } from "../XModule"
-import { XEventManager, XEventList } from "../XEventManager"
+import {XViewManager,XViewsPack} from "./XViewManager"
+import { _xlog,XParser,_xem,XModule,XModuleData, IXObjectData } from "xpell-core";
+
 import XUICoreObjects from "./XUICoreObjects"
 //  import SpellDashboardObjects from "./spell-dashboard"
 //  import SpellMoveControls  from "./sui-objects/spell-move-controls";
-import XParser from "../XParser";
-import * as _xc from "../XConst"
-import {XLogger as _xlog} from "../XLogger"
+// import * as _xc from "../XConst"
+
+
 
 
 export interface XUIApp {
     xpell?: {
         version?: number //minimum xpell version for the app
     }
-    _views?:{
-        _parent_element:string | {}, //id of the view manager html tag 
-        [k:string] : {} | string
-    },
+    _views?:XViewsPack,
     _controls?:{
         _parent_element:string |{} , //id of the controls (static objects) html tag 
         [k:string] : {} | string
@@ -36,22 +33,22 @@ export const FIRST_USER_GESTURE = "first-user-gesture"
 
 export class XUIModule extends XModule {
     vm: XViewManager
-    firstGestureOccured : boolean
-    private _controls_element: string
+    _first_gesture_occured : boolean
+    private _controls_element!: string
 
     /**
      * @fires "xui-loaded" event
      * @param data module data
      */
-    constructor(data: ModuleData) {
+    constructor(data: XModuleData) {
 
         super(data)
         //this.engine = SpellUI
         this.vm = new XViewManager()
         //register default objects
         this.importObjectPack(XUICoreObjects)
-        this.firstGestureOccured = false
-        XEventManager.fire("xui-loaded")
+        this._first_gesture_occured = false
+        _xem.fire("xui-loaded")
 
     }
 
@@ -70,7 +67,7 @@ export class XUIModule extends XModule {
         if(xuiApp._controls){
             this.addControlsPack(xuiApp._controls)
         }
-        XEventManager.fire(XEventList.app_loaded)
+        _xem.fire("xui-app-loaded")
     }
 
 
@@ -105,16 +102,16 @@ export class XUIModule extends XModule {
 
 
 
-    addControlsPack(controls: {}) {
+    addControlsPack(controls: {[name:string]:{}}) {
         Object.keys(controls).forEach(ctrl => {
-            if(ctrl == _xc.NODES.parent_element) {this._controls_element = <string>controls[ctrl]}
+            if(ctrl == "_parent_element") {this._controls_element = <string>controls[ctrl]}
             else {
                 this.loadControl(controls[ctrl])
             }
         })
     }
 
-    loadControl(data): XUIObject {
+    loadControl(data:IXObjectData): XUIObject {
         const xobj = this.create(data)
         const ctrl = xobj.getDOMObject()
         
@@ -129,7 +126,7 @@ export class XUIModule extends XModule {
         return xobj
     }
 
-    createFromTemplate(xpell2json) {
+    createFromTemplate(xpell2json:{[k:string]:any}) {
         const s = this.create(XParser.xpellify(xpell2json))
         return s
     }
@@ -146,12 +143,12 @@ export class XUIModule extends XModule {
         document.body.appendChild(obj.getDOMObject())
         document.addEventListener("first-user-gesture", (e) => {
             XUI.remove("first-gesture-overlay")
-            XUI.firstGestureOccured = true
+            XUI._first_gesture_occured = true
         })
 
     }
 
-    async onFrame(frameNumber) {
+    async onFrame(frameNumber:number) {
         super.onFrame(frameNumber) //bubble event to all the active objects in the object manager (om)
         //console.log("frame " + frame_number)
     }

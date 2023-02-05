@@ -1,8 +1,8 @@
 
 import * as THREE from 'three'
-import { IXObjectData, XObjectPack } from "./src/XObject"
-import { Xpell as _x } from "./src/Xpell"
-import { XData } from "./src/XData"
+import { _x,IXObjectData, XObjectPack,XData } from "xpell-core"
+// import { Xpell as _x } from "./src/Xpell"
+// import { XData } from "./src/XData"
 import { X3D, X3DApp, X3DObject } from "./src/X3D/X3D"
 import { XCameraData,XLightData } from './src/X3D/X3DCoreObjects'
 import { XLabel } from "./src/XUI/XUICoreObjects"
@@ -13,7 +13,6 @@ import { XUIObject } from "./src/XUI/XUIObject"
 import XJoystick from "./src/XUI/XJoystick"
 import { TopBar } from "./src/XUI/XDashboard"
 import { XEditor, XTransformControls } from "./src/XUI/XEditor"
-import { NPCStates,XNPC } from './src/X3D/X3DNPC'
 
 
 //display Xpell engine info

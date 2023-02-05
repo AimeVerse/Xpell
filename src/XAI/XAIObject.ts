@@ -1,8 +1,7 @@
 
-import XUtils from "../XUtils"
-import XData from "../XData"
-import XObject, { IXObjectData } from "../XObject"
-import * as _XC from "../XConst"
+import {_xem,_xlog,XObjectPack,IXObjectData,XObject,_xu } from "xpell-core"
+// import XObject, { IXObjectData } from "../XObject"
+// import * as _XC from "../XConst"
 
 // import _xuiobject_basic_nano_commands from "./XUINanoCommands"
 const reservedWords = { _children:"child objects" }
@@ -15,7 +14,7 @@ export class XAIObject extends XObject {
     
 
 
-    constructor(data, defaults) {
+    constructor(data:IXObjectData, defaults:any) {
         super(data,defaults,true)
         this._ignore = reservedWords;
         
@@ -23,7 +22,7 @@ export class XAIObject extends XObject {
 
         if (data) {
             if (data.hasOwnProperty("_ignore")) {
-                this._ignore = XUtils.createIgnoreList(data["_ignore"],reservedWords)
+                this._ignore = _xu.createIgnoreList(<any>data["_ignore"],reservedWords)
             }
             this.parse(data, this._ignore);
         }
@@ -35,7 +34,7 @@ export class XAIObject extends XObject {
      * Dispose all object memory (destructor)
      */
      async dispose(){
-        this._children = null
+        this._children = []
     }
 
     /**
@@ -80,7 +79,7 @@ export class XAIObject extends XObject {
      * object that extends XUIObject can override this method and call super.onFrame
      * to bubble the event to child objects 
      */
-    async onFrame(frameNumber){
+    async onFrame(frameNumber:number){
       
         
         super.onFrame(frameNumber)

@@ -4,20 +4,17 @@
  */
 
 import XUI from "./XUI"
-import XUtils from "../XUtils"
 import XUIObject from "./XUIObject"
-import XData from "../XData"
-import XEventManager from "../XEventManager"
-import { json } from "stream/consumers"
+import  {XData, _xu, _xem,IXObjectData} from "xpell-core"
 
 export class XTransformControls extends XUIObject {
-    private _keyboard_down_listener: Function
-    private _key_down: boolean
+    private _keyboard_down_listener!: Function
+    private _key_down!: boolean
     private _state: 'translate' | 'rotate' | 'scale' 
 
-    constructor(data) {
+    constructor(data:IXObjectData) {
 
-        const ids = XUtils.guid()
+        const ids = _xu.guid()
         const defaults = {
             _type: "transform-controls",
             _html_tag: "div",
@@ -111,7 +108,7 @@ export class XTransformControls extends XUIObject {
     changeState(newState:'translate' | 'rotate' | 'scale') {
         this._state = newState
         XData.variables["xtransform-controls-state"] = this._state
-        XEventManager.fire("xtransform-controls-state-changed")
+        _xem.fire("xtransform-controls-state-changed")
 
     }
 
@@ -145,17 +142,17 @@ export class XTransformControls extends XUIObject {
        
 
 
-        const btn_pos = document.getElementById("tc-pos-button")
+        const btn_pos:HTMLElement = <HTMLElement>document.getElementById("tc-pos-button")
         btn_pos.addEventListener("click",(event) => {
             this.changeState('translate')
         })
 
-        const btn_rot = document.getElementById("tc-rot-button")
+        const btn_rot:HTMLElement = <HTMLElement>document.getElementById("tc-rot-button")
         btn_rot.addEventListener("click",(event) => {
             this.changeState('rotate')
         })
 
-        const btn_scale = document.getElementById("tc-scale-button")
+        const btn_scale:HTMLElement = <HTMLElement>document.getElementById("tc-scale-button")
         btn_scale.addEventListener("click",(event) => {
             this.changeState("scale")
         })
@@ -174,9 +171,9 @@ export class XTransformControls extends XUIObject {
 
 export class X3DObjectViewer extends XUIObject {
 
-    constructor(data) {
+    constructor(data:IXObjectData) {
 
-        const ids = XUtils.guid()
+        const ids = _xu.guid()
         const defaults = {
             _type: "x3d-object-viewer",
             _html_tag: "div",

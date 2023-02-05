@@ -8,16 +8,19 @@
  */
 
 import * as THREE from 'three'
-import XModule from "../XModule"
+
+import { _xlog ,XData,_xem,XModule,XModuleData} from 'xpell-core';
+// import XModule from "../XModule"
+// import { XEventManager, XEventList } from "../XEventManager"
+// import  from "../XData";
+// import { XLogger as _xlog } from '../XLogger'
 
 import X3DObject, { IX3DObjectData } from "./X3DObject"
-import { XEventManager, XEventList } from "../XEventManager"
-import X3DPrimitives from "./X3DPrivitives"
 import { XCameraData, XLightData } from './X3DCoreObjects'
-import XData from "../XData";
+import X3DPrimitives from "./X3DPrivitives"
 import X3DWorld from './X3DWorld'
-import { XLogger as _xlog } from '../XLogger'
-import X3DNPC from './X3DNPC'
+// import X3DNPC from './X3DNPC'
+// import XObject from '../core/XObject';
 
 
 
@@ -98,21 +101,20 @@ export type X3DApp = {
  * @class X3DModule - Xpell 3D Module
  */
 export class X3DModule extends XModule {
-    world: X3DWorld;
+    world!: X3DWorld ;
     x3dObjects: {};
-    status: number;
+    status!: number;
     
 
     constructor() {
         super({ _name: "x3d" })
         this.importObjectPack(X3DPrimitives)
-        this.importObjectPack(X3DNPC)
 
         //SpellObjects.load(this)
         XData.objects["x3d-om"] = this.om
-        this.world = null
+        //this.world = null
         this.x3dObjects = {}
-        XEventManager.fire(XEventList.engine3d_init)
+        _xem.fire("x3d-init")
     }
 
 
@@ -122,7 +124,7 @@ export class X3DModule extends XModule {
      * @param autoRun - start world running automatically 
      * @deprecated - use loadApp function instead
      */
-    async loadWorld(x3dWorldData, autoRun = true) {
+    async loadWorld(x3dWorldData:X3DApp, autoRun:boolean = true) {
 
         await this.loadApp(x3dWorldData)
     }
@@ -148,14 +150,14 @@ export class X3DModule extends XModule {
      * @return {X3DObject}
      * @override 
      */
-    create(data) {
+    create(data:IX3DObjectData) {
 
-        if (this.om.hasObjectClass(data._type)) {
+        if (this.om.hasObjectClass(<string>data._type)) {
             if (this._log_rules.createObject) {
                 _xlog.log("X3D | creating " + data._type);
             }
 
-            const xclass = this.om.getObjectClass(data._type)
+            const xclass = this.om.getObjectClass(<string>data._type)
             const obj = new xclass(data)
             this.om.addObject(obj)
             return obj
@@ -171,19 +173,27 @@ export class X3DModule extends XModule {
         if (this._log_rules.removeObject) {
             _xlog.log("X3D remove object " + objectId)
         }
-        await this.world.removeX3DObject(objectId)
+        await this.world?.removeX3DObject(objectId)
         
         super.remove(objectId)
     }
 
-    //get spell3d object
+    /**
+     * Add X3DObject to the object manager and world
+     * @param x3dObject X3DObject 
+     */
     add(x3dObject: X3DObject) {
-        this.om.addObject(x3dObject)
-        this.world.addX3DObject(x3dObject)
+        this.om.addObject(<any>x3dObject)
+        this.world?.addX3DObject(x3dObject)
     }
 
-    addRaw(x3dJson: IX3DObjectData): X3DObject {
-        const obj = X3D.create(x3dJson)
+    /**
+     * Creates new X3DObject from data and add it to the world 
+     * @param <IX3DObjectData> data  - the object to create data (json)
+     * @returns 
+     */
+    addRaw(data: IX3DObjectData): X3DObject {
+        const obj = X3D.create(data)
         X3D.add(obj)
         return obj
     }
@@ -191,14 +201,14 @@ export class X3DModule extends XModule {
 
 
     onWindowResize() {
-        this.world.onWindowResize()
+        this.world?.onWindowResize()
     }
 
     async start() {
         _xlog.log("Running 3d engine");
         this.status = X3DEngineStatus.Running
-        await this.world.run()
-        XEventManager.fire("spell3d-world-load")
+        await this.world?.run()
+        _xem.fire("x3d-world-load")
     }
 
     get_objects_available() {
@@ -211,14 +221,14 @@ export class X3DModule extends XModule {
     }
 
 
-    raycast(e) {
-        const cam = this.world.defaultCamera;
+    raycast(e:any) {
+        const cam = this.world?.defaultCamera;
         const mouse = { x: 0, y: 0 }
 
         const div = e.target
 
 
-        if (div.tagName.toLowerCase() != this.world.renderer.domElement.tagName.toLowerCase()) return
+        if (div.tagName.toLowerCase() != this.world?.renderer.domElement.tagName.toLowerCase()) return
 
         if (e.which != 1) return;
 
@@ -227,12 +237,12 @@ export class X3DModule extends XModule {
         mouse.y = - (e.clientY / window.innerHeight) * 2 + 1;
 
 
-        this.world.raycaster.setFromCamera(mouse, cam);
+        this.world?.raycaster.setFromCamera(mouse, cam);
 
 
-        const intersects = this.world.raycaster.intersectObjects(this.world.scene.children);
+        const intersects = this.world?.raycaster.intersectObjects(this.world.scene.children);
 
-        intersects.forEach((ints) => {
+        intersects?.forEach((ints) => {
 
             if (ints?.object) {
                 let obj = ints.object
@@ -245,7 +255,7 @@ export class X3DModule extends XModule {
                         if (x3dObject) {
                             //console.log(x3dObject);
                             //X3D.world.setTransformControls(x3dObject)
-                            XEventManager.fire("raycast-data", { detail: { x3dObject: x3dObject } })
+                            _xem.fire("raycast-data", {  x3dObject: x3dObject } )
                         }
                         found = true
                     }
@@ -258,9 +268,9 @@ export class X3DModule extends XModule {
 
     }
 
-    set_world_control_target(cameraTarget) {
+    set_world_control_target(cameraTarget:THREE.Vector3) {
 
-        if (this.world.controls) {
+        if (this.world?.controls) {
             //const cameraTarget = new THREE.Vector3(0.2,0.2,0)
             //this.world.controls.target = cameraTarget
             this.world.defaultCamera.position.set(cameraTarget.x, cameraTarget.y + 0.5, cameraTarget.z + 3)
@@ -290,7 +300,7 @@ export class X3DModule extends XModule {
      * @param path - path to skymap
      * @param images - optional images array like ["px.jpg","nx.jpg","py.jpg","ny.jpg","pz.jpg","nz.jpg"]
      */
-    addEnvironmentMap(path, images?) {
+    addEnvironmentMap(path:string, images?:string[]) {
 
 
         if (!images) images = ["px.jpg", "nx.jpg", "py.jpg", "ny.jpg", "pz.jpg", "nz.jpg"]
@@ -299,7 +309,7 @@ export class X3DModule extends XModule {
             .setPath(path)
             .load(images)
 
-        this.world.addBackground(environmentMap)
+        this.world?.addBackground(environmentMap)
     }
 
     // set_camera_path(data) {
@@ -375,9 +385,9 @@ export class X3DModule extends XModule {
     //   }
 
 
-    async onFrame(frameNumber) {
+    async onFrame(frameNumber:number) {
         if (this.status == X3DEngineStatus.Running) {
-            this.world.onFrame(frameNumber)
+            this.world?.onFrame(frameNumber)
         }
 
         super.onFrame(frameNumber) //bubble event to all the active objects in the object manager (om)

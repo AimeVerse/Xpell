@@ -9,16 +9,11 @@
 
 
 
- import { XNanoCommandPack } from "../XNanoCommands"
+ import { XNanoCommandPack,XCommand,_xem,_xlog,_xu,XData,XObject } from "xpell-core"
 
- import XCommand from "../XCommand"
- import { XEventManager as _xem } from "../XEventManager"
- import { XLogger as _xlog } from "../XLogger"
 
 import * as THREE from 'three'
 
-import XData from "../XData";
-import * as _XU from "../XUtils"
 import X3DObject from "./X3DObject"
 
 
@@ -34,10 +29,10 @@ import X3DObject from "./X3DObject"
  * - dir -> change direction (up/down)
  * - step -> step to move
  */
-const change_axis = (root, xCommand:XCommand) => {
-    const axis = xCommand.getParam(0, "axis") 
-    const direction = (<string>xCommand.getParam(1, "dir")).toLowerCase()
-    const step = parseFloat(<string>xCommand.getParam(2, "step"))
+const change_axis = (root:any, xCommand:XCommand) => {
+    const axis = xCommand.getParam(0, "axis","x") 
+    const direction = (<string>xCommand.getParam(1, "dir","up")).toLowerCase()
+    const step = parseFloat(<string>xCommand.getParam(2, "step",0.01))
     if (direction == "up") {
         root[<string>axis] += step
     } else if (direction == "down") {
@@ -47,7 +42,7 @@ const change_axis = (root, xCommand:XCommand) => {
 
 
 
-const set_axis = (root, axis, param) => {
+const set_axis = (root:any, axis:any, param:any) => {
 
     if (param) {
         if (param.startsWith("++")) {
@@ -93,36 +88,36 @@ export const _x3dobject_nano_commands:XNanoCommandPack = {
     //     set_axis(ns_cmd.s3d_object._scale, "z", get_param(2, "z", ns_cmd))
     //     console.log("scale");
     // },
-    "rotation":  (xCommand:XCommand,x3dObject:X3DObject) => {
+    "rotation":  (xCommand:XCommand,x3dObject?:XObject) => {
         
         //rotation x:0.01 y:++0.01 z:--0.01
-        const x = xCommand.getParam(0, "x")
+        const x = xCommand.getParam(0, "x","0")
 
-        if (x) { set_axis(x3dObject._rotation, "x", x) }
+        if (x) { set_axis(x3dObject?._rotation, "x", x) }
 
-        const y = xCommand.getParam(1, "y")
-        if (y) { set_axis(x3dObject._rotation, "y", y) }
+        const y = xCommand.getParam(1, "y",0)
+        if (y) { set_axis(x3dObject?._rotation, "y", y) }
 
-        const z = xCommand.getParam(2, "z")
-        set_axis(x3dObject._rotation, "z", z)
+        const z = xCommand.getParam(2, "z",0)
+        set_axis(x3dObject?._rotation, "z", z)
     },
-    "spin": (xCommand:XCommand,x3dObject:X3DObject) => {
+    "spin": (xCommand:XCommand,x3dObject?:XObject) => {
 
-        const x = xCommand.getParam(0, "x")
+        const x = xCommand.getParam(0, "x",0)
         const x_str = (x) ? "x:++" + x : ""
 
-        const y = xCommand.getParam(0, "y")
+        const y = xCommand.getParam(0, "y",0)
         const y_str = (y) ? "y:++" + y : ""
 
-        const z = xCommand.getParam(0, "z")
+        const z = xCommand.getParam(0, "z",0)
         const z_str = (z) ? "z:++" + z : ""
         const sstr = `rotation ${x_str} ${y_str} ${z_str}`
 
         // console.log(sstr);
-        x3dObject._on_frame = sstr
+        if(x3dObject) x3dObject._on_frame = sstr
     },
-    "stop-spin": (xCommand:XCommand,x3dObject:X3DObject)  => {
-        x3dObject.onframe = ""
+    "stop-spin": (xCommand:XCommand,x3dObject?:XObject)  => {
+        if(x3dObject) x3dObject.onframe = ""
     },
     // "rotate": (ns_cmd) => {
     //     // transfer positioning control to THREE from Spell
@@ -175,13 +170,14 @@ export const _x3dobject_nano_commands:XNanoCommandPack = {
     //         }
     //     }
     // },
-    "follow-joystick": (ns_cmd,x3dObject:X3DObject) => {
+    "follow-joystick": (ns_cmd,x3dObject?:XObject) => {
+        const x3do:X3DObject = <X3DObject>x3dObject
         const jm = XData.objects["joy-move"]
-        if (jm) {
+        if (jm && x3do) {
 
 
             let power = 0.2
-            let lvector = x3dObject._three_obj.position
+            let lvector = (x3do._three_obj) ? x3do._three_obj.position : new THREE.Vector3(0,0,0)
             let tempVector = new THREE.Vector3();
             const upVector = new THREE.Vector3(0, 1, 0);
             let change = false
@@ -227,10 +223,10 @@ export const _x3dobject_nano_commands:XNanoCommandPack = {
             //tv.addScaledVector(lvector, 1)
             //
             //console.log(ns_cmd.s3d_object)
-            x3dObject.setPositionFromVector3(lvector)
+            x3do?.setPositionFromVector3(<THREE.Vector3>lvector)
 
 
-            x3dObject._three_obj.updateMatrixWorld()
+            x3do?._three_obj?.updateMatrixWorld()
             //console.log("ct")
             XData.objects["control-target"] =  (change)  ? lvector : undefined
 

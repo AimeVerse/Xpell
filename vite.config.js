@@ -1,4 +1,7 @@
 import {resolve} from 'path'
+import dts from 'vite-plugin-dts'
+
+const index = resolve(__dirname, 'index.ts')
 
 export default {
   server: {
@@ -6,16 +9,16 @@ export default {
   },
   build: {
     lib: {
-      entry: resolve(__dirname, 'index.ts'),
+      entry: index,
       name: 'xpell',
       // the proper extensions will be added
       fileName: format => `xpell.${format}.js`
     },
-    target: 'esnext',
+    target: 'modules',
     minify: true,
-    outDir:"dist",
-    root: "",
-    base:"",
+    // outDir:"dist",
+    // root: "",
+    // base:"",
     rollupOptions: {
       // make sure to externalize deps that shouldn't be bundled
       // into your library
@@ -27,7 +30,18 @@ export default {
         }
       }
     }
-  }
+  },
+  plugins: [dts({
+    outputDir: ['dist', 'types'],
+    include: ['index.ts'],
+    exclude: ['src/ignore','public'],
+    // aliasesExclude: [/^@components/],
+    staticImport: true,
+    skipDiagnostics: false,
+    logDiagnostics: true,
+    rollupTypes: true,
+    insertTypesEntry: true
+  })],
 };
 
 

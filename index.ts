@@ -17,18 +17,45 @@
 
 const XFolder = "./src/"
 
-export {default as Xpell} from "./src/Xpell"
-export {XUtils} from "./src/XUtils"
-export {XData} from "./src/XData"
-export {XParser} from "./src/XParser"
-export {XCommand} from "./src/XCommand"
-export {XLogger} from "./src/XLogger"
-export {XModule} from "./src/XModule"
-import IXObjectData from "./src/XObject"
-export {IXObjectData}
-export {XObject,XObjectPack} from "./src/XObject"
-export {XObjectManager} from "./src/XObjectManager"
-export {XEventManager,XEvent,XEventList} from "./src/XEventManager"
+/**
+ * Xpell-Core exports
+ */
+
+export {
+    Xpell,Xpell as _x,
+    XUtils,XUtils as _xu,
+    XData,XParser,XCommand,XModule,
+    XLogger,XLogger as _xlog,
+    XObjectManager,XObject,XObjectPack,type IXObjectData,
+    XEventManager, XEventManager as _xem,type XEventListener
+
+} from "xpell-core"
+// export {} from "./src/XUtils"
+// export {XData} from "./src/XData"
+// export {XParser} from "./src/XParser"
+// export {XCommand} from "./src/XCommand"
+// export {XLogger,XLogger as _xlog} from "./src/XLogger"
+// export {XModule} from "./src/XModule"
+// export {XObject,XObjectPack,type IXObjectData} from "./src/XObject"
+// export {XObjectManager} from "./src/XObjectManager"
+// export {XEventManager, XEventManager as _xem,type XEventListener} from "./src/XEventManager"
+
+// export {default as Xpell} from "xpell-core"
+// export {XUtils} from "./src/XUtils"
+// export {XData} from "./src/XData"
+// export {XParser} from "./src/XParser"
+// export {XCommand} from "./src/XCommand"
+// export {XLogger} from "./src/XLogger"
+// export {XModule} from "./src/XModule"
+// import IXObjectData from "./src/XObject"
+// export {IXObjectData}
+// export {XObject,XObjectPack} from "./src/XObject"
+// export {XObjectManager} from "./src/XObjectManager"
+// export {XEventManager,XEvent,XEventList} from "./src/XEventManager"
+
+
+
+
 export {XUI} from "./src/XUI/XUI"
 export {XUIObject} from "./src/XUI/XUIObject"
 export {XUIObjects,XView,XButton,XForm,XHeader,XImage,XLabel,XLink,XList,XNavBar,XTextArea,XTextField,XVideo,XWebcam,XHTML,XInput,XSVG} from "./src/XUI/XUICoreObjects"
@@ -36,8 +63,11 @@ export {TopBar} from "./src/XUI/XDashboard"
 export {XJoystick} from "./src/XUI/XJoystick"
 export {XViewManager} from "./src/XUI/XViewManager"
 export {X3D} from "./src/X3D/X3D"
-export {X3DObject} from "./src/X3D/X3DObject"
-export {XCamera,XGeometry,XGroup,XLight,XMaterial,XMesh} from "./src/X3D/X3DCoreObjects"
+export {X3DObject,type IX3DObjectData} from "./src/X3D/X3DObject"
+export {XGeometry,XGroup,XMaterial,XMesh,
+    XCamera, type XCameraTypes,type XCameraData,
+    XLight,type XLightData, type XLightTypes
+} from "./src/X3D/X3DCoreObjects"
 export {X3DPrimitives,XBox,XCone,XCylinder,XPlane,XSphere,XTorus} from "./src/X3D/X3DPrivitives"
 export {X3DWorld,XWorldStatus} from "./src/X3D/X3DWorld"
 export {XEditor,XTransformControls } from "./src/XUI/XEditor"
@@ -48,15 +78,15 @@ export {X3DLoader} from "./src/X3D/X3DLoader"
  * Interface and Types
  * -- should be in a single line for each to prevent build errors
  */
-import IX3DObjectData from "./src/X3D/X3DObject"
-import XCameraTypes from "./src/X3D/X3DCoreObjects"
-import XCameraData from "./src/X3D/X3DCoreObjects"
-import XLightData from "./src/X3D/X3DCoreObjects"
-import XLightTypes from "./src/X3D/X3DCoreObjects"
-export {IX3DObjectData}
-export {XCameraTypes}
-export {XCameraData}
-export {XLightData}
-export {XLightTypes}
+// import IX3DObjectData from "./src/X3D/X3DObject"
+// import XCameraTypes from "./src/X3D/X3DCoreObjects"
+// import XCameraData from "./src/X3D/X3DCoreObjects"
+// import XLightData from "./src/X3D/X3DCoreObjects"
+// import XLightTypes from "./src/X3D/X3DCoreObjects"
+// export type {IX3DObjectData}
+// export type {XCameraTypes}
+// export type {XCameraData}
+// export type {XLightData}
+// export type {XLightTypes}
 
-export * from "./src/X3D/X3DCoreObjects"
+// export * from "./src/X3D/X3DCoreObjects"

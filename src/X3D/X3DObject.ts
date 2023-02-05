@@ -1,13 +1,13 @@
-import { XUtils as _XU } from "../XUtils"
-import XParser from "../XParser"
-import * as _XC from "../XConst"
+import { _xu,XParser,XObject, IXObjectData,_xlog } from "xpell-core"
+// import { XObject, IXObjectData } from "../XObject"
+// import XParser from "../XParser"
+// import * as _XC from "../XConst"
 import * as THREE from 'three'
 import * as CANNON from 'cannon-es'
 import { threeToCannon, ShapeType } from 'three-to-cannon';
-import { XObject, IXObjectData } from "../XObject"
 import _x3dobject_nano_commands from './X3DNanoCommands'
 import X3D from "./X3D"
-import { XLogger as _xlog } from '../XLogger'
+// import { XLogger as _xlog } from '../XLogger'
 
 /**
  * Extended imports
@@ -51,30 +51,29 @@ export interface IX3DObjectData extends IXObjectData {
 
 export class X3DObject extends XObject {
     _three_class: any
-    _threes_class_args: Array<any>
-    _three_obj: THREE.Object3D | null
-    _cannon_obj: CANNON.Body | undefined
-    _cannon_shape: CANNON.Shape | undefined
-    _mass: number
-    _enable_physics: boolean
-    _position: THREE.Vector3
-    _rotation: THREE.Euler
-    _scale: THREE.Vector3
+    _threes_class_args!: Array<any>
+    _three_obj!: THREE.Object3D | null
+    _cannon_obj: CANNON.Body | undefined | null
+    _cannon_shape: CANNON.Shape | undefined | null
+    _mass!: number
+    _enable_physics!: boolean
+    _position!: THREE.Vector3
+    _rotation!: THREE.Euler
+    _scale!: THREE.Vector3
     _on_frame: string | Function | undefined
-    protected _visible: boolean
-    protected _animation_clips: {}
-    protected _fade_duration: number
+    protected _visible!: boolean
+    protected _animation_clips: {[name:string]:THREE.AnimationAction}
+    protected _fade_duration!: number
     protected _clock: THREE.Clock
     protected _fraction: number
-    protected _animation_mixer: THREE.AnimationMixer
-    private _frame_number: number
-    protected _cache_cmd_txt: string | null
+    protected _animation_mixer!: THREE.AnimationMixer | null
+    protected _cache_cmd_txt!: string | null
     protected _cache_jcmd: any
     protected _disable_frame_3d_state!: boolean
-    protected _3d_set_once: boolean
-    protected _current_action: string
-    protected _positional_audio: THREE.PositionalAudio | undefined
-    protected _positional_audio_source: string
+    protected _3d_set_once!: boolean
+    protected _current_action!: string | null
+    protected _positional_audio: THREE.PositionalAudio | undefined | null
+    protected _positional_audio_source!: string
 
     protected _log_rules:{
         _import_animation:boolean,
@@ -85,7 +84,7 @@ export class X3DObject extends XObject {
         _play_animation:false
     }
 
-    static getXData(threeObj: THREE.Object3D, defaults) {
+    static getXData(threeObj: THREE.Object3D, defaults:IX3DObjectData) {
         let _xdata = {
             _id: threeObj.name,
             _type: "x3d-object",
@@ -99,13 +98,13 @@ export class X3DObject extends XObject {
         }
         if (defaults) {
             if (defaults._name) { threeObj.name = defaults._name }
-            _XU.mergeDefaultsWithData(<IXObjectData>_xdata, defaults, true)
+            _xu.mergeDefaultsWithData(<IXObjectData>_xdata, defaults, true)
         }
         return _xdata
     }
 
-    static getFromThreeObject(three_obj, defaults) {
-        let _xdata: any = X3DObject.getXData(three_obj, defaults)
+    static getFromThreeObject(threeObj:THREE.Object3D, defaults:IX3DObjectData) {
+        let _xdata: any = X3DObject.getXData(threeObj, defaults)
         return new X3DObject(_xdata)
     }
 
@@ -146,7 +145,7 @@ export class X3DObject extends XObject {
     }
 
 
-    parse3d(data) {
+    parse3d(data:IX3DObjectData) {
 
         
         
@@ -166,7 +165,7 @@ export class X3DObject extends XObject {
         }
         
         if (data._rotation) {
-            this._rotation = new THREE.Euler(data._rotation.x, data._rotation.y, data._rotation.z, data._rotation?.w)
+            this._rotation = new THREE.Euler(data._rotation.x, data._rotation.y, data._rotation.z)
             this.setRotation(data._rotation)
         } else {
             this._rotation = new THREE.Euler(0, 0, 0) //x,y,z
@@ -281,10 +280,10 @@ export class X3DObject extends XObject {
 
                 keys.forEach(key => {
                     if (!key.startsWith("_")) {
-                        if (key == "color") {
-                            this._three_obj[key] = new THREE.Color(<string>this[key]);
+                        if (key == "color" ) {
+                            (<any>this._three_obj)[key] = new THREE.Color(<string>this[key]);
                         } else {
-                            this._three_obj[key] = this[key]
+                            (<any>this._three_obj)[key] = <any>this[key]
                         }
 
                     }
@@ -296,10 +295,11 @@ export class X3DObject extends XObject {
             }
 
         }
-        return this._three_obj
+
+        return <THREE.Object3D>this._three_obj
     }
 
-    getCannonObject(): CANNON.Body {
+    getCannonObject(): CANNON.Body  {
         if (!this._cannon_obj && this._enable_physics) {
             let offset = new CANNON.Vec3(0, 0, 0)
             if (!this._cannon_shape) {
@@ -314,25 +314,25 @@ export class X3DObject extends XObject {
                     else if (collisionType === "mesh") { shape = ShapeType.MESH }
 
                 }
-                const ttcResult = threeToCannon(this._three_obj, { type: shape })
-                this._cannon_shape = ttcResult.shape
+                const ttcResult = threeToCannon(<THREE.Object3D>this._three_obj, { type: shape })
+                this._cannon_shape = ttcResult?.shape
                 this._cannon_shape
-                offset = ttcResult.offset
+                offset = <CANNON.Vec3>ttcResult?.offset
             }
 
             const rigidBody = new CANNON.Body({ mass: this._mass, material: new CANNON.Material('physics') })
-            rigidBody.addShape(this._cannon_shape, offset)
+            rigidBody.addShape(<CANNON.Shape>this._cannon_shape, offset)
             rigidBody.position.set(this._position.x, this._position.y, this._position.z)
             rigidBody.quaternion.setFromEuler(this._rotation.x, this._rotation.y, this._rotation.z)
             rigidBody.position
             rigidBody.linearDamping = 0.9
             this._cannon_obj = rigidBody
         }
-        return this._cannon_obj
+        return <CANNON.Body>this._cannon_obj
     }
 
 
-    async createPositionalAudio(source, data?) {
+    async createPositionalAudio(source:string, data?:IX3DObjectData) {
         const sound = new THREE.PositionalAudio(X3D.world.audioListener);
         // load a sound and set it as the PositionalAudio object's buffer
         const audioLoader = new THREE.AudioLoader();
@@ -348,7 +348,7 @@ export class X3DObject extends XObject {
         return sound
     }
 
-    async setPositionalAudioSource(source?: string, data?) {
+    async setPositionalAudioSource(source?: string, data?:IX3DObjectData) {
         const src = (source) ? source : this._positional_audio_source
         this._positional_audio = await this.createPositionalAudio(src, data)
         if (this._three_obj) this._three_obj.add(this._positional_audio)
@@ -356,7 +356,7 @@ export class X3DObject extends XObject {
 
     }
 
-    playAudio(loop?) {
+    playAudio(loop?:boolean) {
         const snd = <THREE.PositionalAudio>this._positional_audio
         if (snd) {
             if (loop) snd.setLoop(true)
@@ -380,7 +380,7 @@ export class X3DObject extends XObject {
      * - update animation mixer if exists
      * @param {number} frameNumber 
      */
-    async onFrame(frameNumber) {
+    async onFrame(frameNumber:number) {
         this._frame_number = frameNumber
 
         //check if _disable_frame_3d_state is in the Spell object
@@ -412,7 +412,7 @@ export class X3DObject extends XObject {
             // console.log(this._position);
 
             this.setPosition({ x: cp.x, y: cp.y, z: cp.z })
-            this._three_obj.quaternion.copy(<any>cq)
+            this._three_obj?.quaternion.copy(<any>cq)
             // console.log(this._cannon_obj.position)
         }
 
@@ -425,7 +425,7 @@ export class X3DObject extends XObject {
 
 
 
-    append(x3dObject) {
+    append(x3dObject:X3DObject) {
         this._children.push(x3dObject);
     }
 
@@ -442,7 +442,7 @@ export class X3DObject extends XObject {
      *                            will be added with index: Idle, Idle-2, Idle -3 ...)
      */
     async importAnimations(threeObj: THREE.Object3D, newName?: string) {
-        if (!this._animation_mixer) {
+        if (this._three_obj && !this._animation_mixer) {
             this._animation_mixer = new THREE.AnimationMixer(this._three_obj)
         }
         let idx = 1
@@ -458,9 +458,9 @@ export class X3DObject extends XObject {
                 }
             }
             idx++
-            this._three_obj.animations.push(a2)
+            this._three_obj?.animations.push(a2)
             a2.optimize()
-            this._animation_clips[a2.name] = this._animation_mixer.clipAction(a2)
+            if(this._animation_mixer && this._animation_clips) this._animation_clips[a2.name] = this._animation_mixer.clipAction(a2)
             if(this._log_rules._import_animation) {
                 _xlog.log("Animation " + a2.name + " loaded on object " + this._id);
             }
@@ -476,19 +476,19 @@ export class X3DObject extends XObject {
 
     async loadThreeObjectFromGLTF(modelUrl: string): Promise<THREE.Object3D> {
         return new Promise(function (resolve, reject) {
-            const _onload = (gltf) => {
+            const _onload = (gltf:any) => {
                 const child = gltf.scene
                 child.animations = gltf.animations
-                child.traverse((child2) => {
+                child.traverse((child2:THREE.Object3D) => {
                     child2.frustumCulled = false
                     /** add more */
                 })
                 resolve(child)
             }
 
-            const _onprogress = (data) => { }
+            const _onprogress = (data:any) => { }
 
-            const _onerror = (error) => {
+            const _onerror = (error:any) => {
                 _xlog.error("ERROR loading GLTF", error);
                 reject(error)
             }
@@ -524,11 +524,11 @@ export class X3DObject extends XObject {
                     resolve(obj)
                 }
 
-                const _onprogress = (data) => { }
+                const _onprogress = (data:any) => { }
 
-                const _onerror = (error) => {
+                const _onerror = (error:any) => {
                     _xlog.error(error);
-                    this.loading = false
+                    // this.loading = false
                     reject(error)
                 }
 
@@ -557,7 +557,9 @@ export class X3DObject extends XObject {
             const anim = this._three_obj.animations
             this._animation_mixer = new THREE.AnimationMixer(this._three_obj)
             anim.forEach(__anim => {
-                this._animation_clips[__anim.name] = this._animation_mixer.clipAction(__anim)
+                if(this._animation_mixer) {
+                    this._animation_clips[__anim.name] = this._animation_mixer.clipAction(__anim)
+                }
                 _xlog.log("Animation " + __anim.name + " loaded on object " + this._id);
             })
         }
@@ -565,16 +567,16 @@ export class X3DObject extends XObject {
     }
 
     stopAllAnimations() {
-        this._animation_mixer.stopAllAction()
+        this._animation_mixer?.stopAllAction()
     }
 
 
 
-    playRandomStateAnimation(state: string) {
-        this.playAnimation(state + "-" + _XU.getRandomInt(1, this._npc_state_animations[state].length))
-    }
+    // playRandomStateAnimation(state: string) {
+    //     this.playAnimation(state + "-" + _xu.getRandomInt(1, this._npc_state_animations[state].length))
+    // }
 
-    playAnimation(clipName: string, loop?: THREE.AnimationActionLoopStyles) {
+    playAnimation(clipName: string, loop?: THREE.AnimationActionLoopStyles,repetitions?:number) {
 
         if (clipName) {
             const anim = this._animation_clips[clipName]
@@ -585,7 +587,8 @@ export class X3DObject extends XObject {
                 }
 
                 if (loop) { 
-                    anim.setLoop(loop) 
+                    const rp = (repetitions) ? repetitions : 0
+                    anim.setLoop(loop,rp) 
                 }
 
                 if (this._current_action) {

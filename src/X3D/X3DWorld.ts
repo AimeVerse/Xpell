@@ -8,13 +8,14 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import { FirstPersonControls } from 'three/examples/jsm/controls/FirstPersonControls.js';
 import { PointerLockControls } from 'three/examples/jsm/controls/PointerLockControls.js'
 import { TransformControls } from 'three/examples/jsm/controls/TransformControls'
-import {TWEEN} from "three/examples/jsm/libs/tween.module.min.js"
+// import {TWEEN} from "three/examples/jsm/libs/tween.module.min.js"
 import { CannonDebugRenderer } from './X3DUtils';
 
-import XUtils from '../XUtils';
-import XData from '../XData';
-import {XLogger as _xlog} from '../XLogger'
-import {X3D,X3DApp,X3DObject} from "./X3D"
+// import XUtils from '../XUtils';
+// import XData from '../XData';
+import {_xlog,_xu,XData, IXObjectData} from 'xpell-core'
+import {X3D,X3DApp,X3DObject,X3AxesHelper, XHelperData} from "./X3D"
+import { IX3DObjectData } from './X3DObject';
 
 
 
@@ -75,17 +76,17 @@ export class X3DWorld {
     renderer: THREE.WebGLRenderer;
     frameNumber: number;
     raycaster: THREE.Raycaster;
-    transformControls: TransformControls
-    private transformControlX3dObject:X3DObject
-    private transformControlsListenerAdded: boolean;
+    transformControls!: TransformControls
+    private transformControlX3dObject!:X3DObject
+    private transformControlsListenerAdded!: boolean;
     lights: {};
     x3dObjects: {[k:string]:X3DObject};
     defaultCamera: any;
-    controls: OrbitControls | PointerLockControls | FirstPersonControls;
-    frameProcessTime: number;
-    audioListener:THREE.AudioListener
+    controls!: OrbitControls | PointerLockControls | FirstPersonControls;
+    frameProcessTime!: number;
+    audioListener!:THREE.AudioListener
     enablePhysics:boolean = true
-    private physicsWorld:CANNON.World
+    private physicsWorld!:CANNON.World
     _log_rules:{
         addObject:boolean,
         removeObject:boolean,
@@ -94,11 +95,11 @@ export class X3DWorld {
         addObject:false,
         removeObject:false
     }
-    private cannonDebugRenderer: CannonDebugRenderer;
+    private cannonDebugRenderer!: CannonDebugRenderer;
 
     constructor(xworld:X3DApp) {
 
-        XUtils.mergeDefaultsWithData(xworld, xWorldDefaults)
+        _xu.mergeDefaultsWithData(xworld, xWorldDefaults)
 
         this.status = XWorldStatus.New
         this.worldRowData = xworld
@@ -168,13 +169,15 @@ export class X3DWorld {
         let idx = 0
 
         if(xworld._scene._helpers){
-            Object.keys(xworld._scene._helpers).forEach(async helperIndex => {
-                let helper = xworld._scene._helpers[helperIndex]
-                if (helper._type == "axes" && helper._active) {
-                    const  axesLength = (helper._params && helper._params["size"]) ?  helper._params["size"] : 5
-                    
-                    const axesHelper = new THREE.AxesHelper( axesLength );
-                    this.scene.add( axesHelper )
+            Object.keys(xworld._scene._helpers).forEach( (helperIndex:string) => {
+                if(xworld._scene._helpers && xworld._scene._helpers.hasOwnProperty(helperIndex)) {
+                    let helper = xworld._scene._helpers[helperIndex]
+                    if (helper._type == "axes" && helper._active) {
+                        const  axesLength = (helper._params && helper._params["size"]) ?  helper._params["size"] : 5
+                        
+                        const axesHelper = new THREE.AxesHelper( axesLength );
+                        this.scene.add( axesHelper )
+                    }
                 }
                
             })
@@ -183,7 +186,7 @@ export class X3DWorld {
             const keys = Object.keys(xworld._scene._cameras)
             for (let i = 0; i < keys.length; ++i) {
                 const camera = xworld._scene._cameras[keys[i]]
-                camera.name = keys[i]
+                // camera["name"] = keys[i]
 
                 
                 let cam = X3D.create(camera)
@@ -200,7 +203,7 @@ export class X3DWorld {
                 }
                 if(camera["_positional_audio_listener"]) {
                     // document.addEventListener("first-user-gesture",(e) => X3D.world.setAudioListener())
-                    X3D.world.setAudioListener()
+                    X3D.world?.setAudioListener()
                 }
             }
         } else {
@@ -239,7 +242,10 @@ export class X3DWorld {
             })
         }
 
-        document.getElementById(xworld._parent_element).appendChild(this.renderer["domElement"]);
+        if(xworld._parent_element){
+            const pe = <string>xworld._parent_element
+            document.getElementById(pe)?.appendChild(this.renderer["domElement"]);
+        }
 
         //this.gui = new dat.GUI();
 
@@ -251,7 +257,7 @@ export class X3DWorld {
                 if (control._type == "orbit" && control._active) {
                     this.controls = new OrbitControls(this.defaultCamera, this.renderer["domElement"]);
                     if (control._params) {
-                        Object.keys(control._params).forEach(key => this.controls[key] = control._params[key])
+                        Object.keys(control._params).forEach(key => (<any>this.controls)[key] = (<any>control._params)[key])
                     }
                     // this.controls.minPolarAngle = Math.PI/2.5
                     // this.controls.maxPolarAngle = Math.PI/1.5
@@ -278,7 +284,7 @@ export class X3DWorld {
                     _xlog.log("Transforms controls enabled")
                     this.transformControls = new TransformControls(this.defaultCamera, this.renderer["domElement"])
                     this.transformControls.addEventListener("dragging-changed", (e) => {
-                        this.controls["enabled"] = ! e.value
+                        (<any>this.controls)["enabled"] = ! e.value
                     })
                 }
             })
@@ -349,29 +355,32 @@ export class X3DWorld {
 
 
 
-    setTransformControls(x3dObject) {
+    setTransformControls(x3dObject:X3DObject) {
         this.transformControlX3dObject = x3dObject
         this.transformControls.attach(x3dObject.getThreeObject())
         if(!this.transformControlsListenerAdded) {
             this.transformControlsListenerAdded = true
             this.transformControls.addEventListener("objectChange",(e) => {
-                const pos = this.transformControls.object.position
-                const rot = this.transformControls.object.rotation
-                const scale = this.transformControls.object.scale
-                this.transformControlX3dObject.setPositionFromVector3(pos)
-                this.transformControlX3dObject.setRotationFromEuler(rot)
-                this.transformControlX3dObject.setScaleFromVector3(scale)
-                XData.variables["tc-pos-x"] = pos.x.toFixed(2)
-                XData.variables["tc-pos-y"] = pos.y.toFixed(2)
-                XData.variables["tc-pos-z"] = pos.z.toFixed(2)
-                
-                XData.variables["tc-rot-x"] = rot.x.toFixed(2)
-                XData.variables["tc-rot-y"] = rot.y.toFixed(2)
-                XData.variables["tc-rot-z"] = rot.z.toFixed(2)
-                
-                XData.variables["tc-scale-x"] = scale.x.toFixed(2)
-                XData.variables["tc-scale-y"] = scale.y.toFixed(2)
-                XData.variables["tc-scale-z"] = scale.z.toFixed(2)
+                if(this.transformControls.object){
+
+                    const pos = this.transformControls.object.position
+                    const rot = this.transformControls.object.rotation
+                    const scale = this.transformControls.object.scale
+                    this.transformControlX3dObject.setPositionFromVector3(pos)
+                    this.transformControlX3dObject.setRotationFromEuler(rot)
+                    this.transformControlX3dObject.setScaleFromVector3(scale)
+                    XData.variables["tc-pos-x"] = pos.x.toFixed(2)
+                    XData.variables["tc-pos-y"] = pos.y.toFixed(2)
+                    XData.variables["tc-pos-z"] = pos.z.toFixed(2)
+                    
+                    XData.variables["tc-rot-x"] = rot.x.toFixed(2)
+                    XData.variables["tc-rot-y"] = rot.y.toFixed(2)
+                    XData.variables["tc-rot-z"] = rot.z.toFixed(2)
+                    
+                    XData.variables["tc-scale-x"] = scale.x.toFixed(2)
+                    XData.variables["tc-scale-y"] = scale.y.toFixed(2)
+                    XData.variables["tc-scale-z"] = scale.z.toFixed(2)
+                }
     
             })
             
@@ -383,25 +392,25 @@ export class X3DWorld {
     }
 
     // being called on every frame 
-    async onFrame(frameNumber) {
+    async onFrame(frameNumber:number) {
 
         if (this.status == XWorldStatus.Running) {
             this.clock.start()
             this.frameNumber = frameNumber
           
             this.render()
-            if (this.controls && this.controls["update"]) {
+            if (this.controls && (<any>this.controls)["update"]) {
                 
-                this.controls["update"](this.clock.getDelta());
-                XData.variables["control-azimuth"] = this.controls["getAzimuthalAngle"]()
+                (<any>this.controls)["update"](this.clock.getDelta());
+                XData.variables["control-azimuth"] = (<any>this.controls)["getAzimuthalAngle"]()
                 
                 const controlTarget = XData.objects["control-target"]
                 const cp = XData.objects["cam-path-pos"]
 
                 if (controlTarget) {
                     // this.controls.target.set(tv)
-                    this.defaultCamera.position.sub(this.controls["target"])
-                    this.controls["target"].copy(new THREE.Vector3(controlTarget.x,controlTarget.y,controlTarget.z))
+                    this.defaultCamera.position.sub((<any>this.controls)["target"])
+                    (<any>this.controls)["target"].copy(new THREE.Vector3(controlTarget.x,controlTarget.y,controlTarget.z))
                     this.defaultCamera.position.add(new THREE.Vector3(controlTarget.x,controlTarget.y,controlTarget.z))
                     delete XData.objects["control-target"]
                 }
@@ -421,7 +430,7 @@ export class X3DWorld {
             }
 
 
-            TWEEN.update()
+            // TWEEN.update()
             this.clock.stop()
             this.frameProcessTime = this.clock.getElapsedTime()
 

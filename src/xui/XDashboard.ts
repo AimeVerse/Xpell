@@ -1,11 +1,11 @@
 import { XUI } from "./XUI"
 import XUIObject from "./XUIObject"
-import XData from "../XData"
+import  {XData, IXObjectData } from "xpell-core"
 
 const vStyle =  `position:absolute;top:0;left:0;width:100vw;height:40px;text-align:left;padding:10px;color:white;background-color:black`
 
 export class TopBar extends XUIObject {    
-    constructor(data) {
+    constructor(data:IXObjectData) {
         const defaults = {
             _type:"top-bar",
             _html_tag:"div",

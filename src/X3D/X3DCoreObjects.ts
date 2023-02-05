@@ -1,7 +1,7 @@
 import * as THREE from 'three'
-import X3DObject, { IX3DObjectData } from './X3DObject'
+import {X3DObject, IX3DObjectData } from './X3DObject'
 
-export const threeCameras = {
+export const threeCameras:{[name:string]:any} = {
     "perspective-camera": THREE.PerspectiveCamera,
     "perspective": THREE.PerspectiveCamera, //alias 
     "camera": THREE.PerspectiveCamera, //alias for default camera
@@ -9,13 +9,13 @@ export const threeCameras = {
     "orthographic":THREE.OrthographicCamera // alias
 }
 
-export const threeLights = {
+export const threeLights:{[name:string]:any} = {
     "ambient": THREE.AmbientLight,
     "directional": THREE.DirectionalLight,
     "spotlight":THREE.SpotLight
 }
 
-export const threeGeometries = {
+export const threeGeometries:{[name:string]:any} = {
     // 2D
     "plane-geometry": THREE.PlaneGeometry,
     "circle-geometry": THREE.CircleBufferGeometry,
@@ -30,7 +30,7 @@ export const threeGeometries = {
 }
 
 
-export const threeMaterials = {
+export const threeMaterials:{[name:string]:any} = {
     "standard-material": THREE.MeshPhysicalMaterial,
     "basic-material": THREE.MeshBasicMaterial,
     "shader-material": THREE.ShaderMaterial,
@@ -49,6 +49,7 @@ export interface XCameraData extends IX3DObjectData {
     _far?:number, // Camera frustum far plane (clipping - default = 2000)
     _near?:number, // Camera frustum near plane (clipping - default = 0.01)
     _positional_audio_listener?:boolean // set true to support positional audio (default is false)
+    _helper?:boolean
 }
 
 
@@ -75,7 +76,7 @@ export class XCamera extends X3DObject {
         super(data) // parse parent class fields (X3dDObject & XObject)
         this.parseFields(data,fieldsToParse,true) //parse Camera fields
         this._three_obj = null  // reset THREE object 
-        this._three_class = threeCameras[data._camera] // define THREE class 
+        this._three_class = threeCameras[<string>data._camera] // define THREE class 
         this._threes_class_args = [this._fov, this._ratio, this._close, this._far] // define THREE class arguments 
     }
 }
@@ -111,7 +112,7 @@ export class XLight extends X3DObject {
         super(data) // parse parent class fields (X3dDObject & XObject)
         this.parseFields(data,fieldsToParse,true) //parse Camera fields
         this._type = XLight.xtype
-        this._three_class = threeLights[data._light]
+        this._three_class = threeLights[<string>data._light]
         this._threes_class_args = [this.color, this.intensity]
     }
 }
@@ -119,7 +120,7 @@ export class XLight extends X3DObject {
 export class XGeometry extends X3DObject {
     // width:number
     // height:number
-    constructor(data, defaults?) {
+    constructor(data:IX3DObjectData, defaults?:IX3DObjectData) {
         if (!defaults) {
             defaults = {
                 _type: "geometry",
@@ -129,7 +130,7 @@ export class XGeometry extends X3DObject {
             }
         }
         super(data, defaults)
-        this._three_class = threeGeometries[data._type]
+        this._three_class = threeGeometries[<string>data._type]
         if(data._threes_class_args) {
             this._threes_class_args = data._threes_class_args
         } else {
@@ -155,14 +156,14 @@ export class XGeometry extends X3DObject {
  * } */
 
 export class XMaterial extends X3DObject {
-    constructor(data) {
+    constructor(data:IX3DObjectData) {
         const defaults = {
             // roughness: (data.roughness) ? data.roughness : 1,
         }
 
 
         super(data, defaults)
-        this._three_class=  threeMaterials[data._type],
+        this._three_class=  threeMaterials[<string>data._type],
         this.color =  (data.color) ? data.color : 0xffffff,
         this.side = (data.side)  ? data.side : THREE.DoubleSide
 
@@ -171,20 +172,20 @@ export class XMaterial extends X3DObject {
 
 
         //Spell 2 Three
-        const s2t = {
+        const s2t:{[name:string]:string} = {
             "_normal_map": "normalMap",   
             "_dp_map": "displacementMap",
             "_texture_map": "map"
         }
 
-        let tca_params = {
+        let tca_params :{[name:string]:any} = {
             color: this.color,
             side: this.side,
             // roughness: this.roughness
         }
         
-        const addMap = (name) => {
-            const lmap = data[name]
+        const addMap = (name:string) => {
+            const lmap:any = data[name]
             if (lmap /*check file*/ ) {
                 
                 // console.log("creating map ",name,lmap)
@@ -242,21 +243,8 @@ export class XMaterial extends X3DObject {
 export class XMesh extends X3DObject {
 
 
-    static getFromThreeObject(threeObject,defaults) {
-        // let mesh_spell = {
-        //     _id: threeObject.name,
-        //     _type: "mesh",
-        //     _three_obj: threeObject,
-        //     name: threeObject.name,
-        //     _position: threeObject.position,
-        //     _rotation: threeObject.rotation,
-        //     _geometry: threeObject.geometry,
-        //     _material: threeObject.material,
-        // }
-         //load animations
-        // if(mesh_spell._three_obj?.animations.length>0){
-        //     console.log(mesh_spell._three_obj.animations);
-        // }
+    static getFromThreeObject(threeObject:THREE.Mesh,defaults:IX3DObjectData) {
+        
         if(!defaults) {
             defaults = {}
         }        
@@ -271,7 +259,7 @@ export class XMesh extends X3DObject {
     // _material:XMaterial
 
 
-    constructor(data, defaults = {
+    constructor(data:IX3DObjectData, defaults = {
         _type: "mesh",
         _geometry: null,
         _material: null,
@@ -281,8 +269,8 @@ export class XMesh extends X3DObject {
         this._three_class = THREE.Mesh
         if(!this._three_obj) {
             
-            this._geometry = new XGeometry(data._geometry)
-            this._material = new XMaterial(data._material)
+            this._geometry = new XGeometry(<any>data._geometry)
+            this._material = new XMaterial(<any>data._material)
         }
 
     }
@@ -299,7 +287,7 @@ export class XMesh extends X3DObject {
 
 export class XGroup extends X3DObject {
 
-    static getFromThreeObject(threeObject,defaults:any) {
+    static getFromThreeObject(threeObject:THREE.Group,defaults:any) {
         if(!defaults) {
             defaults = {}
         }        
@@ -309,7 +297,7 @@ export class XGroup extends X3DObject {
         return new XGroup(_xdata)
     }
 
-    constructor(data, defaults = {
+    constructor(data:IX3DObjectData, defaults = {
         _type: "group",
         _three_class: THREE.Group,
         _three_obj:null,

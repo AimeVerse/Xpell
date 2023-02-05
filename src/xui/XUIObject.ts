@@ -1,11 +1,12 @@
 
-import XUtils from "../XUtils"
-import XData from "../XData"
-import XObject, { IXObjectData } from "../XObject"
-import * as _XC from "../XConst"
+// import XUtils from "../XUtils"
+// import XData from "../XData"
+// import XObject, { IXObjectData } from "../XObject"
+import { XUtils,XData,XObject ,IXObjectData} from "xpell-core"
+// import * as _XC from "../XConst"
 import _xuiobject_basic_nano_commands from "./XUINanoCommands"
 const reservedWords = { _children:"child objects" }
-const xpellObjectHtmlFieldsMapping = { "_id": "id", "css-class": "class", "animation": "xyz", "input-type": "type" };
+const xpellObjectHtmlFieldsMapping:{[k:string]:string} = { "_id": "id", "css-class": "class", "animation": "xyz", "input-type": "type" };
 
 
 
@@ -17,16 +18,16 @@ export class XUIObject extends XObject {
     _type:string  //[_SC.NODES.type]
     _html: string | undefined
     _base_display: string | undefined | null  
-    text: string //depracted
-    _text: string
-    _data_source: string | null 
+    // text: string //depracted
+    _text!: string
+    _data_source!: string | null 
     _on_frame_skip_data_source: any
-    _format: string | null
+    _format!: string | null
     _ignore: {[k:string]:string}
-    
+    _children: XUIObject[];
 
 
-    constructor(data, defaults,skipParse?:boolean) {
+    constructor(data:IXObjectData, defaults:IXObjectData,skipParse?:boolean) {
         super(data,defaults,true)
         this._html_tag = "div";
         this._html_ns = null
@@ -104,8 +105,8 @@ export class XUIObject extends XObject {
             });
 
             //--> support both text and _text to deprecate text 
-            if ((this["text"] && this["text"].length > 0)) {
-                dom_object.textContent = this["text"];
+            if ((this["text"] && (<string>this["text"]).length > 0)) {
+                dom_object.textContent = <string>this["text"];
             }  else if (this["_text"] && (<string>this["_text"]).length > 0) {
                 dom_object.textContent = <string>this["_text"];
             }
@@ -157,25 +158,25 @@ export class XUIObject extends XObject {
      * @deprecated
      */
     get DOMElementFromHTML():HTMLElement {
-        return document.getElementById(<string>this._id)
+        return <HTMLElement>document.getElementById(<string>this._id)
     }
 
     append(xObject:XUIObject | IXObjectData | any) {
-        this._children.push(<XObject>xObject)
+        this._children.push(<XUIObject>xObject)
         if (this._dom_object) {
             this.DOMElementFromHTML?.appendChild(xObject.getDOMObject())
         }
     }
 
-    setText(text)
+    setText(text:string)
     {
         this._text = text
         this.getDOMObject().textContent = text
     }
 
-    setStyle(attr, val) {
+    setStyle(attr:string, val:string) {
         if(this._dom_object instanceof HTMLElement) {
-            this._dom_object.style[attr]= val
+            this._dom_object.style.setProperty(attr,val) 
         }
     }
 
@@ -233,7 +234,7 @@ export class XUIObject extends XObject {
      * object that extends XUIObject can override this method and call super.onFrame
      * to bubble the event to child objects 
      */
-    async onFrame(frameNumber){
+    async onFrame(frameNumber:number){
         if(this._data_source && !this._on_frame_skip_data_source) {
             if(XData.variables[this._data_source]) {
                 const ph = "_$"
@@ -247,7 +248,7 @@ export class XUIObject extends XObject {
                 //console.log("data source");
                 const ob = XData.objects[this._data_source]
                 if(this._format) {
-                    const replace_at_plus_one = (str,index, character) => {
+                    const replace_at_plus_one = (str:string,index:number, character:string) => {
                         return str.substr(0, index) + character + str.substr(index +2);
                     };
                     let  trimmed = this._format.trim()

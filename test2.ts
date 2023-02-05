@@ -1,6 +1,6 @@
 
-import XEventManager from "./src/XEventManager"
-import { Xpell as _x } from "./src/Xpell"
+import {XEventManager,_x} from "xpell-core"
+// import { Xpell as _x } from "./src/Xpell"
 import { XUI, XUIApp } from "./src/XUI/XUI"
 import {XAI} from "./src/XAI/XAI"
 import { XEditor, XTransformControls } from "./src/XUI/XEditor"

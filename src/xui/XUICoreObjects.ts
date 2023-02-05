@@ -1,12 +1,11 @@
 import XUIObject from "./XUIObject";
-import {Xpell as _X} from "../Xpell"
-import * as _XC from "../XConst"
-import { IXObjectData,XObjectPack } from "../XObject";
+// import {Xpell as _x} from "../Xpell"
+import {_x, IXObjectData,XObjectPack } from "xpell-core";
 
 
 
 export class XView extends XUIObject {
-    constructor(data) {
+    constructor(data:IXObjectData) {
         const defaults =  {
             _type: "view",
             "class":"xview"
@@ -41,7 +40,7 @@ export class XNavBar extends XUIObject {
 }
 
 export class XForm extends XUIObject {
-    constructor(data) {
+    constructor(data:IXObjectData) {
         const tag = "form"
         const defaults = {
             _type: tag,
@@ -56,7 +55,7 @@ export class XForm extends XUIObject {
 export class XImage extends XUIObject {
    
 
-    constructor(data) {
+    constructor(data:IXObjectData) {
         const tag = "image"
         const defaults = {
             _type: tag,
@@ -68,7 +67,7 @@ export class XImage extends XUIObject {
 }
 
 export class XVideo extends XUIObject {
-    constructor(data) {
+    constructor(data:IXObjectData) {
         const tag = "video"
         const defaults = {
             _type: tag,
@@ -85,7 +84,7 @@ export class XWebcam extends XUIObject {
     muted: boolean;
     _video_constraints: { video: boolean; width: number; height: number; };
     
-    constructor(data) {
+    constructor(data:IXObjectData) {
         const tag = "webcam"
         const defaults = {
             _type: tag,
@@ -113,7 +112,7 @@ export class XWebcam extends XUIObject {
         return !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia);
     }
 
-    setSource(video_elem) {
+    setSource(video_elem:any) {
 
         navigator.mediaDevices.getUserMedia(this._video_constraints).then((stream) => {
             video_elem.srcObject = stream;
@@ -145,7 +144,7 @@ export class XWebcam extends XUIObject {
 
 
 export class XTextField extends XUIObject {
-    constructor(data) {
+    constructor(data:IXObjectData) {
         const tag = "text"
         const defaults = {
             _type : tag,
@@ -157,7 +156,7 @@ export class XTextField extends XUIObject {
 }
 
 export class XPassword extends XUIObject {
-    constructor(data) {
+    constructor(data:IXObjectData) {
         const tag = "text"
         const defaults = {
             _type : tag,
@@ -171,7 +170,7 @@ export class XPassword extends XUIObject {
 
 
 export class XInput extends XUIObject {
-    constructor(data) {
+    constructor(data:IXObjectData) {
         const tag = "input"
         const defaults = {
             _type : tag,
@@ -183,7 +182,7 @@ export class XInput extends XUIObject {
 }
 
 export class XTextArea extends XUIObject {
-    constructor(data) {
+    constructor(data:IXObjectData) {
         const defs = {
             _type:"textarea",
             "class":"form-control",
@@ -213,7 +212,7 @@ export class XLink extends XUIObject {
 }
 
 export class XLabel extends XUIObject {    
-    constructor(data) {
+    constructor(data:IXObjectData) {
         const defaults = {
             _type:"label",
             _html_tag:"label",
@@ -224,7 +223,7 @@ export class XLabel extends XUIObject {
 }
 
 export class XHTML extends XUIObject {    
-    constructor(data) {
+    constructor(data:IXObjectData) {
         const defaults = {
             _type:"xhtml",
             _html_tag: (data["_html_tag"]) ?data["_html_tag"] : "div"
@@ -235,9 +234,9 @@ export class XHTML extends XUIObject {
 }
 
 export class XSVG extends XUIObject {
-    private _svg_data: string;    
+    private _svg_data!: string;    
 
-    constructor(data) {
+    constructor(data:IXObjectData) {
         const defaults = {
             _type:"svg",
             _html_tag: "svg",
@@ -249,7 +248,7 @@ export class XSVG extends XUIObject {
 }
 
 export class XButton extends XUIObject {
-    constructor(data) {
+    constructor(data:IXObjectData) {
         const defs = {
             _type : "button",
             class:"xbutton",
@@ -267,7 +266,7 @@ export class XButton extends XUIObject {
 
 export class XList extends XUIObject {
     _items: any;
-    constructor(data) {
+    constructor(data:IXObjectData) {
     
         const defaults = {
             _type:"list",
@@ -278,7 +277,7 @@ export class XList extends XUIObject {
         super(data,defaults,true);
         super.parse(data)
         if(this._items.length>0) {
-            this._items.forEach(item => {
+            this._items.forEach((item:any) => {
                 const si = new XView(item)
                 this.append(si)
             });

@@ -8,7 +8,7 @@
     "types",
     "docs"
   ],
-  "types": "./types/index.d.ts",
+  "types": "./dist/index.d.ts",
   "main": "./dist/xpell.umd.js",
   "module": "./dist/xpell.es.js",
   "exports": {
@@ -35,12 +35,14 @@
     "@types/node": "^18.0.6",
     "@types/three": "^0.142.0",
     "typedoc": "^0.23.10",
-    "vite": "^3.0.2"
+    "vite": "^3.0.2",
+    "vite-plugin-dts": "^1.7.2"
   },
   "dependencies": {
     "cannon-es": "^0.20.0",
     "nipplejs": "^0.9.1",
     "three": "^0.143.0",
-    "three-to-cannon": "^4.2.0"
+    "three-to-cannon": "^4.2.0",
+    "xpell-core": "^0.0.37"
   }
 }

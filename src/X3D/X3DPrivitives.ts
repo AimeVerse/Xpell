@@ -1,5 +1,5 @@
-import X3DObject from './X3DObject'
-import { XObjectPack } from '../XObject'
+import X3DObject, { IX3DObjectData } from './X3DObject'
+import { XObjectPack } from 'xpell-core'
 import { XCamera, XGeometry, XLight, XMaterial, XMesh, XGroup } from './X3DCoreObjects'
 import * as THREE from 'three'
 import * as CANNON from 'cannon-es'
@@ -33,7 +33,7 @@ export class XPlane extends XMesh {
 
 
 
-    constructor(data, defaults?) {
+    constructor(data:IX3DObjectData, defaults?:IX3DObjectData) {
 
         if (!defaults) {
             defaults = {
@@ -44,9 +44,13 @@ export class XPlane extends XMesh {
                 _material: null
             }
         }
-        data._geometry._threes_class_args = [data._geometry.width, data._geometry.height, data._geometry.widthSegments, data._geometry.heightSegments]
-        data._geometry._type =  "plane-geometry"
-        super(data, defaults)
+        if(data._geometry) {
+            const dg = <IX3DObjectData>data._geometry;
+            (<IX3DObjectData>data._geometry)["_threes_class_args"] = [dg.width, dg.height, dg.widthSegments, dg.heightSegments];
+            (<IX3DObjectData>data._geometry)._type =   "plane-geometry";
+        }
+
+        super(data, <any>defaults)
         // this._cannon_shape = new CANNON.Box(new CANNON.Vec3(data._geometry.width/2, data._geometry.height/2, 0.01))
 
         // var slipperyMat = new CANNON.Material();
@@ -87,7 +91,7 @@ export class XPlane extends XMesh {
 
 export class XBox extends XMesh {
 
-    constructor(data, defaults) {
+    constructor(data:IX3DObjectData, defaults:any) {
         if (!defaults) {
             defaults = {
                 _type: "box",
@@ -97,10 +101,17 @@ export class XBox extends XMesh {
                 _material: null
             }
         }
-        data._geometry._threes_class_args = [data._geometry.width, data._geometry.height, data._geometry.depth, data._geometry.widthSegments, data._geometry.heightSegments, data._geometry.depthSegments]
-        data._geometry._type =  "box-geometry"
+        const dg = <IX3DObjectData>data._geometry;
+        
+        if(data._geometry) {
+            (<IX3DObjectData>data._geometry)._threes_class_args = [dg.width, dg.height, dg.depth, dg.widthSegments, dg.heightSegments, dg.depthSegments];
+            (<IX3DObjectData>data._geometry)._type =  "box-geometry"
+        }
         super(data, defaults)
-        this._cannon_shape = new CANNON.Box(new CANNON.Vec3(data._geometry.width/2, data._geometry.height/2, data._geometry.depth/2))
+        if(this._enable_physics) {
+
+            this._cannon_shape = new CANNON.Box(new CANNON.Vec3(<any>dg.width/2, <any>dg.height/2, <any>dg.depth/2))
+        }
     }
 }
 
@@ -129,7 +140,7 @@ export class XSphere extends XMesh {
     //     }
     // }
 
-    constructor(data, defaults) {
+    constructor(data:IX3DObjectData, defaults:IX3DObjectData) {
 
 
 
@@ -143,12 +154,15 @@ export class XSphere extends XMesh {
 
             }
         }
-        
-        data._geometry._threes_class_args = [data._geometry.radius, data._geometry.widthSegments, data._geometry.heightSegments]
-        data._geometry._type =  "sphere-geometry"
-        super(data, defaults)
+
+        const dg = <IX3DObjectData>data._geometry;
+        if(data._geometry) {
+            (<IX3DObjectData>data._geometry)._threes_class_args = [dg.radius, dg.widthSegments, dg.heightSegments];
+            (<IX3DObjectData>data._geometry)._type =  "sphere-geometry"
+        }
+        super(data, <any>defaults)
         if(this._enable_physics) {
-            this._cannon_shape = new CANNON.Sphere(data._geometry.radius)
+            this._cannon_shape = new CANNON.Sphere(<any>dg.radius)
         }
 
     }
@@ -190,7 +204,7 @@ export class XCylinder extends XMesh {
     //     }
     // }
 
-    constructor(data, defaults) {
+    constructor(data:IX3DObjectData, defaults:IX3DObjectData) {
 
 
 
@@ -203,11 +217,14 @@ export class XCylinder extends XMesh {
                 _material: null
             }
         }
-        data._geometry._threes_class_args = [data._geometry.radiusTop, data._geometry.radiusBottom, data._geometry.height, data._geometry.radialSegments]
-        data._geometry._type =  "cylinder-geometry"
-        super(data, defaults)
+        const dg = <IX3DObjectData>data._geometry;
+        if(data._geometry) {
+            (<IX3DObjectData>data._geometry)._threes_class_args =[dg.radiusTop, dg.radiusBottom, dg.height, dg.radialSegments];
+            (<IX3DObjectData>data._geometry)._type =   "cylinder-geometry";
+        }
+        super(data, <any>defaults)
         if(this._enable_physics) {
-            this._cannon_shape = new CANNON.Cylinder(data._geometry.radiusTop, data._geometry.radiusBottom, data._geometry.height, data._geometry.radialSegments)
+            this._cannon_shape = new CANNON.Cylinder(<any>dg.radiusTop, <any>dg.radiusBottom, <any>dg.height, <any>dg.radialSegments)
         }
     }
 
@@ -246,7 +263,7 @@ export class XTorus extends XMesh {
     //     }
     // }
 
-    constructor(data, defaults) {
+    constructor(data:IX3DObjectData, defaults:any) {
 
 
 
@@ -259,8 +276,12 @@ export class XTorus extends XMesh {
                 _material: null
             }
         }
-        data._geometry._threes_class_args = [data._geometry.radius, data._geometry.tubeRadius, data._geometry.radialSegments, data._geometry.tubularSegments]
-        data._geometry._type =  "torus-geometry"
+        const dg = <IX3DObjectData>data._geometry;
+        if(data._geometry) {
+            (<IX3DObjectData>data._geometry)._threes_class_args =[dg.radius, dg.tubeRadius, dg.radialSegments, dg.tubularSegments];
+            (<IX3DObjectData>data._geometry)._type =   "torus-geometry";
+        }
+        
         super(data, defaults)
     }
 
@@ -298,7 +319,7 @@ export class XCone extends XMesh {
     //     }
     // }
 
-    constructor(data, defaults) {
+    constructor(data:IX3DObjectData, defaults:any) {
         if (!defaults) {
             defaults = {
                 _type: "cone",
@@ -308,15 +329,18 @@ export class XCone extends XMesh {
                 _material: null
             }
         }
-        data._geometry._threes_class_args = [data._geometry.radius, data._geometry.height, data._geometry.segments]
-        data._geometry._type =  "cone-geometry"
+        const dg = <IX3DObjectData>data._geometry;
+        if(data._geometry) {
+            (<IX3DObjectData>data._geometry)._threes_class_args =[dg.radius, dg.height, dg.segments];
+            (<IX3DObjectData>data._geometry)._type =   "cone-geometry";
+        }
         super(data, defaults)
     }
 }
 
 export class XCircle extends XMesh {
    
-    constructor(data, defaults) {
+    constructor(data:any, defaults:any) {
         if (!defaults) {
             defaults = {
                 _type: "circle",
@@ -326,6 +350,8 @@ export class XCircle extends XMesh {
                 _material: null
             }
         }
+
+        
         if(!data._geometry.thetaStart) data._geometry.thetaStart = 0
         if(!data._geometry.thetaLength) data._geometry.thetaLength = Math.PI * 2
         // 
