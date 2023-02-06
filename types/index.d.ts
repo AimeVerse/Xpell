@@ -11,11 +11,13 @@ import { XButton } from './src/XUI/XUICoreObjects';
 import { XCamera } from './src/X3D/X3DCoreObjects';
 import { XCameraData } from './src/X3D/X3DCoreObjects';
 import { XCameraTypes } from './src/X3D/X3DCoreObjects';
+import { XCircle } from './src/X3D/X3DPrivitives';
 import { XCommand } from 'xpell-core';
 import { XCone } from './src/X3D/X3DPrivitives';
 import { XCylinder } from './src/X3D/X3DPrivitives';
 import { XData } from 'xpell-core';
 import { XEditor } from './src/XUI/XEditor';
+import { XEvent } from 'xpell-core';
 import { XEventListener } from 'xpell-core';
 import { XEventManager } from 'xpell-core';
 import { XForm } from './src/XUI/XUICoreObjects';
@@ -85,6 +87,8 @@ export { XCameraData }
 
 export { XCameraTypes }
 
+export { XCircle }
+
 export { XCommand }
 
 export { XCone }
@@ -94,6 +98,8 @@ export { XCylinder }
 export { XData }
 
 export { XEditor }
+
+export { XEvent }
 
 export { XEventListener }
 
