@@ -31,13 +31,13 @@ export {
 
 } from "xpell-core"
 
-export {XUI} from "./src/XUI/XUI"
+export {XUI,type XUIApp} from "./src/XUI/XUI"
 export {XUIObject} from "./src/XUI/XUIObject"
 export {XUIObjects,XView,XButton,XForm,XHeader,XImage,XLabel,XLink,XList,XNavBar,XTextArea,XTextField,XVideo,XWebcam,XHTML,XInput,XSVG} from "./src/XUI/XUICoreObjects"
 export {TopBar} from "./src/XUI/XDashboard"
 export {XJoystick} from "./src/XUI/XJoystick"
 export {XViewManager} from "./src/XUI/XViewManager"
-export {X3D} from "./src/X3D/X3D"
+export {X3D,type X3DApp} from "./src/X3D/X3D"
 export {X3DObject,type IX3DObjectData} from "./src/X3D/X3DObject"
 export {XGeometry,XGroup,XMaterial,XMesh,
     XCamera, type XCameraTypes,type XCameraData,

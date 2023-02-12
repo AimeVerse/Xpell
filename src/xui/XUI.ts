@@ -18,7 +18,7 @@ import XUICoreObjects from "./XUICoreObjects"
 
 
 
-export interface XUIApp {
+export type XUIApp = {
     xpell?: {
         version?: number //minimum xpell version for the app
     }

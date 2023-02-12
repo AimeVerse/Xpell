@@ -99,26 +99,26 @@ export const world:X3DApp = {
 
         },
         _objects: {
-                // "pointer": {
-                //     _type: "sphere",
-                //     _id: "pointer",
-                //     _geometry: {
-                //         _type: "sphere-geometry",
-                //         widthSegments: 8,
-                //         heightSegments: 8,
-                //         radius: 0.01
-                //     },
-                //     _material: {
-                //         _type: "basic-material",
-                //         color: 0xff99ff,
-                //         side: 1,
-                //         // roughness: 0.5,
-                //     },
-                //     _position: { x: 0, y: 0.75, z: 0 },
-                //     _rotation: { x: 0, y: 0, z: 0 },
-                //     // castShadow: true,
-                //     _on_frame: `follow-joystick`
-                // },
+                "pointer": {
+                    _type: "sphere",
+                    _id: "pointer",
+                    _geometry: {
+                        _type: "sphere-geometry",
+                        widthSegments: 8,
+                        heightSegments: 8,
+                        radius: 0.01
+                    },
+                    _material: {
+                        _type: "basic-material",
+                        color: 0xff99ff,
+                        side: 1,
+                        // roughness: 0.5,
+                    },
+                    _position: { x: 0, y: 0.75, z: 0 },
+                    _rotation: { x: 0, y: 0, z: 0 },
+                    // castShadow: true,
+                    _on_frame: `follow-joystick`
+                },
                 floor: {
                     _id: "floor",
                     _type: "plane",
