@@ -2,6 +2,7 @@ import { IX3DObjectData } from './src/X3D/X3DObject';
 import { IXObjectData } from 'xpell-core';
 import { TopBar } from './src/XUI/XDashboard';
 import { X3D } from './src/X3D/X3D';
+import { X3DApp } from './src/X3D/X3D';
 import { X3DLoader } from './src/X3D/X3DLoader';
 import { X3DObject } from './src/X3D/X3DObject';
 import { X3DPrimitives } from './src/X3D/X3DPrivitives';
@@ -52,6 +53,7 @@ import { XTextField } from './src/XUI/XUICoreObjects';
 import { XTorus } from './src/X3D/X3DPrivitives';
 import { XTransformControls } from './src/XUI/XEditor';
 import { XUI } from './src/XUI/XUI';
+import { XUIApp } from './src/XUI/XUI';
 import { XUIObject } from './src/XUI/XUIObject';
 import { XUIObjects } from './src/XUI/XUICoreObjects';
 import { XUtils } from 'xpell-core';
@@ -68,6 +70,8 @@ export { IXObjectData }
 export { TopBar }
 
 export { X3D }
+
+export { X3DApp }
 
 export { X3DLoader }
 
@@ -171,6 +175,8 @@ export { XTorus }
 export { XTransformControls }
 
 export { XUI }
+
+export { XUIApp }
 
 export { XUIObject }
 
