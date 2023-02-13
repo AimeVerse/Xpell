@@ -3,6 +3,7 @@
 // import XData from "../XData"
 // import XObject, { IXObjectData } from "../XObject"
 import { XUtils,XData,XObject ,IXObjectData} from "xpell-core"
+import XUI from "./XUI";
 // import * as _XC from "../XConst"
 import _xuiobject_basic_nano_commands from "./XUINanoCommands"
 const reservedWords = { _children:"child objects" }
@@ -25,6 +26,7 @@ export class XUIObject extends XObject {
     _format!: string | null
     _ignore: {[k:string]:string}
     _children: XUIObject[];
+    _visible:boolean
 
 
     constructor(data:IXObjectData, defaults:IXObjectData,skipParse?:boolean) {
@@ -36,7 +38,7 @@ export class XUIObject extends XObject {
         this._html = "";
         this._children = [];
         this._ignore = reservedWords;
-        
+        this._visible = true
         //this._base_display = "block"
 
         if (data && !skipParse) {
@@ -161,10 +163,14 @@ export class XUIObject extends XObject {
         return <HTMLElement>document.getElementById(<string>this._id)
     }
 
+    //check if XUI or IXData 
     append(xObject:XUIObject | IXObjectData | any) {
+        if(!(xObject instanceof XUIObject)) {
+            xObject = XUI.create(xObject)
+        }
         this._children.push(<XUIObject>xObject)
         if (this._dom_object) {
-            this.DOMElementFromHTML?.appendChild(xObject.getDOMObject())
+            this._dom_object.appendChild(xObject.getDOMObject())
         }
     }
 
@@ -180,10 +186,18 @@ export class XUIObject extends XObject {
         }
     }
 
+
+    
+    toggle() {
+        if(this._visible) this.hide()
+        else this.show()
+    }
+
     show() {
         if(this._dom_object instanceof HTMLElement && this._base_display) {
             this._dom_object.style.display = this._base_display
         }
+        this._visible=true
     }
 
     hide() {
@@ -196,6 +210,7 @@ export class XUIObject extends XObject {
         if(this._dom_object instanceof HTMLElement) {
             this._dom_object.style.display = "none"
         }
+        this._visible=false
     }
 
     

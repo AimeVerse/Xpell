@@ -1,7 +1,7 @@
 
 import {XEventManager,_x} from "xpell-core"
 // import { Xpell as _x } from "./src/Xpell"
-import { XUI, XUIApp } from "./src/XUI/XUI"
+import { XUI, XUIApp, XUIObject } from "./src/XUI/XUI"
 import {XAI} from "./src/XAI/XAI"
 import { XEditor, XTransformControls } from "./src/XUI/XEditor"
 import { XLabel } from "./src/XUI/XUICoreObjects"
@@ -20,8 +20,14 @@ XUI.importObjectPack(XEditor)
 _x.start()
 
 
+class XE extends XUIObject {
+    constructor(data){
+        super(data,{_type:"xe"})
+        this.append({_type:"view",style:"width:100%;height:20px;background-color:red"})
+    }
+}
 
-
+XUI.importObject("xe",XE)
 
 const xapp:XUIApp = {
     _views: {
@@ -51,9 +57,9 @@ const xapp:XUIApp = {
                     style:"text-align:center"
                 },
                 {
-                    _type:"view",
-                    _text:"menu3",
-                    style:"text-align:center"
+                    _type:"xe",
+                    // _text:"menu3",
+                    // style:"text-align:center"
                 }
             ]
         },
@@ -96,7 +102,7 @@ XUI.vm.showPage("left-menu")
 
 
 
-const ttso = XAI.create({_type:"tts",_voice:"Kathy"})
+// const ttso = XAI.create({_type:"tts",_voice:"Kathy"})
 
 
 // document.addEventListener("tts-voices-loaded",(e)=>{

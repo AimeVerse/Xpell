@@ -14,6 +14,7 @@ import X3D from "./X3D"
  */
 import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
+import { Object3D } from "three";
 
 
 const reservedWords = { _children: "child objects", _position: "position", _rotation: "rotation", _scale: "scale" }
@@ -353,7 +354,16 @@ export class X3DObject extends XObject {
         this._positional_audio = await this.createPositionalAudio(src, data)
         if (this._three_obj) this._three_obj.add(this._positional_audio)
         //_xlog.log("Sound " + source + " loaded")
+    }
 
+    /**
+     * clears the positional audio from the object and the Three object
+     */
+    clearPositionalAudio() {
+        if(this._positional_audio) {
+            this._three_obj?.remove(this._positional_audio)
+            this._positional_audio = null
+        }
     }
 
     playAudio(loop?:boolean) {
@@ -423,10 +433,18 @@ export class X3DObject extends XObject {
     }
 
 
-
-
-    append(x3dObject:X3DObject) {
-        this._children.push(x3dObject);
+    /**
+     * Append X3DObject as a child object
+     * @param x3dObject 
+     */
+    append(x3dObject:X3DObject | IX3DObjectData) {
+        if(!(x3dObject instanceof X3DObject)) {
+            x3dObject = X3D.create(<IX3DObjectData>x3dObject)
+        }
+        this._children.push(x3dObject as XObject);
+        if(this._three_obj) {
+            this._three_obj.add((<X3DObject>x3dObject).getThreeObject())
+        }
     }
 
 
