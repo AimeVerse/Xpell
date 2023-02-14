@@ -60,13 +60,49 @@ const xapp:XUIApp = {
                     _type:"xe",
                     // _text:"menu3",
                     // style:"text-align:center"
-                }
+                },
+                {
+                    "_type": "view",
+                    "_id": "main-view",
+                    "_text":"hoooo",
+                    "style": "border: 1px solid black;background-color:yellow;color:red",
+                    "_on_frame": (obj:XUIObject, frameNumber: number) => {
+                      obj.getDOMObject().style.color = "rgb(" + (frameNumber % 256) + ", "+(frameNumber % 256)+", 0)";
+                    }
+                  }
             ]
         },
         "page-2":{
             _type:"view",
             style:"left:150px;width:50px;position:absolute;height:300px;background-color:green"
-        }
+        },
+        "gpt-page":{
+            "_type": "view",
+            "_id": "main-view",
+            "_children": [
+              {
+                "_type": "label",
+                "_id": "time-label",
+                "style": "font-size: 15px",
+                "_on_frame": (obj:XUIObject, frameNumber: number) => {
+                  obj.getDOMObject().textContent = new Date().toLocaleTimeString();
+                }
+              },
+              {
+                "_type": "text",
+                "_id": "my-text"
+              },
+              {
+                "_type": "button",
+                "_id": "my-button",
+                "_text": "Log Text",
+                "_on_click": (obj:XUIObject, e:HTMLEvent) => {
+                  console.log(document.getElementById("my-text").value);
+                }
+              }
+            ]
+          }
+          
     },
     // _controls:{
     //     _parent_element: "controls",
@@ -94,13 +130,13 @@ XUI.vm.addRawView("third-view",{
 
 
 
-XUI.vm.showPage("left-menu")
- XUI.vm.showView("third-view")
+// XUI.vm.showPage("left-menu")
+//  XUI.vm.showView("third-view")
 // XUI.vm.hidePage("menu")
 // XUI.vm.showPage("page-2")
 // XUI.vm.hidePage("page-2")
-
-
+XUI.vm.showPage("gpt-page")
+// _x.execute()
 
 // const ttso = XAI.create({_type:"tts",_voice:"Kathy"})
 
