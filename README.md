@@ -42,23 +42,78 @@ XUI.importObject("object-name",MyXUIObject)
 The View Manager object handles the page view activities automatically for you.
 Attached to the XUI Module the View Manager is being initialized by the XUI.
 
+## XUI Core Objects
+
+The following is the XUI Core objects that wraps HTML elements and can be used out-of-the-box:
 
 
-XUIObject extends xpell object (XObject), every XUIObject wraps html elements as needed. the following list is XUI core objects:
-view:DIV
-label:label
-link : a href
-button :Button,
-text : input type=”input”
-password : input type=”password”
-input:Input
-textarea:textarea
-video: Video,
-image:img,
-form:Form,
-Webcam:video with webcam source
-Xhtml:any other html tag that defined in _html_tag xpell attribute
-svg:SVG
+### XView
+This is the basic element within the XUI core objects.
+
+- Wrapping HTML Element: Div
+- Xpell name : "view"
+
+### XLabel
+Represents a caption for an item in a user interface.
+
+- Wrapping HTML Element: Label
+- Xpell name : "label"
+
+
+### XLink
+HyperLink to other page/resource.
+
+- Wrapping HTML Element: A href
+- Xpell name : "link"
+
+## XButton
+Represents a clickable button in a user interface.
+
+- Wrapping HTML Element: Button
+- Xpell name: "button"
+
+### XText
+Text input in a user interface.
+
+Wrapping HTML Element: Input (type="text")
+Xpell name: "text"
+
+### XTextArea
+Text area for multiple lines in a user interface.
+
+Wrapping HTML Element: Textarea
+Xpell name: "textarea"
+
+### XVideo
+Embed a video in a user interface.
+
+Wrapping HTML Element: Video
+Xpell name: "video"
+
+### XWebcam
+Embed a video feed from a webcam in a user interface.
+
+Wrapping HTML Element: Video with webcam source
+Xpell name: "webcam"
+
+### XImage
+Embed an image in a user interface.
+
+Wrapping HTML Element: Img
+Xpell name: "image"
+
+### XForm
+Create a form to submit data in a user interface.
+
+Wrapping HTML Element: Form
+Xpell name: "form"
+
+### XHTML
+Include any other HTML tag in a user interface.
+
+Wrapping HTML Element: Any other HTML tag (defined in _html_tag attribute)
+Xpell name: "xhtml"
+
 
 
 every XUIObject has _on_click attribute that can get text or callable javascript function like:

@@ -15,17 +15,6 @@ Xpell is a rear-time interpreter that provides an interface to control both outp
 
 Xpell is a modular framework, meaning the basic engine can load external modules and run them. 
 
-## Xpell Module (XModule)
-
-Every Xpell Module (XModule) uses as a interpretation layer for specific engine, flow manager or any other module.
-
-
-
-## Xpell Object (XObject)
-
-XModules can create objects that can provide abstract interface to the module objects, for example XObject is a generic Xpell Object but XUIObject is an object that wraps HTML Element there for it uses as an abstraction layer to handle the HTML Element.
-
-Xpell Objects can be identified by the X prefix like XObject.
 
 ## Xpell Command
 
@@ -40,15 +29,11 @@ Xpell interpreter has the ability to handle commands in two formats:
 This is a text-based interface with the following structure:
 
 Format:
-```
-module-name op object:object-id param1:param1-value param2:param2-value ...
-```
+```module-name op object:object-id param1:param1-value param2:param2-value ...```
 
 Example: 
 Run the xpell `_info` command: 
-```
-xpell info
-```
+```xpell info```
 
 ### JSON format
 
@@ -73,53 +58,64 @@ Example:
 }
 ```
 
+
+## Xpell Module (XModule)
+
+Every Xpell Module (XModule) uses as a interpretation layer for specific engine, flow manager or any other module.
+
+
+## Xpell Object (XObject)
+
+XModules can create objects that can provide abstract interface to the module objects, for example XObject is a generic Xpell Object but XUIObject is an object that wraps HTML Element there for it uses as an abstraction layer to handle the HTML Element.
+
+Xpell Objects can be identified by the X prefix like XObject.
+
+
+### Creating  XObject
+
+There are two ways to create a new Xpell Object of type XObject:
+
+1. Create Javascript object instance:
+   ```const myXObject = new XObject({_id:"xobject-id",_type:"xobject-xpell-name"})```
+
+2. Using the XModule create method:
+   ```const myObject = XModule.create({_id:"xobject-id",_type:"xobject-xpell-name"})`
+
+
+#### XObject Data
+Every XObject can be created by the interpreter with a simple data object in a JSON format.
+
+The interface/type of the data is defined in the IXObjectData TypeScript interface:
+
 ```
-  [user] --> XCommand --> [Xpell]  
-                                  |  
-                                  |-----> [XUI] -> UI Module  (HTML)
-                                  |  
-                                  |-----> [X3D] -> 3D Module (three.js)  
-                                  |  
-                                  |-----> [xpell-module]  -> Base Module
-```   
-
-The way to communicate with Xpell engine is to send XCommand that will be analyzed and activate the appropriate module:
-
-```
-  [XCommand]
-     - module (the name of the module to run the command)
-     - created (date/timestamp of the command)
-     - op (the operation (method/function) to run within the module)
-        - params (list of parameters)
-  optional:
-     = on-frame (when to run the command)
-     = on-event (event to run the command)
+interface IXObjectData  {
+    [k: string]: string | null | [] | undefined | Function | boolean | number | {}
+    _id: string 
+    _name?: string
+    _type: string
+    _children?: Array<IXObjectData>
+    _xversion?: number 
+}
 ```
 
+for example to define a new XObject with the id="obj1" and with one child object use the following data object:
+```
+{
+    _id:"obj1",
+    _type:"xobject",
+    _children:[
+        {
+            _id:"child-object",
+            _type:"xobject"
+        }
+    ]
+}
+```
 
-# XUI
+* Every XObject data attribute starts with an underscore sign "_", nevertheless it is possible to add also attributes that will not be used by the interpreter but they will be transferred to the wrapped object directly, for example if the XObject wraps an HTML element this mechanism enable setting also HTML attribute to the object like style, class etc'.
+  
 
-## View Manager
-The View Manager object handles the page view activities automatically for you.
-Attached to the XUI Module the View Manager is being initialized by the XUI.
-
-
-
-XUIObject extends xpell object (XObject), every XUIObject wraps html elements as needed. the following list is XUI core objects:
-view:DIV
-label:label
-link : a href
-button :Button,
-text : input type=”input”
-password : input type=”password”
-input:Input
-textarea:textarea
-video: Video,
-image:img,
-form:Form,
-Webcam:video with webcam source
-Xhtml:any other html tag that defined in _html_tag xpell attribute
-svg:SVG
+### _on_frame attribute
 
 
 every XUIObject has _on_click attribute that can get text or callable javascript function like:
