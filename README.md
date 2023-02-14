@@ -7,7 +7,7 @@ Xpell is a real-time user interface (UI) framework for frontend application deve
 
 This package is an implementation of Xpell engine for web applications (/Typescript/Javascript/HTML), the engine supports native HTML DOM manipulation engine (XUI) and real-time 3D (X3D) engine for browsers based on THREE.JS and WebGL.
 
-More about the Xpell engine please refer to the [xpell-core](xpell-core.MD) file
+More about the Xpell engine please refer to the [xpell-core](xpell-core.md) file
 
 # Xpell.js Base Module
 
