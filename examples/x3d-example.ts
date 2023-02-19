@@ -1,91 +1,83 @@
 
-import { IXObjectData, XObjectPack } from "./src/XObject"
-import {Xpell as _x} from "./src/Xpell"
-import {XData} from "./src/XData"
-import {X3D, X3DObject} from "./src/X3D/X3D"
-import {XLabel} from "./src/XUI/XUICoreObjects"
-import {XGLTFLoader as _gltf,GLTFEvents} from "./src/X3D/XGLTFLoader"
+import * as THREE from 'three'
+import { _x,IXObjectData, XObjectPack,XData } from "xpell-core"
+// import { Xpell as _x } from "./src/Xpell"
+// import { XData } from "./src/XData"
+import { X3D, X3DApp, X3DObject } from "./src/X3D/X3D"
+import { XCameraData,XLightData } from './src/X3D/X3DCoreObjects'
+import { XLabel } from "./src/XUI/XUICoreObjects"
+import { X3DLoader as _loader, } from "./src/X3D/X3DLoader"
 
 import { XUI } from "./src/XUI/XUI"
 import { XUIObject } from "./src/XUI/XUIObject"
+import XJoystick from "./src/XUI/XJoystick"
+import { TopBar } from "./src/XUI/XDashboard"
+import { XEditor, XTransformControls } from "./src/XUI/XEditor"
+
 
 //display Xpell engine info
+_x.verbose()
+
 _x.info()
 
 //load Xpell UI (XUI) Module
-_x.loadModule(XUI)
+// _x.loadModule(XUI)
 _x.loadModule(X3D)
-
+// XUI.importObject("joystick", XJoystick)
+// XUI.importObjectPack(XEditor)
 
 _x.start()
 
 
 
 
-const world = {
-    "html-tag-id": "x3d-player",
-    scene: {
-        "lights": {
-            "main": {
+export const world:X3DApp = {
+    _parent_element: "x3d-player",
+    _physics: {
+        _engine: "cannon.js",
+        _active: true,
+        _debug: true
+    },
+    _scene: {
+        _helpers:{
+            "axes":{
+                _type:"axes",
+                _active:false,
+                _params:{size:5}
+            }
+        },
+        _lights: {
+            "main":{
                 _type: "light",
-                _light: "ambient",
-                color: 0x444466
+                _light:"ambient"
             },
             "p1": {
                 _type: "light",
                 _light: "directional",
-                _helper: true,
-                color: "hsl(180, 0%, 60%)",
+                color: "#aaffff",
                 intensity: 1,
-                _position: { x: 5, y: 10, z: -30 },
-        
-            },
-            "p2": {
-                _type: "light",
-                _light: "directional",
-                color: "hsl(180, 0%, 60%)",
-                intensity: 1,
-                _position: { x: 5, y: 5, z: 30 },
-        
-            },
-            "p3": {
-                _type: "light",
-                _light: "directional",
-                color: "hsl(180, 0%, 60%)",
-                intensity: 1,
-                _position: { x: -20, y: 5, z: 0 }
-        
-            },
-            "p4": {
-                _type: "light",
-                _light: "directional",
-                color: "hsl(180, 0%, 60%)",
-                intensity: 1,
-                _position: { x: 20, y: 5, z: 0 }
-            },
-            "top-light": {
-                _type: "light",
-                _light: "directional",
-                color: "hsl(180, 0%, 80%)",
-                intensity: 1,
-                _position: { x: 0, y: 16, z: -40 }
+                _position: { x: 0, y: 2, z: 0 },
+
             }
+
         },
-        cameras: {
+        _cameras: {
             "main-cam": {
-                _type: "perspective-camera",
-                fov: 40,
-                ratio: window.innerWidth / window.innerHeight,
-                _clipping: {
-                    far: 5000,
-                    close: 0.01
-                },
-                _position: { x: 0, y: 1.75, z: -40 },
+                _id: "main-cam",
+                _type: "camera",
+                _camera:"perspective",
+                _position: { x: 0, y: 1.75, z: 10 },
                 _rotation: { x: 0, y: 0, z: 0 },
-                _disable_frame_3d_state: true
+                _disable_frame_3d_state: true,
+                _3d_set_once: true,
+                fov: 30,
+                ratio: window.innerWidth / window.innerHeight,
+                far: 3000,
+                close: 0.01
+                //_positio_audio_listener: false
             }
         },
-        controls: {
+        _controls: {
             "cam-control": {
                 _type: "orbit",
                 _active: true,
@@ -93,161 +85,119 @@ const world = {
                     enableDamping: true,
                     minPolarAngle: Math.PI / 2.5,
                     maxPolarAngle: Math.PI / 1.5,
-                    minDistance: 2,
-                    maxDistance: 10,
+                    minZoom: 1,
+                    minDistance: 1,
+                    maxDistance: 30,
                     rotateSpeed: 0.3,
+                    
                 }
+            },
+            "transform": {
+                _type:"transform",
+                _active: true
+            },
+
+        },
+        _objects: {
+                "pointer": {
+                    _type: "sphere",
+                    _id: "pointer",
+                    _geometry: {
+                        _type: "sphere-geometry",
+                        widthSegments: 8,
+                        heightSegments: 8,
+                        radius: 0.01
+                    },
+                    _material: {
+                        _type: "basic-material",
+                        color: 0xff99ff,
+                        side: 1,
+                        // roughness: 0.5,
+                    },
+                    _position: { x: 0, y: 0.75, z: 0 },
+                    _rotation: { x: 0, y: 0, z: 0 },
+                    // castShadow: true,
+                    _on_frame: `follow-joystick`
+                },
+                floor: {
+                    _id: "floor",
+                    _type: "plane",
+                    _geometry: {
+                        _type: "plane-geometry",
+                        width: 10,
+                        height: 10,
+                        widthSegments: 100,
+                        heightSegments: 100,
+
+                    },
+                    _material: {
+                        _type: "standard-material",
+                        color: "#ffffff",
+                        side: 2,
+                        roughness:0.2,
+                        _normal_map:{texture:"/public/nmap.png"}
+                        // wireframe: true
+                    },
+                    _position: { x: 0, y: -0.01, z: 0 },
+                    _rotation: { x: Math.PI / 2, y: 0, z: 0 },
+                    _enable_physics: true,
+                    _collider:"box",
+                    _mass: 0
+                },
+                box: {
+                    _id: "box",
+                    _type: "box",
+                    _geometry: {
+                        width: 1,
+                        height: 1,
+                        depth:1
+
+                    },
+                    _material: {
+                        _type: "standard-material",
+                        color: "#ffffff",
+                        side: 2,
+                        roughness:0.2,
+                        // wireframe: true
+                    },
+                    _position: { x: 0, y: 2, z: 0 },
+                    _rotation: { x: Math.PI / 2, y: 0, z: 0 },
+                    _enable_physics: false,
+                    _collider:"box",
+                    _mass: 0
+                },
+                cir: {
+                    _id: "cir",
+                    _type: "circle",
+                    _geometry: {
+                        radius: 1,
+                        segments: 24,
+
+                    },
+                    _material: {
+                        _type: "standard-material",
+                        color: "#ffffff",
+                        side: 2,
+                        roughness:0.2,
+                        // wireframe: true
+                    },
+                    _position: { x: -1, y: 1, z: 0 },
+                    _rotation: { x: Math.PI / 2, y: 0, z: 0 },
+                    _enable_physics: false,
+                    _collider:"box",
+                    _mass: 0
+                }
+
+
+
             }
-        }
-
     },
-    "x3d-objects": {
-        "pointer": {
-            _type: "sphere",
-            _id: "pointer",
-            _geometry: {
-                _type: "sphere-geometry",
-                widthSegments: 8,
-                heightSegments: 8,
-                radius: 0.1
-            },
-            _material: {
-                _type: "basic-material",
-                color: 0xff99ff,
-                side: 2,
-                // roughness: 0.5,
-            },
-            _position: { x: 0, y: 1, z: -1 },
-            _rotation: { x: 0, y: 0, z: 0 },
-            castShadow: true
-            
-        }
-    }
-}
-
-
-X3D.loadWorld(world)
-
-_gltf.load("/Drummer.glb",{_id:"bot",name:"bot",_position:{x:0,y:0,z:0},_on_frame: `rotation y:++0.01 `},()=>{
-    // const bot:X3DObject = X3D.om.getObject("bot")
-    // bot.playAnimation("Sitting")
-})
-
-// _gltf.load("/DrumsChair.glb",{_id:"chair"})
-// _gltf.load("/Drums.glb",{_id:"drums",name:"drums"})
-
-
-
-
-
-class InfoBar extends XUIObject  {   
-    constructor(data) {
-        
-        const defaults = {
-            _type:"info-bar",
-            _html_tag:"div",
-            _user_name:"unknown"
-        }
-        super(data,defaults)
-
-        this._frameLable = XUI.create({
-            _id:"name-label",
-            _type:"label",
-            _data_source:"frame-number",
-            _format:"Frame: _$"
-        })
-        
-        this.append(this._frameLable)
-
-        this.fpsLabel = XUI.create({
-            _id:"fps-label",
-            _type:"label",
-            _data_source:"fps",
-            _format:"FPS: _$",
-            style:"margin-left:20px"
-        })
-        
-        this.append(this.fpsLabel)
-
-        this.userName = XUI.create({
-            _id:"username-label",
-            _type:"label",
-            text:"User :" + this._user_name,
-            style:"margin-left:20px"
-        })
-        
-        this.append(this.userName)
-        
-        this.animateButton = XUI.create({
-            _id:"animateButton",
-            _type:"button",
-            style:"margin-left:20px",
-            text:"Animate",
-            onclick:"document.dispatchEvent(new CustomEvent('clickme'))",
-            _pos:0
-        })
-        
-        this.append(this.animateButton)
-
-
-        
-
-        
-
-        document.addEventListener("clickme",(e) => {
-            const anims = ["Sitting","Drumming","Angry","Clapping"]
-            const bot:X3DObject = X3D.om.getObject("bot")
-            const but:XUIObject = XUI.om.getObject("animateButton")
-            bot.playAnimation(anims[but._pos++])
-            if(but._pos == anims.length) but._pos = 0
-
-        })
-        
-    }
-}
-
-
-
-
-
-
-class InfoObjects {
     
-    static getObjects() {
-        return  {
-            "info-bar":InfoBar
-        }
-    }
-}
-
-XUI.importObjectPack(InfoObjects)
-
-const _app = {
-    xpell: {version: 1},
-    views: {
-        "hello-view": {
-            _type: "info-bar",
-            style:"display:block",
-            _id: "hello-view",
-            _user_name:"Tamir"
-            
-        }
-    },
-    defaults: {
-        view: "hello-view"
-    },
-    "html-tag-id":"player"
-
 }
 
 
 
 
-//load Xpell application
-XUI.loadApp(_app)
-
-//load "hello-view" view into the page
-XUI.vm.loadPage("hello-view")
-
-
+await X3D.loadApp(world)
+// console.log(X3D.world)
 

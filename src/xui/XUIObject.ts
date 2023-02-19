@@ -171,6 +171,7 @@ export class XUIObject extends XObject {
         this._children.push(<XUIObject>xObject)
         if (this._dom_object) {
             this._dom_object.appendChild(xObject.getDOMObject())
+            xObject.mount()
         }
     }
 

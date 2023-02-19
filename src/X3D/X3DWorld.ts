@@ -13,7 +13,7 @@ import { CannonDebugRenderer } from './X3DUtils';
 
 // import XUtils from '../XUtils';
 // import XData from '../XData';
-import {_xlog,_xu,XData, IXObjectData} from 'xpell-core'
+import {_xlog,_xu,XData, IXObjectData, _xem} from 'xpell-core'
 import {X3D,X3DApp,X3DObject,X3AxesHelper, XHelperData} from "./X3D"
 import { IX3DObjectData } from './X3DObject';
 
@@ -77,7 +77,7 @@ export class X3DWorld {
     frameNumber: number;
     raycaster: THREE.Raycaster;
     transformControls!: TransformControls
-    private transformControlX3dObject!:X3DObject
+    private transformControlX3dObject!:X3DObject | null
     private transformControlsListenerAdded!: boolean;
     lights: {};
     x3dObjects: {[k:string]:X3DObject};
@@ -189,7 +189,7 @@ export class X3DWorld {
                 // camera["name"] = keys[i]
 
                 
-                let cam = X3D.create(camera)
+                let cam = await X3D.create(camera)
 
                 if(camera._helper) {
                     this.defaultCamera = cam.getThreeObject()
@@ -212,9 +212,9 @@ export class X3DWorld {
 
         //get lights
         if (xworld._scene._lights) {
-            Object.keys(xworld._scene._lights).forEach(light_name => {
+            Object.keys(xworld._scene._lights).forEach(async (light_name) => {
                 const lgt = xworld._scene._lights[light_name]
-                let light = X3D.create(lgt)
+                let light = await X3D.create(lgt)
                 light.name = light_name
                 
                 if (lgt._helper && lgt._light == "directional") {
@@ -223,7 +223,7 @@ export class X3DWorld {
                     this.scene.add(helper)
                 }
                 else {
-                    this.addX3DObject(light)
+                    await this.addX3DObject(light)
                 }
             })
         } else {
@@ -237,7 +237,7 @@ export class X3DWorld {
             Object.keys(xworld._scene._objects).forEach(async s3dobj => {
                 let ob = xworld._scene._objects[s3dobj]
                 ob.name = s3dobj
-                let obj = X3D.create(ob)
+                let obj = await X3D.create(ob)
                 await this.addX3DObject(obj)
             })
         }
@@ -322,7 +322,9 @@ export class X3DWorld {
             if(this._log_rules.addObject) {_xlog.log("XWorld adding ", x3dObject._id)}
 
             this.x3dObjects[<string>x3dObject._id] = x3dObject
-            const threeObject = x3dObject.getThreeObject()
+            const threeObject = await x3dObject.getThreeObject()
+            console.log(threeObject);
+            
             this.scene.add(threeObject)
 
             // if physics engine is on and the X3DObject supports physics 
@@ -343,8 +345,8 @@ export class X3DWorld {
     async removeX3DObject(objectId:string) {
         if(this._log_rules.removeObject) _xlog.log("XWorld Removing " + objectId)
         if(this.x3dObjects.hasOwnProperty(objectId)) {
-            const x3dObject = this.x3dObjects[objectId]
-            x3dObject.getThreeObject().removeFromParent()
+            const x3dObject:X3DObject = <X3DObject>this.x3dObjects[objectId];
+            (x3dObject.getThreeObject() as THREE.Object3D).removeFromParent()
             if(x3dObject._cannon_obj) this.physicsWorld.removeBody(x3dObject._cannon_obj)
             delete this.x3dObjects[objectId] 
         } else {
@@ -354,10 +356,14 @@ export class X3DWorld {
     }
 
 
+    removeTransformControls(){
+        this.transformControlX3dObject = null
+        this.transformControls.detach()
+    }
 
     setTransformControls(x3dObject:X3DObject) {
         this.transformControlX3dObject = x3dObject
-        this.transformControls.attach(x3dObject.getThreeObject())
+        this.transformControls.attach(<THREE.Object3D>x3dObject.getThreeObject())
         if(!this.transformControlsListenerAdded) {
             this.transformControlsListenerAdded = true
             this.transformControls.addEventListener("objectChange",(e) => {
@@ -366,9 +372,9 @@ export class X3DWorld {
                     const pos = this.transformControls.object.position
                     const rot = this.transformControls.object.rotation
                     const scale = this.transformControls.object.scale
-                    this.transformControlX3dObject.setPositionFromVector3(pos)
-                    this.transformControlX3dObject.setRotationFromEuler(rot)
-                    this.transformControlX3dObject.setScaleFromVector3(scale)
+                    this.transformControlX3dObject?.setPositionFromVector3(pos)
+                    this.transformControlX3dObject?.setRotationFromEuler(rot)
+                    this.transformControlX3dObject?.setScaleFromVector3(scale)
                     XData.variables["tc-pos-x"] = pos.x.toFixed(2)
                     XData.variables["tc-pos-y"] = pos.y.toFixed(2)
                     XData.variables["tc-pos-z"] = pos.z.toFixed(2)
@@ -384,7 +390,7 @@ export class X3DWorld {
     
             })
             
-            document.addEventListener("xtransform-controls-state-changed",(e) => {            
+            _xem.on("xtransform-controls-state-changed",(xevent:any) => {            
                 this.transformControls.setMode(<'translate' | 'rotate' | 'scale'>XData.variables["xtransform-controls-state"])
             })
             this.scene.add(this.transformControls)

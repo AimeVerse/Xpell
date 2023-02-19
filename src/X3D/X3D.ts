@@ -150,18 +150,21 @@ export class X3DModule extends XModule {
      * @return {X3DObject}
      * @override 
      */
-    create(data:IX3DObjectData) {
+    async create(data:IX3DObjectData) {
 
-        if (this.om.hasObjectClass(<string>data._type)) {
+        // if (this.om.hasObjectClass(<string>data._type)) {
             if (this._log_rules.createObject) {
                 _xlog.log("X3D | creating " + data._type);
             }
 
-            const xclass = this.om.getObjectClass(<string>data._type)
-            const obj = new xclass(data)
-            this.om.addObject(obj)
-            return obj
-        } else return null
+        //     const xclass = this.om.getObjectClass(<string>data._type)
+        //     const obj = new xclass(data)
+        //     this.om.addObject(obj)
+        //     return obj
+        // } else return null
+
+        
+        return await super.create(data)
     }
 
 
@@ -192,8 +195,8 @@ export class X3DModule extends XModule {
      * @param <IX3DObjectData> data  - the object to create data (json)
      * @returns 
      */
-    addRaw(data: IX3DObjectData): X3DObject {
-        const obj = X3D.create(data)
+    async addRaw(data: IX3DObjectData): Promise<X3DObject> {
+        const obj = await X3D.create(data)
         X3D.add(obj)
         return obj
     }

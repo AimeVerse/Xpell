@@ -54,12 +54,12 @@ export class XForm extends XUIObject {
 
 export class XImage extends XUIObject {
    
+    static xtype = "image"
 
     constructor(data:IXObjectData) {
-        const tag = "image"
         const defaults = {
-            _type: tag,
-            class:"x" + tag,
+            _type: XImage.xtype,
+            class:"x" + XImage.xtype,
             _html_tag:"img"
         }
         super(data,defaults);

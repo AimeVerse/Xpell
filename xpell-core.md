@@ -16,6 +16,28 @@ Xpell is a rear-time interpreter that provides an interface to control both outp
 Xpell is a modular framework, meaning the basic engine can load external modules and run them. 
 
 
+## XEventManager (XEM)
+
+The XEventManager (_xem) is a critical component of the Xpell event system. It is responsible for managing events, both dispatching and listening to them. The XEventManager allows developers to easily create custom events and respond to them in a flexible and dynamic way.
+
+The XEventManager is a powerful tool for creating custom event systems within Xpell and can be used to implement complex functionality in a simple and modular way.
+
+Usage:
+
+1. Event Listen
+```    // listen to event name "my-event" and display the event data to the console when fired
+       _xem.on("my-event",(eventName,data)=>{
+           console.log("XEM Event " + eventName,data)
+       })
+```
+
+2. Event Fire
+```     //fire (trigger) event name "my-event" and simple object as data
+       _xem.fire("my-event",{_data_param:"my data"}) 
+```
+ 
+
+
 ## Xpell Command
 
 Xpell provides a command (XCommand) system to enable communication between modules in the framework. When a command is received by the Xpell interpreter, it is routed to the requested module for execution.
@@ -50,6 +72,7 @@ Format (Schema):
     }
 }
 ```
+
 Example: 
 ```
 {
@@ -79,7 +102,7 @@ There are two ways to create a new Xpell Object of type XObject:
    ```const myXObject = new XObject({_id:"xobject-id",_type:"xobject-xpell-name"})```
 
 2. Using the XModule create method:
-   ```const myObject = XModule.create({_id:"xobject-id",_type:"xobject-xpell-name"})`
+   ```const myObject = XModule.create({_id:"xobject-id",_type:"xobject-xpell-name"})```
 
 
 #### XObject Data
@@ -113,35 +136,72 @@ for example to define a new XObject with the id="obj1" and with one child object
 ```
 
 * Every XObject data attribute starts with an underscore sign "_", nevertheless it is possible to add also attributes that will not be used by the interpreter but they will be transferred to the wrapped object directly, for example if the XObject wraps an HTML element this mechanism enable setting also HTML attribute to the object like style, class etc'.
-  
-
-### _on_frame attribute
 
 
-every XUIObject has _on_click attribute that can get text or callable javascript function like:
+### XObject Base Methods
+
+The following list describes the XObject base method, these methods can be override when extending the object (just remember to call the super class method to bubble the call to the parent class):
+
+#### OnCreate Method 
+This method invoked when the object is begin created.
+
+To set the method from the XData object use the `_on_create` attribute that can receive both textual XCommand (CLI) or callable Javascript function:
+
+Example with JS anonymous function:
+```
 {
-   _type:"button",
-   _id:"my-button",
-   _text:"click me",
-   style:"border:1px solid black;border-radius:5px",
-   _on_click:(xobj:XUIObject,e:HTMLEvent) => {console.log("click")}
+    _id:"my-obj",
+    _type:"xobject",
+    _on_create:(xobj:XObject) => { //write JS code here}
 }
+```
 
-
-xpell interpreter works with frames that being populated to the children objects, this example is a label that change the content every frame to the current frame number:
+Example with XCommand CLI style:
+```
 {
-   _type:"label",
-   _on_frame:(obj:XUIObject,frameNumber:number) = {
-      obj.getDOMObject().textContent = frameNumber
+    _id:"my-obj",
+    _type:"xobject",
+    _on_create:"log" //will run "log" xnano-command that will log the object to the console
+}
+```
+
+
+### OnFrame Method
+
+Since Xpell Interpreter works with frames as a basic clock every module and object defines `async onFrame(frameNumber:number)` method to handle frame based code.
+
+The onFrame method will include the code from the `_on_frame` attribute that can receive both textual XCommand (CLI) or callable Javascript function:
+
+The following example writes the frame number to the console each frame.
+```
+{
+   _type:"xobject",
+   _on_frame:(obj:XObject,frameNumber:number) = {
+     console.log(frameNumber)
    }
 }
+```
+* When Overriding this method call super.onFrame(frameNumber) method to bubble the event
+* Do not use complex code since it can affect the general system frame rate
+  
 
 
+### OnMount Method
+This method is invoked when the object is mounted in the DOM tree. This method is useful when you need to access the DOM elements or interact with them.
 
+To set the method from the XObject use the _on_mount attribute that can receive both textual XCommand (CLI) or callable Javascript function:
+
+Example with JS anonymous function:
+```
+{
+    _id:"my-obj",
+    _type:"xobject",
+    _on_mount:(xobj:XObject) => { //write JS code here}
+}
 
 ```
-npm install xpell
-```
+
+
 
 
 

@@ -125,6 +125,10 @@ export class XViewManager {
         this.showPage(this.activeView)
     }
 
+    /*TO-DO remove view */
+
+    
+
 
     /**
      * handle the hashchange browser event, used to support Back functionality.

@@ -1,8 +1,17 @@
+1.0.50:
+----------
+- X3D create function is async
+- X3D object name attribute : _model_url 
+- X3D new Primitive : XModel - any generic model (gltf/glb) (_model_url attribute)
+
+
+
 1.0.45:
 ----------
 - X3D world support TWEEN update 
 - X3DObject setRotationFromQuaternion
 - X3D new primitive -> circle
+
 
 
 1.0.42:

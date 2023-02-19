@@ -47,6 +47,7 @@ export interface IX3DObjectData extends IXObjectData {
     _disable_frame_3d_state?: boolean,
     _3d_set_once?: boolean,
     _positional_audio_source?: string,
+    _model_url?:string 
 
 }
 
@@ -62,7 +63,8 @@ export class X3DObject extends XObject {
     _rotation!: THREE.Euler
     _scale!: THREE.Vector3
     _on_frame: string | Function | undefined
-    protected _visible!: boolean
+    _visible!: boolean
+    _model_url!:string 
     protected _animation_clips: {[name:string]:THREE.AnimationAction}
     protected _fade_duration!: number
     protected _clock: THREE.Clock
@@ -79,10 +81,12 @@ export class X3DObject extends XObject {
     protected _log_rules:{
         _import_animation:boolean,
         _play_animation:boolean,
+        _load_model:boolean
         
     } = {
         _import_animation:false,
-        _play_animation:false
+        _play_animation:false,
+        _load_model:false
     }
 
     static getXData(threeObj: THREE.Object3D, defaults:IX3DObjectData) {
@@ -266,7 +270,7 @@ export class X3DObject extends XObject {
     /**
      * @override
      */
-    getThreeObject(): THREE.Object3D {
+    getThreeObject(): THREE.Object3D | Promise<THREE.Object3D> {
         if (!this._three_obj && this._three_class) {
             this._three_obj = new this._three_class(...this._threes_class_args)
             if (this._three_obj) {
@@ -295,6 +299,11 @@ export class X3DObject extends XObject {
                 }
             }
 
+        }
+        else if(this._model_url) {
+            return new Promise((resolve,reject) => {
+                this.loadModel(this._model_url).then(result=> {resolve(<any>this._three_obj)})
+            })
         }
 
         return <THREE.Object3D>this._three_obj
@@ -437,13 +446,13 @@ export class X3DObject extends XObject {
      * Append X3DObject as a child object
      * @param x3dObject 
      */
-    append(x3dObject:X3DObject | IX3DObjectData) {
+    async append(x3dObject:X3DObject | IX3DObjectData) {
         if(!(x3dObject instanceof X3DObject)) {
-            x3dObject = X3D.create(<IX3DObjectData>x3dObject)
+            x3dObject = await X3D.create(<IX3DObjectData>x3dObject)
         }
         this._children.push(x3dObject as XObject);
         if(this._three_obj) {
-            this._three_obj.add((<X3DObject>x3dObject).getThreeObject())
+            this._three_obj.add((<X3DObject>x3dObject).getThreeObject() as THREE.Object3D)
         }
     }
 
@@ -517,11 +526,10 @@ export class X3DObject extends XObject {
     }
 
     async loadModel(modelUrl: string) {
-        _xlog.log("Loading avatar " + modelUrl)
+        if(this._log_rules._load_model) _xlog.log("Loading model " + modelUrl)
         const model: THREE.Object3D = await this.loadThreeObjectFromGLTF(modelUrl)
         this._three_class = model.type
         this._three_obj = model
-        // this._model_url = modelUrl
     }
 
 

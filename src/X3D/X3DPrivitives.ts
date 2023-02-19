@@ -1,5 +1,5 @@
 import X3DObject, { IX3DObjectData } from './X3DObject'
-import { XObjectPack } from 'xpell-core'
+import { IXObjectData, XObjectPack } from 'xpell-core'
 import { XCamera, XGeometry, XLight, XMaterial, XMesh, XGroup } from './X3DCoreObjects'
 import * as THREE from 'three'
 import * as CANNON from 'cannon-es'
@@ -362,6 +362,27 @@ export class XCircle extends XMesh {
         super(data, defaults)
     }
 }
+
+export class XModel extends X3DObject {
+    static xtype = "xmodel"
+
+    constructor(data:IXObjectData) {
+        super(data)
+        
+        this._log_rules._load_model = true
+    }
+    
+    async onCreate(): Promise<void> {
+        await this.loadModel(this._model_url)
+        console.log("xmodel created");
+        
+        
+    }
+
+
+}
+
+
 // export class XFloor extends X3DObject {
 
 //     // _geometry: XGeometry
@@ -519,7 +540,7 @@ export class X3DPrimitives extends XObjectPack {
             "cylinder": XCylinder,
             "torus": XTorus,
             "cone": XCone,
-            // "floor": XFloor,
+            "xmodel": XModel,
             "perspective-camera": XCamera,
             "camera": XCamera, //alias to perspective-camera
             "light": XLight, // alias to ambient-light
