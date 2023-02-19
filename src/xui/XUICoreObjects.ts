@@ -117,7 +117,6 @@ export class XWebcam extends XUIObject {
         navigator.mediaDevices.getUserMedia(this._video_constraints).then((stream) => {
             video_elem.srcObject = stream;
             video_elem.addEventListener('loadeddata',async  () => {
-                //console.log("media is running");
                 // video_playing = true;
 
                 // await load_hands_model()

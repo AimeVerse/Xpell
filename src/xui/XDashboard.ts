@@ -55,7 +55,6 @@ export class TopBar extends XUIObject {
      * @param frameNumber 
      */
     async onFrame (frameNumber:number) {
-        //console.log(per(frameNumber)
         const d=new Date()
         const getTime = () => d.getHours() + ':' + d.getMinutes() + ':' + d.getSeconds() + "." + d.getMilliseconds()
         XData.variables["sys-time"] =getTime()

@@ -246,7 +246,6 @@ export class X3DObject extends XObject {
     set3DState() {
         if (this._three_obj) {
             if (this._scale) this._three_obj.scale.copy(this._scale) //in case that other engine (like physics) controls the position
-            // console.log(this._id,this._rotation);
             
             if (this._rotation) this._three_obj.rotation.copy(this._rotation)
             if (this._position) this._three_obj.position.copy(this._position)
@@ -300,7 +299,7 @@ export class X3DObject extends XObject {
             }
 
         }
-        else if(this._model_url) {
+        else if(!this._three_obj  && this._model_url) {
             return new Promise((resolve,reject) => {
                 this.loadModel(this._model_url).then(result=> {resolve(<any>this._three_obj)})
             })
@@ -428,11 +427,9 @@ export class X3DObject extends XObject {
         if (this._cannon_obj && this._enable_physics) {
             const cp = this._cannon_obj.position
             const cq = this._cannon_obj.quaternion
-            // console.log(this._position);
 
             this.setPosition({ x: cp.x, y: cp.y, z: cp.z })
             this._three_obj?.quaternion.copy(<any>cq)
-            // console.log(this._cannon_obj.position)
         }
 
         //very important to call the super function 
@@ -474,7 +471,6 @@ export class X3DObject extends XObject {
         }
         let idx = 1
         threeObj.animations.forEach((anim) => {
-            //console.log(anim)
             const a2 = anim.clone()
 
             if (newName) {

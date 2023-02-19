@@ -374,7 +374,7 @@ export class XModel extends X3DObject {
     
     async onCreate(): Promise<void> {
         await this.loadModel(this._model_url)
-        console.log("xmodel created");
+        await super.onCreate()
         
         
     }
@@ -520,7 +520,6 @@ export class XModel extends X3DObject {
 //    * override to implement
 //    */
 //     async onCreate() {
-//         //console.log("skeleton created");
 //         //this.
 //     }
 

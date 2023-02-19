@@ -47,7 +47,6 @@ class CardPack extends XUIObject  {
                 iplayer["lastSeen"] = frameNumber
                 this["_players"][player.id] = iplayer
                 
-                // console.log("adding player " + iplayer.id);
                 const crd = {
                             _type:"card",
                             _id:"crd-" + player.id,
@@ -67,10 +66,8 @@ class CardPack extends XUIObject  {
             
             playersArray.forEach(player => {
                 const p1 = this["_players"][player]
-                //console.log(p1["name"],p1["lastSeen"]);
                 
                 if(p1["lastSeen"] != frameNumber) {
-                    // console.log("anomaly ", p1["lastSeen"]);
                     const domCard = document.getElementById("crd-" + p1["id"]) 
                     
                     if(domCard)

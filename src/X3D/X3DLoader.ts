@@ -43,7 +43,6 @@ class X3DLoader {
                 })
                 
                 xobject?.loadAnimations()
-                // console.log(xobject);
 
                 
 
@@ -60,13 +59,12 @@ class X3DLoader {
         }
 
         const _onprogress = (data:any) => {
-            //console.log(data);
             // this.loading=false
 
         }
 
         const _onerror = (error:any) => {
-            console.log(error);
+            console.error(error);
             this.loading = false
 
         }
@@ -85,7 +83,6 @@ class X3DLoader {
             let xobject;
             //child.animations = obj.animations
 
-            // console.log("tye:" + child.type);
 
             if (obj.type == "Mesh") {
                 xobject = XMesh.getFromThreeObject(<THREE.Mesh>obj, data)
@@ -97,7 +94,6 @@ class X3DLoader {
                 xobject = X3DObject.getFromThreeObject(obj, data)
             }
             xobject?.loadAnimations()
-            // console.log(xobject);
 
             if(xobject) X3D.add(xobject)
 
@@ -106,17 +102,13 @@ class X3DLoader {
             if (data["_id"]) _xem.fire(data["_id"] + "-loaded", {})
             if (onLoadCallBack) onLoadCallBack(xobject)
 
-            // console.log(obj);
-            // obj.scene.traverse( (threeObj) => {
-            //     console.log(threeObj);    
-            // })
+            
 
 
 
         }
 
         const _onprogress = (data:any) => {
-            //console.log(data);
             // this.loading=false
 
         }
@@ -142,7 +134,6 @@ class X3DLoader {
         }
 
         const _onprogress = (data:any) => {
-            //console.log(data);
             // this.loading=false
 
         }
@@ -175,7 +166,6 @@ class X3DLoader {
             }
 
             const _onprogress = (data:any) => {
-                //console.log(data);
                 // this.loading=false
 
             }

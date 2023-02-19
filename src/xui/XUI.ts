@@ -117,7 +117,6 @@ export class XUIModule extends XModule {
         
         
         const pe = (xobj._parent_element) ? xobj._parent_element : this._controls_element;
-        // console.log(xobj);
         
         document.querySelector("#" + pe)?.append(ctrl)
         if (xobj.onMount && typeof xobj.onMount === 'function') {
@@ -150,7 +149,6 @@ export class XUIModule extends XModule {
 
     async onFrame(frameNumber:number) {
         super.onFrame(frameNumber) //bubble event to all the active objects in the object manager (om)
-        //console.log("frame " + frame_number)
     }
 }
 

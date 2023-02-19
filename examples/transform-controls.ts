@@ -258,7 +258,6 @@ XUI.enableFirstUserGestureEvent()
 
 
 
-    //console.log(X3D.world)
 
     const stage = {
         x: 0,
@@ -297,10 +296,9 @@ XUI.enableFirstUserGestureEvent()
     //     })
     //     // x3dObject._three_obj.traverse((child) => {
     //     //     if (child.isBone) {
-    //     //         console.log(child.name);
+    //     //         (child.name);
     //     //         if(child.name == "RightForeArm") {
 
-    //     //             // console.log(child.position);
     //     //             // child.position.add(new THREE.Vector3(0.1,0,0))
     //     //             child.rotation.z = -Math.PI /2
 

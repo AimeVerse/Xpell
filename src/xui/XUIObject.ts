@@ -88,7 +88,6 @@ export class XUIObject extends XObject {
 
     getDOMObject():Element  {
         if (!this._dom_object) {
-            //console.log("creating " + this._html_tag);
             let dom_object = (this._html_ns)
                  ? document.createElementNS(this._html_ns,this._html_tag)
                  : document.createElement(this._html_tag)
@@ -261,7 +260,6 @@ export class XUIObject extends XObject {
                 }
             }
             else if(XData.objects[this._data_source]) {
-                //console.log("data source");
                 const ob = XData.objects[this._data_source]
                 if(this._format) {
                     const replace_at_plus_one = (str:string,index:number, character:string) => {
@@ -275,7 +273,6 @@ export class XUIObject extends XObject {
                     while ((index = trimmed.indexOf("_$", start_index)) > -1) {
                         const f = trimmed.substr(index+2,1)
                         const val = ob[f].toFixed(2)
-                        //console.log("v",val,val.toString().length)
                         trimmed = replace_at_plus_one(trimmed,index,val)
                         start_index = index + 2 + val.length ;
                     }
@@ -286,7 +283,6 @@ export class XUIObject extends XObject {
             }
         }
         super.onFrame(frameNumber)
-        //console.log(this._id + " frame " + frame_number)
     }
 }
 

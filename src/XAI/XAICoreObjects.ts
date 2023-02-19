@@ -37,8 +37,6 @@ export class XTTS extends XAIObject {
 
     applyVoices() {
         this.voices = this.synth.getVoices();
-        // console.log("total voices: " + this.voices.length);
-        // this.voices.forEach(voice => console.log(voice.name))
         if (this.defaults_voice_name) {
             
             this.setVoiceByName(<any>this.defaults_voice_name);
@@ -74,7 +72,6 @@ export class XTTS extends XAIObject {
     setVoiceByName(voiceName:string) {
         if (this.voices) {
             for (let i = 0; i < this.voices.length; i++) {
-                //console.log("bot voice " + this.voices[i].name + ' (' + this.voices[i].lang + ')')
                 if (this.voices[i].name.toLowerCase() == voiceName.toLowerCase()) {
                     _xlog.log("xai tts default voice is set to " + this.voices[i].name + ' (' + this.voices[i].lang + ')')
                     this.setVoice(i)
@@ -109,7 +106,6 @@ export class XTTS extends XAIObject {
             // return new Promise(resolve => {
             //     const id = setInterval(() => {
             //         if (PAIWebVoice.get_instance().synth.speaking === false) {
-            //             //console.log("stop speak");
             //             clearInterval(id);
             //             resolve();
             //         }

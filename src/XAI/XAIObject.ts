@@ -83,7 +83,6 @@ export class XAIObject extends XObject {
       
         
         super.onFrame(frameNumber)
-        //console.log(this._id + " frame " + frame_number)
     }
 }
 

@@ -47,15 +47,12 @@ const set_axis = (root:any, axis:any, param:any) => {
     if (param) {
         if (param.startsWith("++")) {
             param = param.substring(1)
-            // console.log("changing ++",param)
             root[axis] += parseFloat(param)
         } else if (param.startsWith("--")) {
 
             param = param.substring(1)
-            // console.log("changing --",param)
             root[axis] -= parseFloat(param) * (-1)
         } else {
-            // console.log("no changing")
             root[axis] = parseFloat(param)
         }
 
@@ -86,7 +83,6 @@ export const _x3dobject_nano_commands:XNanoCommandPack = {
     //     set_axis(ns_cmd.s3d_object._scale, "x", get_param(0, "x", ns_cmd))
     //     set_axis(ns_cmd.s3d_object._scale, "y", get_param(1, "y", ns_cmd))
     //     set_axis(ns_cmd.s3d_object._scale, "z", get_param(2, "z", ns_cmd))
-    //     console.log("scale");
     // },
     "rotation":  (xCommand:XCommand,x3dObject?:XObject) => {
         
@@ -113,7 +109,6 @@ export const _x3dobject_nano_commands:XNanoCommandPack = {
         const z_str = (z) ? "z:++" + z : ""
         const sstr = `rotation ${x_str} ${y_str} ${z_str}`
 
-        // console.log(sstr);
         if(x3dObject) x3dObject._on_frame = sstr
     },
     "stop-spin": (xCommand:XCommand,x3dObject?:XObject)  => {
@@ -130,7 +125,6 @@ export const _x3dobject_nano_commands:XNanoCommandPack = {
     // },
     // "rotate-toward": (ns_cmd) => {
     //     //ns_cmd.s3d_object._rotation.z
-    //     //console.log(ns_cmd.s3d_object._three_obj.rotation.x - parseFloat(ns_cmd.s3d_object._rotatation_dir))
     //     if (ns_cmd.s3d_object._three_obj.rotation.x == ns_cmd.s3d_object._rotatation_dir) {
     //         ns_cmd.s3d_object._disable_frame_3d_state = false
     //         ns_cmd.s3d_object._quaternion = null
@@ -146,7 +140,6 @@ export const _x3dobject_nano_commands:XNanoCommandPack = {
 
     // },
     // "play-sound": (ns_cmd) => {
-    //     // console.log(ns_cmd.s3d_object._positional_audio)
     //     // ns_cmd.s3d_object._positional_audio.pause()
 
     // },
@@ -222,17 +215,14 @@ export const _x3dobject_nano_commands:XNanoCommandPack = {
             //let tv = new THREE.Vector3(ns_cmd.s3d_object._position.x, ns_cmd.s3d_object._position.y, ns_cmd.s3d_object._position.z)
             //tv.addScaledVector(lvector, 1)
             //
-            //console.log(ns_cmd.s3d_object)
             x3do?.setPositionFromVector3(<THREE.Vector3>lvector)
 
 
             x3do?._three_obj?.updateMatrixWorld()
-            //console.log("ct")
             XData.objects["control-target"] =  (change)  ? lvector : undefined
 
             XData.objects["joystick-vector"] = lvector
             XData.variables["joystick-position"] = `x:${lvector.x.toFixed(2)} y:${lvector.y.toFixed(2)} z:${lvector.z.toFixed(2)}`
-            //console.log(SpellData.variables["joystick-position"])
             //   //controls.target.set( mesh.position.x, mesh.position.y, mesh.position.z );
             //   // reposition camera
             //   camera.position.sub(controls.target)
@@ -255,7 +245,6 @@ export const _x3dobject_nano_commands:XNanoCommandPack = {
     //             ns_cmd.s3d_object._position.x = kp[0]
     //             ns_cmd.s3d_object._position.y = kp[1]
     //             ns_cmd.s3d_object._position.z = kp[2]
-    //             console.log(ns_cmd.s3d_object._position)
     //         }
     //     }
     // },
@@ -273,18 +262,14 @@ export const _x3dobject_nano_commands:XNanoCommandPack = {
     //         const newPosition = cp.getPoint(ns_cmd.s3d_object._fraction);
     //         ns_cmd.s3d_object._follow_axis_path.crossVectors(ns_cmd.s3d_object._up, tangent).normalize();
     //         const radians = Math.acos(ns_cmd.s3d_object._up.dot(tangent));
-    //         // console.log("radians " + radians);
 
     //         ns_cmd.s3d_object._three_obj.quaternion.setFromAxisAngle(ns_cmd.s3d_object._follow_axis_path, radians);
-    //         // console.log(ns_cmd.s3d_object._follow_axis_path,tangent);
     //         ns_cmd.s3d_object._fraction += 0.001;
     //         if (ns_cmd.s3d_object._fraction > 1) { ns_cmd.s3d_object._fraction = 0 }
 
     //         ns_cmd.s3d_object._three_obj.updateMatrixWorld()
-    //         //console.log("ct")
     //         XData.objects["cam-path-pos"] = newPosition
     //         XData.objects["cam-path-rotation"] = ns_cmd.s3d_object._three_obj.quaternion
-    //         //console.log(SpellData.variables["joystick-position"])
     //         //   //controls.target.set( mesh.position.x, mesh.position.y, mesh.position.z );
     //         //   // reposition camera
     //         //   camera.position.sub(controls.target)

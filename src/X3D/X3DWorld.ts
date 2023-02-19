@@ -323,7 +323,6 @@ export class X3DWorld {
 
             this.x3dObjects[<string>x3dObject._id] = x3dObject
             const threeObject = await x3dObject.getThreeObject()
-            console.log(threeObject);
             
             this.scene.add(threeObject)
 
