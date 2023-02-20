@@ -34,36 +34,6 @@ export const XWorldStatus = {
 const CWORLD_STEP = 1.0/60.0 
 
 
-const xWorldDefaults = {
-    "html-tag-id": "body",
-    renderer: {
-        _type: "webgl",
-        settings: { antialias: true, alpha: true }
-    },
-    scene: {
-        lights: {
-            "main": {
-                _type: "ambient",
-                color: 0x444477
-            }
-        },
-        cameras: {
-            "main": {
-                _type: "perspective",
-                fov: 20,
-                ratio: window.innerWidth / window.innerHeight,
-                clipping: {
-                    far: 5000,
-                    close: 0.01
-                },
-                position: { x: 0, y: 0, z: 0 },
-                rotation: { x: 0, y: 0, z: 0 }
-            }
-        }
-    }
-
-}
-
 
 
 
@@ -98,8 +68,8 @@ export class X3DWorld {
     private cannonDebugRenderer!: CannonDebugRenderer;
 
     constructor(xworld:X3DApp) {
-
-        _xu.mergeDefaultsWithData(xworld, xWorldDefaults)
+        
+        // _xu.mergeDefaultsWithData(xworld, xWorldDefaults)
 
         this.status = XWorldStatus.New
         this.worldRowData = xworld
