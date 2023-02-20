@@ -12,10 +12,10 @@ import XUIObject from "./XUIObject"
  * XUINanoCommand Pack
  */
 export const _xuiobject_basic_nano_commands:XNanoCommandPack = {
-    "hide": (xCommand: XCommand, xObject?: XObject) => {
+    "hide": (xCommand, xObject?: XObject) => {
         (<XUIObject>xObject).hide()
     },
-    "show": (xCommand: XCommand, xObject?: XObject) => {
+    "show": (xCommand, xObject?: XObject) => {
         (<XUIObject>xObject).show()
     }
 }

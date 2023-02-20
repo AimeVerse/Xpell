@@ -9,7 +9,7 @@
 
 
 
- import { XNanoCommandPack,XCommand,_xem,_xlog,_xu,XData,XObject } from "xpell-core"
+ import { XNanoCommandPack,XCommand,_xem,_xlog,_xu,XData,XObject ,XNanoCommand, XCommandData} from "xpell-core"
 
 
 import * as THREE from 'three'
@@ -84,34 +84,34 @@ export const _x3dobject_nano_commands:XNanoCommandPack = {
     //     set_axis(ns_cmd.s3d_object._scale, "y", get_param(1, "y", ns_cmd))
     //     set_axis(ns_cmd.s3d_object._scale, "z", get_param(2, "z", ns_cmd))
     // },
-    "rotation":  (xCommand:XCommand,x3dObject?:XObject) => {
-        
+    "rotation":  (xCommand:XCommand | XCommandData,x3dObject?:XObject) => {
+        const cmd = <XCommand>xCommand
         //rotation x:0.01 y:++0.01 z:--0.01
-        const x = xCommand.getParam(0, "x","0")
+        const x = cmd.getParam(0, "x","0")
 
         if (x) { set_axis(x3dObject?._rotation, "x", x) }
 
-        const y = xCommand.getParam(1, "y",0)
+        const y = cmd.getParam(1, "y",0)
         if (y) { set_axis(x3dObject?._rotation, "y", y) }
 
-        const z = xCommand.getParam(2, "z",0)
+        const z = cmd.getParam(2, "z",0)
         set_axis(x3dObject?._rotation, "z", z)
     },
-    "spin": (xCommand:XCommand,x3dObject?:XObject) => {
-
-        const x = xCommand.getParam(0, "x",0)
+    "spin": (xCommand:XCommand | XCommandData,x3dObject?:XObject) => {
+        const cmd = <XCommand>xCommand
+        const x = cmd.getParam(0, "x",0)
         const x_str = (x) ? "x:++" + x : ""
 
-        const y = xCommand.getParam(0, "y",0)
+        const y = cmd.getParam(0, "y",0)
         const y_str = (y) ? "y:++" + y : ""
 
-        const z = xCommand.getParam(0, "z",0)
+        const z = cmd.getParam(0, "z",0)
         const z_str = (z) ? "z:++" + z : ""
         const sstr = `rotation ${x_str} ${y_str} ${z_str}`
 
         if(x3dObject) x3dObject._on_frame = sstr
     },
-    "stop-spin": (xCommand:XCommand,x3dObject?:XObject)  => {
+    "stop-spin": (xCommand:XCommand| XCommandData,x3dObject?:XObject)  => {
         if(x3dObject) x3dObject.onframe = ""
     },
     // "rotate": (ns_cmd) => {
