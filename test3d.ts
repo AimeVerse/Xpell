@@ -195,37 +195,15 @@ export const world: X3DApp = {
             },
         },
         _objects: {
-            // "pointer": {
-            //     _type: "sphere",
-            //     _id: "pointer",
-            //     visible: false,
-            //     _geometry: {
-            //         // _type: "sphere-geometry",
-            //         widthSegments: 8,
-            //         heightSegments: 8,
-            //         radius: 0.1,
-            //     },
-            //     _material: {
-            //         _type: "basic-material",
-            //         color: 0x888888,
-            //         side: 2,
-            //         // roughness: 0.5,
-            //     },
-            //     _position: { x: 0, y: 1.3, z: 0 },
-            //     _rotation: { x: 0, y: 0, z: 0 },
-            //     // castShadow: true,
-            //     _on_frame: `follow-joystick`,
-            //     // _disable_frame_3d_state: true
-            // },
-            "box1": {
-                _type: "box",
-                _id: "box1",
-                visible: false,
+            "pointer": {
+                _type: "sphere",
+                _id: "pointer",
+                visible: true,
                 _geometry: {
                     // _type: "sphere-geometry",
-                    width: 1,
-                    height: 0.5,
-                    depth: 0.1
+                    widthSegments: 8,
+                    heightSegments: 8,
+                    radius: 0.1,
                 },
                 _material: {
                     _type: "basic-material",
@@ -233,139 +211,68 @@ export const world: X3DApp = {
                     side: 2,
                     // roughness: 0.5,
                 },
-                _position: { x: 2.5, y: 1.55, z: -5.6 },
-                _rotation: { x: 0, y: -0.52, z: 0 },
-                // castShadow: true,
-                // _on_frame: `follow-joystick`
-            },
-            "box2": {
-                _type: "box",
-                _id: "box2",
-                visible: false,
-                _geometry: {
-                    // _type: "sphere-geometry",
-                    width: 2.5,
-                    height: 1,
-                    depth: 0.1
-                },
-                _material: {
-                    _type: "basic-material",
-                    color: 0xffffff,
-                    side: 2,
-                    // roughness: 0.5,
-                },
-                _position: { x: -2.75, y: 1.8, z: -5.5 },
-                _rotation: { x: 0, y: -5.92, z: 0 },
-                // castShadow: true,
-                // _on_frame: `follow-joystick`
-            },
-            "box3": {
-                _type: "box",
-                _id: "box3",
-                visible: false,
-                _geometry: {
-                    // _type: "sphere-geometry",
-                    width: 1.5,
-                    height: 0.8,
-                    depth: 0.1
-                },
-                _material: {
-                    _type: "basic-material",
-                    color: 0xffffff,
-                    side: 2,
-                    // roughness: 0.5,
-                },
-                _position: { x: 0, y: 1.6, z: -6.2 },
+                _position: { x: 0, y: 1.3, z: 0 },
                 _rotation: { x: 0, y: 0, z: 0 },
                 // castShadow: true,
-                // _on_frame: `follow-joystick`
+                _on_frame: `follow-joystick`,
+                // _disable_frame_3d_state: true
             },
-            // "pointer4": {
-            //     _type: "sphere",
-            //     _id: "pointer4",
-            //     _geometry: {
-            //         // _type: "sphere-geometry",
-            //         widthSegments: 12,
-            //         heightSegments: 12,
-            //         radius: 0.1
-            //     },
-            //     _material: {
-            //         _type: "basic-material",
-            //         color: 0xffffff,
-            //         side: 2,
-            //         // roughness: 0.5,
-            //     },
-            //     _position: { x: 4, y: 1, z: 4 },
-            //     _rotation: { x: 0, y: 0, z: 0 },
-            //     // castShadow: true,
-            //     // _on_frame: `follow-joystick`
-            // },
-            // "pointer5": {
-            //     _type: "sphere",
-            //     _id: "pointer5",
-            //     _geometry: {
-            //         // _type: "sphere-geometry",
-            //         widthSegments: 12,
-            //         heightSegments: 12,
-            //         radius: 0.1
-            //     },
-            //     _material: {
-            //         _type: "basic-material",
-            //         color: 0xffffff,
-            //         side: 2,
-            //         // roughness: 0.5,
-            //     },
-            //     _position: { x: -4, y: 1, z: 4 },
-            //     _rotation: { x: 0, y: 0, z: 0 },
-            //     // castShadow: true,
-            //     // _on_frame: `follow-joystick`
-            // },
-            // water: {
-            //     _id: "water-background",
-            //     _type: "xwater",
-            //     _position: { x: 0, y: 0, z: 0 },
-            //     _rotation: { x: 0, y: 0, z: 0 },
-            //     _props: false,
-            //     _water_color: "#114c8a",
-            //     _water_scale: 4,
-            //     _water_flow_x: 0,
-            //     _water_flow_y: -1,
-            // },
-            // park: {
-            //     _id: "park-background",
-            //     _type: "xpark",
-            //     _position: { x: 0, y: 0, z: 0 },
-            //     _rotation: { x: 0, y: 0, z: 0 },
-            //     _props: false,
-            // },
-            floor: {
-                _id: "floor",
-                _type: "circle",
-                // visible: false,
-                // layers: { enable: 1 },
+            "pointer2": {
+                _type: "sphere",
+                _id: "pointer2",
+                visible: true,
                 _geometry: {
-                    // _type: "plane-geometry",
-                    radius: 5,
-                    segments: 24,
-                    // width: 10,
-                    // height: 10,
-                    // widthSegments: 50,
-                    // heightSegments: 50,
-
+                    // _type: "sphere-geometry",
+                    widthSegments: 8,
+                    heightSegments: 8,
+                    radius: 0.1,
                 },
                 _material: {
-                    _type: "standard-material",
-                    color: "#ffffff",
-                    side: 1,
-                    transparent: true,
-                    opacity: 0.2,
-                    wireframe: true
+                    _type: "basic-material",
+                    color: 0xffffff,
+                    side: 2,
+                    // roughness: 0.5,
                 },
-                _position: { x: 0, y: 0.01, z: 0 },
-                _rotation: { x: Math.PI / 2, y: 0, z: 0 },
-                _enable_physics: false,
-                _mass: 0
-            }
+                _position: { x: 1, y: 1, z: 0 },
+                _rotation: { x: 0, y: 0, z: 0 },
+                // castShadow: true,
+                _on_frame: (xobj:X3DObject,fn:number) => {
+                    const r = xobj._rotation
+                    xobj.setRotation({x:r.x + 0.1,y:r.y,z:r.z})
+                },
+                // _disable_frame_3d_state: true
+            },
+
+           
+            // floor: {
+            //     _id: "floor",
+            //     _type: "circle",
+            //     // visible: false,
+            //     // layers: { enable: 1 },
+            //     _geometry: {
+            //         // _type: "plane-geometry",
+            //         radius: 5,
+            //         segments: 24,
+            //         // width: 10,
+            //         // height: 10,
+            //         // widthSegments: 50,
+            //         // heightSegments: 50,
+
+            //     },
+            //     _material: {
+            //         _type: "standard-material",
+            //         color: "#ffffff",
+            //         side: 1,
+            //         transparent: true,
+            //         opacity: 1,
+            //         wireframe: true
+            //     },
+            //     _position: { x: 0, y: 0.01, z: 0 },
+            //     _rotation: { x: Math.PI / 2, y: 0, z: 0 },
+            //     _enable_physics: true,
+            //     _mass: 0,
+            //     _on_frame: `follow-joystick`
+            // }
 
         }
 
@@ -389,13 +296,19 @@ async function main() {
 
 
 
-
-
+    const xx = { "_id": "floor", "_children": [], "_type": "circle", "_mass": 0, "_enable_physics": true, "_position": { "x": 0, "y": 0.01, "z": 0 }, "_rotation": { "x": 1.5707963267948966, "y": 0, "z": 0 }, "_scale": { "x": 1, "y": 1, "z": 1 }, "_on_frame": "follow-joystick", "_fade_duration": 0.25, "_name": "floor", "_geometry": { "_id": "83122cdc-f752-4b2e-89a5-024b6e473da1", "_children": [], "_type": "circle-geometry", "_position": { "x": 0, "y": 0, "z": 0 }, "_rotation": { "x": 0, "y": 0, "z": 0 }, "_scale": { "x": 1, "y": 1, "z": 1 }, "_fade_duration": 0.25, "_name": "83122cdc-f752-4b2e-89a5-024b6e473da1", "radius": 5, "segments": 24, "thetaStart": 0, "thetaLength": 6.283185307179586, "width": 0, "height": 0, "depth": 0, "_animation": true }, "_material": { "_id": "9c1452c3-75f0-4215-8361-62f97d64bfbd", "_children": [], "_type": "standard-material", "_position": { "x": 0, "y": 0, "z": 0 }, "_rotation": { "x": 0, "y": 0, "z": 0 }, "_scale": { "x": 1, "y": 1, "z": 1 }, "_fade_duration": 0.25, "_name": "9c1452c3-75f0-4215-8361-62f97d64bfbd", "color": "#ffffff", "side": 1, "transparent": true, "opacity": 1, "wireframe": true, "_animation": true }, "name": "floor", "_animation": true }
+    
     // X3D._log_rules.createObject = true
-
+    
     await X3D.loadApp(world)
+    const xobj = await X3D.addRaw(xx)
+
+   console.log(X3D.om.getObject("pointer2").toXData())
+
 }
 // console.log(X3D.world)
 
 
-main().then(res => console.log(res))
+main().then(res => { })
+
+

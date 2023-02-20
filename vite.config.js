@@ -22,7 +22,7 @@ export default {
     rollupOptions: {
       // make sure to externalize deps that shouldn't be bundled
       // into your library
-      external: ["three","cannon-es","three-to-cannon","nipplejs"],
+      external: ["three","cannon-es","three-to-cannon","nipplejs","xpell-core"],
       output: {
         // Provide global variables to use in the UMD build
         // for externalized deps
@@ -32,7 +32,7 @@ export default {
     }
   },
   plugins: [dts({
-    outputDir: ['dist', 'types'],
+    outputDir: ['dist'],
     include: ['index.ts'],
     exclude: ['src/ignore','public'],
     // aliasesExclude: [/^@components/],

@@ -1,4 +1,4 @@
-import { _xu,XParser,XObject, IXObjectData,_xlog } from "xpell-core"
+import { _xu, XParser, XObject, IXObjectData, _xlog } from "xpell-core"
 // import { XObject, IXObjectData } from "../XObject"
 // import XParser from "../XParser"
 // import * as _XC from "../XConst"
@@ -23,11 +23,57 @@ const xpell_object_html_fields_mapping = {
 };
 
 
-export type XVector3 = {
-    x:number,
-    y:number,
-    z:number
+export type XVector3Data = {
+    x: number,
+    y: number,
+    z: number
 }
+
+export class XVector3 {
+    _x: number = 0
+    _y: number = 0
+    _z: number = 0
+
+    constructor(data?: XVector3Data) {
+        if (data) {
+            this.fromXData(data)
+        }
+    }
+
+    fromThreeVector3(tv3: THREE.Vector3) {
+        this._x = tv3.x
+        this._y = tv3.y
+        this._z = tv3.z
+    }
+
+    fromThreeEuler(euler: THREE.Euler) {
+        this._x = euler.x
+        this._y = euler.y
+        this._z = euler.z
+    }
+
+    fromXData(data: XVector3Data) {
+        this._x = data.x
+        this._y = data.y
+        this._z = data.z
+    }
+
+    toThreeVector3(): THREE.Vector3 {
+        return new THREE.Vector3(this._x, this._y, this._z)
+    }
+
+    toThreeEuler(): THREE.Euler {
+        return new THREE.Euler(this._x, this._y, this._z)
+    }
+
+    toXData(): XVector3Data {
+        return { x: this._x, y: this._y, z: this._z }
+    }
+    toString() {
+        return JSON.stringify(this.toXData())
+    }
+}
+
 
 /**
  * @interface IX3DObjectData
@@ -36,19 +82,18 @@ export interface IX3DObjectData extends IXObjectData {
     _cannon_shape?: CANNON.Shape | undefined,
     _enable_physics?: boolean,
     _mass?: number,
-    _position?: XVector3,
-    _rotation?: XVector3,
-    _scale?: XVector3,
+    _position?: XVector3Data,
+    _rotation?: XVector3Data,
+    _scale?: XVector3Data,
     _visible?: boolean,
     _fade_duration?: number,
-    _three_class ?: any,
+    _three_class?: any,
     _threes_class_args?: Array<any>,
     _on_frame?: string | Function | undefined,
     _disable_frame_3d_state?: boolean,
     _3d_set_once?: boolean,
     _positional_audio_source?: string,
-    _model_url?:string 
-
+    _model_url?: string
 }
 
 export class X3DObject extends XObject {
@@ -64,32 +109,37 @@ export class X3DObject extends XObject {
     _scale!: THREE.Vector3
     _on_frame: string | Function | undefined
     _visible!: boolean
-    _model_url!:string 
-    protected _animation_clips: {[name:string]:THREE.AnimationAction}
-    protected _fade_duration!: number
+    _model_url!: string
+    _positional_audio_source!: string
+    _3d_set_once!: boolean
+    _fade_duration!: number
+    _disable_frame_3d_state!: boolean
+
+    /**
+     * protected fields should not be override by XData object 
+     */
+    protected _animation_clips: { [name: string]: THREE.AnimationAction }
     protected _clock: THREE.Clock
     protected _fraction: number
     protected _animation_mixer!: THREE.AnimationMixer | null
     protected _cache_cmd_txt!: string | null
     protected _cache_jcmd: any
-    protected _disable_frame_3d_state!: boolean
-    protected _3d_set_once!: boolean
     protected _current_action!: string | null
     protected _positional_audio: THREE.PositionalAudio | undefined | null
-    protected _positional_audio_source!: string
 
-    protected _log_rules:{
-        _import_animation:boolean,
-        _play_animation:boolean,
-        _load_model:boolean
-        
+    protected _log_rules: {
+        _import_animation: boolean,
+        _play_animation: boolean,
+        _load_model: boolean
     } = {
-        _import_animation:false,
-        _play_animation:false,
-        _load_model:false
-    }
+            _import_animation: false,
+            _play_animation: false,
+            _load_model: false
+        }
 
-    static getXData(threeObj: THREE.Object3D, defaults:IX3DObjectData) {
+
+
+    static getXData(threeObj: THREE.Object3D, defaults: IX3DObjectData) {
         let _xdata = {
             _id: threeObj.name,
             _type: "x3d-object",
@@ -108,7 +158,7 @@ export class X3DObject extends XObject {
         return _xdata
     }
 
-    static getFromThreeObject(threeObj:THREE.Object3D, defaults:IX3DObjectData) {
+    static getFromThreeObject(threeObj: THREE.Object3D, defaults: IX3DObjectData) {
         let _xdata: any = X3DObject.getXData(threeObj, defaults)
         return new X3DObject(_xdata)
     }
@@ -116,7 +166,7 @@ export class X3DObject extends XObject {
 
 
     constructor(data: IX3DObjectData, defaults?: any) {
-        super(data, defaults,true)
+        super(data, defaults, true)
         this.parse3d(data)
 
         this._animation = true
@@ -132,10 +182,23 @@ export class X3DObject extends XObject {
         }
 
         this.addNanoCommandPack(_x3dobject_nano_commands)
+
         
+        this.addXporterDataIgnoreFields(["_clock", "_ignore", "_three_obj","_log_rules",
+            "_three_class", "_threes_class_args", "_positional_audio", "_current_action",
+            "_animation_clips", "_fraction", "_animation_mixer", "_cache_cmd_txt", "_cache_jcmd"])
+        const vectorHandler = (o:THREE.Vector3 | THREE.Euler) => {
+            return {x:o.x,y:o.y,z:o.z}
+        }
+
+        this.addXporterInstanceXporter(THREE.Vector3,vectorHandler)
+        this.addXporterInstanceXporter(THREE.Euler,vectorHandler)
+
+// else if (tf instanceof THREE.Vector3 || tf instanceof THREE.Euler) {
+
     }
 
- 
+
 
     /**
      * Dispose all object memory (destructor)
@@ -150,37 +213,37 @@ export class X3DObject extends XObject {
     }
 
 
-    parse3d(data:IX3DObjectData) {
+    parse3d(data: IX3DObjectData) {
 
-        
-        
+
+
         if (data._position) {
-            
+
             this._position = new THREE.Vector3(data._position.x, data._position.y, data._position.z)
             this.setPosition(data._position)
         } else {
             this._position = new THREE.Vector3(0, 0, 0)
         }
-        
+
         if (data._scale) {
             this._scale = new THREE.Vector3(data._scale.x, data._scale.y, data._scale.z)
             this.setScale(data._scale)
         } else {
             this._scale = new THREE.Vector3(1, 1, 1) //x,y,z
         }
-        
+
         if (data._rotation) {
             this._rotation = new THREE.Euler(data._rotation.x, data._rotation.y, data._rotation.z)
             this.setRotation(data._rotation)
         } else {
             this._rotation = new THREE.Euler(0, 0, 0) //x,y,z
         }
-        
+
         if (!this._name) {
             this._name = this._id
         }
-        
-        if(!data._fade_duration) {
+
+        if (!data._fade_duration) {
             this._fade_duration = 0.25
         }
 
@@ -193,13 +256,13 @@ export class X3DObject extends XObject {
         //     }
         // });
 
-        this.parse(data,reservedWords)
-       
+        this.parse(data, reservedWords)
+
     }
 
     setPosition(positionObject: { x: number, y: number, z: number }) {
         this._position.set(positionObject.x, positionObject.y, positionObject.z) //incase Xpell engine controls the position
-        
+
         this._cannon_obj?.position.set(this._position.x, this._position.y, this._position.z)
         // const srcObj = (this._cannon_obj) ? this._cannon_obj : this._three_obj
         // srcObj?.position.set(positionObject.x, positionObject.y, positionObject.z) //in case that other engine (like physics) controls the position
@@ -246,7 +309,7 @@ export class X3DObject extends XObject {
     set3DState() {
         if (this._three_obj) {
             if (this._scale) this._three_obj.scale.copy(this._scale) //in case that other engine (like physics) controls the position
-            
+
             if (this._rotation) this._three_obj.rotation.copy(this._rotation)
             if (this._position) this._three_obj.position.copy(this._position)
         }
@@ -284,7 +347,7 @@ export class X3DObject extends XObject {
 
                 keys.forEach(key => {
                     if (!key.startsWith("_")) {
-                        if (key == "color" ) {
+                        if (key == "color") {
                             (<any>this._three_obj)[key] = new THREE.Color(<string>this[key]);
                         } else {
                             (<any>this._three_obj)[key] = <any>this[key]
@@ -299,16 +362,16 @@ export class X3DObject extends XObject {
             }
 
         }
-        else if(!this._three_obj  && this._model_url) {
-            return new Promise((resolve,reject) => {
-                this.loadModel(this._model_url).then(result=> {resolve(<any>this._three_obj)})
+        else if (!this._three_obj && this._model_url) {
+            return new Promise((resolve, reject) => {
+                this.loadModel(this._model_url).then(result => { resolve(<any>this._three_obj) })
             })
         }
 
         return <THREE.Object3D>this._three_obj
     }
 
-    getCannonObject(): CANNON.Body  {
+    getCannonObject(): CANNON.Body {
         if (!this._cannon_obj && this._enable_physics) {
             let offset = new CANNON.Vec3(0, 0, 0)
             if (!this._cannon_shape) {
@@ -341,7 +404,7 @@ export class X3DObject extends XObject {
     }
 
 
-    async createPositionalAudio(source:string, data?:IX3DObjectData) {
+    async createPositionalAudio(source: string, data?: IX3DObjectData) {
         const sound = new THREE.PositionalAudio(X3D.world.audioListener);
         // load a sound and set it as the PositionalAudio object's buffer
         const audioLoader = new THREE.AudioLoader();
@@ -357,7 +420,7 @@ export class X3DObject extends XObject {
         return sound
     }
 
-    async setPositionalAudioSource(source?: string, data?:IX3DObjectData) {
+    async setPositionalAudioSource(source?: string, data?: IX3DObjectData) {
         const src = (source) ? source : this._positional_audio_source
         this._positional_audio = await this.createPositionalAudio(src, data)
         if (this._three_obj) this._three_obj.add(this._positional_audio)
@@ -368,13 +431,13 @@ export class X3DObject extends XObject {
      * clears the positional audio from the object and the Three object
      */
     clearPositionalAudio() {
-        if(this._positional_audio) {
+        if (this._positional_audio) {
             this._three_obj?.remove(this._positional_audio)
             this._positional_audio = null
         }
     }
 
-    playAudio(loop?:boolean) {
+    playAudio(loop?: boolean) {
         const snd = <THREE.PositionalAudio>this._positional_audio
         if (snd) {
             if (loop) snd.setLoop(true)
@@ -398,7 +461,7 @@ export class X3DObject extends XObject {
      * - update animation mixer if exists
      * @param {number} frameNumber 
      */
-    async onFrame(frameNumber:number) {
+    async onFrame(frameNumber: number) {
         this._frame_number = frameNumber
 
         //check if _disable_frame_3d_state is in the Spell object
@@ -443,12 +506,12 @@ export class X3DObject extends XObject {
      * Append X3DObject as a child object
      * @param x3dObject 
      */
-    async append(x3dObject:X3DObject | IX3DObjectData) {
-        if(!(x3dObject instanceof X3DObject)) {
+    async append(x3dObject: X3DObject | IX3DObjectData) {
+        if (!(x3dObject instanceof X3DObject)) {
             x3dObject = await X3D.create(<IX3DObjectData>x3dObject)
         }
         this._children.push(x3dObject as XObject);
-        if(this._three_obj) {
+        if (this._three_obj) {
             this._three_obj.add((<X3DObject>x3dObject).getThreeObject() as THREE.Object3D)
         }
     }
@@ -483,8 +546,8 @@ export class X3DObject extends XObject {
             idx++
             this._three_obj?.animations.push(a2)
             a2.optimize()
-            if(this._animation_mixer && this._animation_clips) this._animation_clips[a2.name] = this._animation_mixer.clipAction(a2)
-            if(this._log_rules._import_animation) {
+            if (this._animation_mixer && this._animation_clips) this._animation_clips[a2.name] = this._animation_mixer.clipAction(a2)
+            if (this._log_rules._import_animation) {
                 _xlog.log("Animation " + a2.name + " loaded on object " + this._id);
             }
         })
@@ -499,19 +562,19 @@ export class X3DObject extends XObject {
 
     async loadThreeObjectFromGLTF(modelUrl: string): Promise<THREE.Object3D> {
         return new Promise(function (resolve, reject) {
-            const _onload = (gltf:any) => {
+            const _onload = (gltf: any) => {
                 const child = gltf.scene
                 child.animations = gltf.animations
-                child.traverse((child2:THREE.Object3D) => {
+                child.traverse((child2: THREE.Object3D) => {
                     child2.frustumCulled = false
                     /** add more */
                 })
                 resolve(child)
             }
 
-            const _onprogress = (data:any) => { }
+            const _onprogress = (data: any) => { }
 
-            const _onerror = (error:any) => {
+            const _onerror = (error: any) => {
                 _xlog.error("ERROR loading GLTF", error);
                 reject(error)
             }
@@ -522,7 +585,7 @@ export class X3DObject extends XObject {
     }
 
     async loadModel(modelUrl: string) {
-        if(this._log_rules._load_model) _xlog.log("Loading model " + modelUrl)
+        if (this._log_rules._load_model) _xlog.log("Loading model " + modelUrl)
         const model: THREE.Object3D = await this.loadThreeObjectFromGLTF(modelUrl)
         this._three_class = model.type
         this._three_obj = model
@@ -546,9 +609,9 @@ export class X3DObject extends XObject {
                     resolve(obj)
                 }
 
-                const _onprogress = (data:any) => { }
+                const _onprogress = (data: any) => { }
 
-                const _onerror = (error:any) => {
+                const _onerror = (error: any) => {
                     _xlog.error(error);
                     // this.loading = false
                     reject(error)
@@ -579,7 +642,7 @@ export class X3DObject extends XObject {
             const anim = this._three_obj.animations
             this._animation_mixer = new THREE.AnimationMixer(this._three_obj)
             anim.forEach(__anim => {
-                if(this._animation_mixer) {
+                if (this._animation_mixer) {
                     this._animation_clips[__anim.name] = this._animation_mixer.clipAction(__anim)
                 }
                 _xlog.log("Animation " + __anim.name + " loaded on object " + this._id);
@@ -598,29 +661,29 @@ export class X3DObject extends XObject {
     //     this.playAnimation(state + "-" + _xu.getRandomInt(1, this._npc_state_animations[state].length))
     // }
 
-    playAnimation(clipName: string, loop?: THREE.AnimationActionLoopStyles,repetitions?:number) {
+    playAnimation(clipName: string, loop?: THREE.AnimationActionLoopStyles, repetitions?: number) {
 
         if (clipName) {
             const anim = this._animation_clips[clipName]
 
             if (anim) {
-                if(this._log_rules._play_animation) {
+                if (this._log_rules._play_animation) {
                     _xlog.log("playing animation: " + clipName);
                 }
 
-                if (loop) { 
+                if (loop) {
                     const rp = (repetitions) ? repetitions : 0
-                    anim.setLoop(loop,rp) 
+                    anim.setLoop(loop, rp)
                 }
 
                 if (this._current_action) {
-                    const prevAnim:THREE.AnimationAction = this._animation_clips[<any>this._current_action]
+                    const prevAnim: THREE.AnimationAction = this._animation_clips[<any>this._current_action]
                     anim.reset()
                     // anim.time = 0.0
                     // anim.setEffectiveTimeScale(1.0)
                     // anim.setEffectiveWeight(1.0)
                     anim.crossFadeFrom(prevAnim, this._fade_duration, false).play()
-                    prevAnim.fadeOut( this._fade_duration)
+                    prevAnim.fadeOut(this._fade_duration)
                 } else {
                     anim.reset()
                     anim.time = 0.0
@@ -638,6 +701,9 @@ export class X3DObject extends XObject {
             this._current_action = null
         }
     }
+
+
+
 }
 
 export default X3DObject
