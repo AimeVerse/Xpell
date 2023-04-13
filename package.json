@@ -1,6 +1,6 @@
 {
   "name": "xpell",
-  "version": "1.0.54",
+  "version": "1.0.55",
   "description": "Xpell UI JS Framework",
   "files": [
     "dist",
@@ -9,7 +9,7 @@
     "docs"
   ],
   "types": "./dist/index.d.ts",
-  "typings":"./dist/index.d.ts",
+  "typings": "./dist/index.d.ts",
   "main": "./dist/xpell.umd.js",
   "module": "./dist/xpell.es.js",
   "exports": {
