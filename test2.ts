@@ -33,6 +33,7 @@ const xapp:XUIApp = {
     _views: {
         _parent_element:"player",
         "left-menu":{
+            _id:"left-menu",
             _type:"view",
             style:"width:150px;position:absolute;height:300px;background-color:black;color:white;padding:10px",
             _children:[
@@ -48,6 +49,12 @@ const xapp:XUIApp = {
                     },
                     _on_frame:(menu,frameNumber:number) => {
                         //menu.getDOMObject().textContent = frameNumber
+                    },
+                    _on_show:(menu) => {
+                        console.log("show")
+                    },
+                    _on_hide:(menu) => {
+                        console.log("hide")
                     }
 
                 },
@@ -123,10 +130,10 @@ XUI.loadApp(xapp)
 // XUI.loadControl(view)
 
 
-XUI.vm.addRawView("third-view",{
-    _type:"view",
-    style:"left:200px;width:50px;position:absolute;height:300px;background-color:brown"
-})
+// XUI.vm.addRawView("third-view",{
+//     _type:"view",
+//     style:"left:200px;width:50px;position:absolute;height:300px;background-color:brown"
+// })
 
 
 
@@ -135,7 +142,13 @@ XUI.vm.addRawView("third-view",{
 // XUI.vm.hidePage("menu")
 // XUI.vm.showPage("page-2")
 // XUI.vm.hidePage("page-2")
-XUI.vm.showPage("gpt-page")
+XUI.vm.showPage("left-menu")
+
+setTimeout(() => {
+  XUI.vm.hidePage("left-menu")
+  console.log("hide menu");
+  
+}, 500);
 // _x.execute()
 
 // const ttso = XAI.create({_type:"tts",_voice:"Kathy"})

@@ -198,9 +198,11 @@ export class XUIObject extends XObject {
             this._dom_object.style.display = this._base_display
         }
         this._visible=true
+        this.onShow()
     }
 
     hide() {
+        
         const cs = getComputedStyle(this._dom_object)
         
         
@@ -211,6 +213,7 @@ export class XUIObject extends XObject {
             this._dom_object.style.display = "none"
         }
         this._visible=false
+        this.onHide()
     }
 
     
@@ -234,11 +237,42 @@ export class XUIObject extends XObject {
                 this.getDOMObject().addEventListener("click", (e) => {sthis.run(sthis._id + " " + sthis._on_click) })
             }
         }
-
-        super.onMount()
+        await super.onMount()
     }
 
 
+
+    async onShow()  {
+        if (this._on_show) {
+            if (typeof this._on_show === 'function') {
+                 <Function>this._on_show(this) 
+            }
+            else if (typeof this._on_show === 'string') {
+                this.run(this._id + " " + this._on_show) 
+            }
+        }
+        this._children.forEach((child: XObject) => {
+            if (child.onShow && typeof child.onShow === 'function') {
+                child.onShow()
+            }
+        })
+    }
+
+    async onHide()  {
+        if (this._on_hide) {
+            if (typeof this._on_hide === 'function') {
+                 <Function>this._on_hide(this) 
+            }
+            else if (typeof this._on_hide === 'string') {
+                this.run(this._id + " " + this._on_hide) 
+            }
+        }
+        this._children.forEach((child: XObject) => {
+            if (child.onHide && typeof child.onHide === 'function') {
+                child.onHide()
+            }
+        })
+    }
 
 
 

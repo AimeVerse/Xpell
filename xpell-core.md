@@ -125,11 +125,11 @@ for example to define a new XObject with the id="obj1" and with one child object
 ```
 {
     _id:"obj1",
-    _type:"xobject",
+    _type:"object",
     _children:[
         {
             _id:"child-object",
-            _type:"xobject"
+            _type:"object"
         }
     ]
 }

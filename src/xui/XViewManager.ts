@@ -171,7 +171,6 @@ export class XViewManager {
          * @param {*} viewName 
          */
     hideView(viewName: string): void {
-
         if (this.hasView(viewName)) {
             (<XUIObject>this.getView(viewName)).hide()
         }

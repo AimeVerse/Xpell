@@ -9,6 +9,7 @@
     "docs"
   ],
   "types": "./dist/index.d.ts",
+  "typings":"./dist/index.d.ts",
   "main": "./dist/xpell.umd.js",
   "module": "./dist/xpell.es.js",
   "exports": {
