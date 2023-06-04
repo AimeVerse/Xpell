@@ -1,9 +1,9 @@
 // import _xem from "../XEventManager";
 // import _xlog from "../XLogger";
 // import { XObjectPack } from "../XObject";
-import {_xem,_xlog,XObjectPack,IXObjectData } from "xpell-core"
+import {_xlog,XObjectPack,XObjectData } from "xpell-core"
 import XAIObject from "./XAIObject";
-
+import { _xem } from "../XEM/XEventManager";
 
 /**
  * Xpell Web TTS (Text to Speech)
@@ -14,7 +14,7 @@ export class XTTS extends XAIObject {
     synth!:SpeechSynthesis 
     voices:Array<SpeechSynthesisVoice> = [];
 
-    constructor(data:IXObjectData) {
+    constructor(data:XObjectData) {
         super(data, { _type: XTTS.xtype, _voice: "Samantha" })
         this.defaults_voice = null;
         this.defaults_voice_name = this._voice;

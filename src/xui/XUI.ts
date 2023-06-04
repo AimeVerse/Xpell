@@ -8,7 +8,7 @@
 
 import XUIObject from "./XUIObject"
 import {XViewManager,XViewsPack} from "./XViewManager"
-import { _xlog,XParser,_xem,XModule,XModuleData, IXObjectData } from "xpell-core";
+import { _xlog,XParser,_xem,XModule,XModuleData, IXObjectData, XObjectData } from "xpell-core";
 
 import XUICoreObjects from "./XUICoreObjects"
 //  import SpellDashboardObjects from "./spell-dashboard"
@@ -106,17 +106,41 @@ export class XUIModule extends XModule {
         Object.keys(controls).forEach(ctrl => {
             if(ctrl == "_parent_element") {this._controls_element = <string>controls[ctrl]}
             else {
-                this.loadControl(controls[ctrl])
+                this.loadControl(<any>controls[ctrl])
             }
         })
     }
 
-    loadControl(data:IXObjectData): XUIObject {
+    /**
+     * Create a XUIObject and mount it to the DOM parent element
+     * @param data - the XUIObject data
+     * @returns XUIObject
+     */
+    loadControl(data:XObjectData): XUIObject {
         const xobj = this.create(data)
         const ctrl = xobj.getDOMObject()
         
         
         const pe = (xobj._parent_element) ? xobj._parent_element : this._controls_element;
+        
+        document.querySelector("#" + pe)?.append(ctrl)
+        if (xobj.onMount && typeof xobj.onMount === 'function') {
+            xobj.onMount()
+        }
+        return xobj
+    }
+
+    /**
+     * Create a XUIObject and mount it to the DOM parent element
+     * @param data - the XUIObject data
+     * @returns XUIObject
+     */
+    loadObject(data:IXObjectData): XUIObject {
+        const xobj = this.create(data)
+        const ctrl = xobj.getDOMObject()
+        
+        
+        const pe = (xobj._parent_element) ? xobj._parent_element : this._object_element;
         
         document.querySelector("#" + pe)?.append(ctrl)
         if (xobj.onMount && typeof xobj.onMount === 'function') {

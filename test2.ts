@@ -35,6 +35,7 @@ const xapp:XUIApp = {
         "left-menu":{
             _id:"left-menu",
             _type:"view",
+            // _parent_element_id:"info",
             style:"width:150px;position:absolute;height:300px;background-color:black;color:white;padding:10px",
             _children:[
                 {
@@ -144,11 +145,11 @@ XUI.loadApp(xapp)
 // XUI.vm.hidePage("page-2")
 XUI.vm.showPage("left-menu")
 
-setTimeout(() => {
-  XUI.vm.hidePage("left-menu")
-  console.log("hide menu");
+// setTimeout(() => {
+//   XUI.vm.hidePage("left-menu")
+//   console.log("hide menu");
   
-}, 500);
+// }, 500);
 // _x.execute()
 
 // const ttso = XAI.create({_type:"tts",_voice:"Kathy"})

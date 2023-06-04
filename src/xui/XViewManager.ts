@@ -5,13 +5,8 @@
  * @description manage views activities
  * */
 
-import {_x, _xem,_xlog,_xu,IXObjectData} from "xpell-core"
-// import * as _xem from "../XEventManager"
-// import { XLogger as _xlog } from "../XLogger"
-// import { Xpell as _x } from "../Xpell"
-// import * as _xc from "../XConst"
-// import { XUtils as _xu } from "../XUtils"
-// import IXObjectData from "../XObject"
+import {_x,_xlog,_xu,XObjectData} from "xpell-core"
+import  _xem from "../XEM/XEventManager"
 import XUI from "./XUI"
 import XView from "./XUICoreObjects"
 import XUIObject from "./XUIObject"
@@ -22,7 +17,7 @@ export type XViewsPack = {
 }
 
 export class XViewManager {
-    viewMetadata: Record<string, IXObjectData> = {}
+    viewMetadata: Record<string, XObjectData> = {}
     views: Record<string, XView> = {}
     activeView!: string | null
     parentHTMLElement: string = "xplayer"
@@ -57,12 +52,15 @@ export class XViewManager {
      * @param auto_add - if true and the view data (view_data) contains a "name" string the new view will be added automatically to the view manager
      * @return {XView}
      */
-    createView(viewData:IXObjectData, auto_add = true) {
+    createView(viewData:XObjectData, auto_add = true) {
 
 
         let new_view: XUIObject = XUI.create(viewData);
         if (auto_add && viewData.hasOwnProperty("_id")) {
-            document.querySelector("#" + this.parentHTMLElement)?.append(new_view.getDOMObject());
+            const elem:string  = (viewData._parent_element) ?<string>viewData._parent_element : this.parentHTMLElement
+            // console.log("elem",elem,viewData._parent_element);
+            
+            document.querySelector("#" + elem)?.append(new_view.getDOMObject());
             new_view.onMount()
             this.addView(new_view, <string>viewData._id)
         }
@@ -102,11 +100,11 @@ export class XViewManager {
         rvuz.forEach((vu) => {
         
             if(vu == "_parent_element") {this.parentHTMLElement = <string>vuz[vu]}
-            else {this.viewMetadata[vu] = <IXObjectData>vuz[vu]}
+            else {this.viewMetadata[vu] = <XObjectData>vuz[vu]}
         });
     }
 
-    addRawView(viewName: string, viewData:IXObjectData): void {
+    addRawView(viewName: string, viewData:XObjectData): void {
         this.viewMetadata[viewName] = viewData
     }
 
@@ -192,7 +190,7 @@ export class XViewManager {
      * @param {*} viewName 
      */
     showPage(viewName: string): void {
-        let vu: IXObjectData, newView;
+        let vu: XObjectData, newView;
         let oncreate = false;
         if (this.hasView(viewName)) {
             newView = this.getView(viewName);

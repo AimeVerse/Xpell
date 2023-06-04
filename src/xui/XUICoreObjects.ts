@@ -129,12 +129,12 @@ export class XWebcam extends XUIObject {
     }
 
     get isPlaying() {
-        const v:any   = this.DOMElementFromHTML
+        const v:any   = this.getDOMObject()
         return !!(v?.currentTime > 0 && !v?.paused && !v?.ended && v?.readyState > 2);
     }
 
     async pause() {
-        const v:any   = this.DOMElementFromHTML
+        const v:any   = this.getDOMObject()
         v?.pause()
         //Spell.run("xai handpose stop-detect")
     }

@@ -9,7 +9,8 @@
 
 import * as THREE from 'three'
 
-import { _xlog ,XData,_xem,XModule,XModuleData} from 'xpell-core';
+import { _xlog ,XData,XModule,XModuleData, XObject} from 'xpell-core';
+import { _xem } from '../XEM/XEventManager';
 // import XModule from "../XModule"
 // import { XEventManager, XEventList } from "../XEventManager"
 // import  from "../XData";
@@ -17,7 +18,7 @@ import { _xlog ,XData,_xem,XModule,XModuleData} from 'xpell-core';
 
 import X3DObject, { IX3DObjectData } from "./X3DObject"
 import { XCameraData, XLightData } from './X3DCoreObjects'
-import X3DPrimitives from "./X3DPrivitives"
+import X3DPrimitives from "./X3DPrimitives"
 import X3DWorld from './X3DWorld'
 // import X3DNPC from './X3DNPC'
 // import XObject from '../core/XObject';
@@ -80,16 +81,33 @@ export type X3DApp = {
         _helpers?: {
             [k: string]: XHelperData<X3AxesHelper>
         },
-        _lights: {
+        _lights?: {
             [k: string]: XLightData
         },
-        _cameras: {
+        _cameras?: {
             [k: string]: XCameraData
         },
-        _controls: {
+        _background?: {
+            /**
+             * Background type
+             * @description solid-color | gradient | image | video | cube-texture | sphere-texture
+             * params for:
+             * solid-color: color:string
+             * gradient: color1, color2, direction
+             * image: url
+             * video: url
+             * cube-texture: [url1, url2, url3, url4, url5, url6]
+             * sphere-texture: url
+             */
+            _type: "solid-color" | "gradient" | "image" | "video" | "cube-texture" | "sphere-texture", 
+            _params: {
+                [k: string]: any
+            }
+        }
+        _controls?: {
             [k: string]: X3DSceneControl
         }
-        _objects: {
+        _objects?: {
             [k: string]: IX3DObjectData
         }
     },
@@ -177,7 +195,7 @@ export class X3DModule extends XModule {
             _xlog.log("X3D remove object " + objectId)
         }
         await this.world?.removeX3DObject(objectId)
-        
+        //super class (XModule) will call dispose on the X3DObject
         super.remove(objectId)
     }
 
@@ -186,8 +204,19 @@ export class X3DModule extends XModule {
      * @param x3dObject X3DObject 
      */
     add(x3dObject: X3DObject) {
-        this.om.addObject(<any>x3dObject)
+        //this.om.addObject(<any>x3dObject)
+        this._object_manager.addObject(<any>x3dObject)
         this.world?.addX3DObject(x3dObject)
+    }
+
+    /**
+     * Add X3DObject to the object manager and world
+     * @param x3dObject - The X3DObject to add
+     * 
+     */
+    async loadObject(data: IX3DObjectData) {
+        const obj = await this.create(data)
+        this.world.addX3DObject(obj)
     }
 
     /**
@@ -254,7 +283,7 @@ export class X3DModule extends XModule {
                 while (obj.parent && !found) {
                     if (obj.parent.type == "Scene") {
 
-                        const x3dObject = X3D.om.getObjectByName(obj.name)
+                        const x3dObject = X3D._object_manager.getObjectByName(obj.name)
                         if (x3dObject) {
                             //X3D.world.setTransformControls(x3dObject)
                             _xem.fire("raycast-data", {  x3dObject: x3dObject } )

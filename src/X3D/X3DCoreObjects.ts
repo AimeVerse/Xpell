@@ -240,7 +240,7 @@ export class XMaterial extends X3DObject {
 export class XMesh extends X3DObject {
 
 
-    static getFromThreeObject(threeObject:THREE.Mesh,defaults:IX3DObjectData) {
+    static getFromThreeObject(threeObject:THREE.Mesh,defaults:any) {
         
         if(!defaults) {
             defaults = {}

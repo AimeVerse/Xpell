@@ -5,16 +5,11 @@
 -- Avatar Controller
 -- Keyboard Controller
 -- Collaboration
--- NPC Controller
--- Smart Objects Controller
 -- Scene Editor
 -- XAI
     -- speak (tts)
 
-XWater:X3DObject
+
+
     
-    plane 1
-    plane 2
-
-
-    //fix appen
+    

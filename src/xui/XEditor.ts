@@ -5,8 +5,8 @@
 
 import XUI from "./XUI"
 import XUIObject from "./XUIObject"
-import  {XData, _xu, _xem,IXObjectData} from "xpell-core"
-
+import  {XData, _xu,IXObjectData} from "xpell-core"
+import { _xem } from "../XEM/XEventManager"
 export class XTransformControls extends XUIObject {
     private _keyboard_down_listener!: Function
     private _key_down!: boolean

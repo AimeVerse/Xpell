@@ -2,34 +2,41 @@
 // import XUtils from "../XUtils"
 // import XData from "../XData"
 // import XObject, { IXObjectData } from "../XObject"
-import { XUtils,XData,XObject ,IXObjectData} from "xpell-core"
+import { XUtils,_xd,XObject , XObjectData, _XEventManager} from "xpell-core"
+import { _xem ,XEventListenerOptions} from "../XEM/XEventManager";
 import XUI from "./XUI";
 // import * as _XC from "../XConst"
 import _xuiobject_basic_nano_commands from "./XUINanoCommands"
 const reservedWords = { _children:"child objects" }
 const xpellObjectHtmlFieldsMapping:{[k:string]:string} = { "_id": "id", "css-class": "class", "animation": "xyz", "input-type": "type" };
 
-
-
+/**
+ *   ADD On Event support
+ *  - override addEventListener to add html event listener if object exist
+ *  - override removeEventListener to remove html event listener
+ *  - check for events in getDOMObject and add them to the object
+*/
 export class XUIObject extends XObject {
-    [k:string]: string | null | [] | undefined | Function | boolean | {}
+    // [k:string]: string | null | [] | undefined | Function | boolean | {}
     _html_tag: string
-    _html_ns:string | null
+    _html_ns?:string | null
     private _dom_object: any 
     _type:string  //[_SC.NODES.type]
-    _html: string | undefined
-    _base_display: string | undefined | null  
+    _html?: string | undefined
+    _base_display?: string | undefined | null  
     // text: string //depracted
-    _text!: string
-    _data_source!: string | null 
-    _on_frame_skip_data_source: any
-    _format!: string | null
-    _ignore: {[k:string]:string}
+    _text?: string
     _children: XUIObject[];
-    _visible:boolean
+    _visible:boolean = true
+    _parent_element?:string //used for mount parent HTML element id
+    _on_click?: Function | string
+    _on_show?: Function | string
+    _on_hide?: Function | string
 
 
-    constructor(data:IXObjectData, defaults:IXObjectData,skipParse?:boolean) {
+
+
+    constructor(data:XObjectData, defaults:XObjectData,skipParse?:boolean) {
         super(data,defaults,true)
         this._html_tag = "div";
         this._html_ns = null
@@ -37,45 +44,84 @@ export class XUIObject extends XObject {
         this._type = "view";
         this._html = "";
         this._children = [];
-        this._ignore = reservedWords;
         this._visible = true
+        this._xem_options = <XEventListenerOptions>{_once:false, _support_html: true,_instance:_xem}
+        
         //this._base_display = "block"
-
-        if (data && !skipParse) {
-           
-            this.parse(data, this._ignore);
-        }
-
         this.addNanoCommandPack(_xuiobject_basic_nano_commands)
+        this.init(data,skipParse)
+        
+        
     }
+
+
+   
 
     /**
      * Dispose all object memory (destructor)
      */
      async dispose(){
+        
         this._dom_object = null
         super.dispose()
     }
 
+
+
+
     /**
-     * occurs on Xpell.init
-     * @override 
+     * XUI Support For XEM & HTML Events
      */
-    init() {
-        
-    }
 
-
-    // parse(data, ignore:{[k:string]:string} = reservedWords) {
-    //     let cdata = Object.keys(data);
-    //     cdata.forEach(field => {
+    // parseEvents(options?:any) {
+    //     console.log("parseEvents",options);
+    //     Object.keys(this._on).forEach(eventName => {
             
-    //         if (!ignore.hasOwnProperty(field) && data.hasOwnProperty(field)) {
-    //             this[field] = data[field];
+    //         if(typeof this._on[eventName] === "function") {
+    //             console.log("parseEvents",eventName,this._on[eventName],options);
+    //             this.addEventListener(eventName,this._on[eventName],options)
     //         }
-    //     });
+    //         // else if(typeof this._on[eventName] === "string") {
+    //         //     console.error("string event handler not supported yet")
+    //         // }
+    //         else {
+    //             throw new Error("event handler must be a function " +eventName)
+    //         }
+    //     })
+    //     const onceOptions:any = (options) ? options : {}
+    //     onceOptions._once = true
+
+    //     Object.keys(this._once).forEach(eventName => {
+    //         if(typeof this._once[eventName] === "function") {
+    //             this.addEventListener(eventName,this._once[eventName],onceOptions)
+    //         }
+    //         // else if(typeof this._on[eventName] === "string") {
+    //         //     console.error("string event handler not supported yet")
+    //         // }
+    //         else {
+    //             throw new Error("event handler must be a function")
+    //         }
+    //     })
+    //     // super.parseEvents(options)
+    //     // if (this._dom_object) {
+    //     //     this._events.forEach((event:string) => {
+    //     //         this._dom_object.addEventListener(event, (e:Event) => {
+    //     //             this.run(e.type)
+    //     //         })
+    //     //     })
+    //     // }
+
     // }
 
+
+    
+
+
+
+
+    /**
+     * logs the object to the console
+     */
     log() {
         let keys = Object.keys(this);
         keys.forEach(key => {
@@ -86,7 +132,11 @@ export class XUIObject extends XObject {
         console.log(this.getHTML());
     }
 
-    getDOMObject():Element  {
+    /**
+     * Gets the HTML DOM object, if the object is not created yet it will be created
+     * @returns the HTML DOM object
+     */
+    getDOMObject():HTMLElement  {
         if (!this._dom_object) {
             let dom_object = (this._html_ns)
                  ? document.createElementNS(this._html_ns,this._html_tag)
@@ -99,16 +149,14 @@ export class XUIObject extends XObject {
                     if (xpellObjectHtmlFieldsMapping.hasOwnProperty(field)) {
                         f_out = xpellObjectHtmlFieldsMapping[field];
                     }
-                    if (!f_out.startsWith("_") && f_out !== "text") {
+                    if (!f_out.startsWith("_")) {
                         dom_object.setAttribute(f_out, <string>this[field]);
                     }
                 }
             });
 
-            //--> support both text and _text to deprecate text 
-            if ((this["text"] && (<string>this["text"]).length > 0)) {
-                dom_object.textContent = <string>this["text"];
-            }  else if (this["_text"] && (<string>this["_text"]).length > 0) {
+            
+            if (this["_text"] && (<string>this["_text"]).length > 0) {
                 dom_object.textContent = <string>this["_text"];
             }
             
@@ -120,12 +168,19 @@ export class XUIObject extends XObject {
                     dom_object.appendChild(coo);
                 })
             }
+
+            //check style visibility
+            (<HTMLElement>dom_object).style.display = (this._visible) ? "block" : "none"
             this._dom_object = dom_object;
             // this.onCreate()
         }
         return this._dom_object;
     }
 
+    /**
+     * Gets the HTML representation of the object
+     * @returns the HTML representation of the object
+     */
     getHTML() {
         const dom = this.getDOMObject()
         this._html = dom?.outerHTML;
@@ -154,16 +209,9 @@ export class XUIObject extends XObject {
     
 
   
-    /**
-     * return the dom element
-     * @deprecated
-     */
-    get DOMElementFromHTML():HTMLElement {
-        return <HTMLElement>document.getElementById(<string>this._id)
-    }
-
+    
     //check if XUI or IXData 
-    append(xObject:XUIObject | IXObjectData | any) {
+    append(xObject:XUIObject | XObjectData | any) {
         if(!(xObject instanceof XUIObject)) {
             xObject = XUI.create(xObject)
         }
@@ -174,12 +222,20 @@ export class XUIObject extends XObject {
         }
     }
 
+    /** */
     setText(text:string)
     {
         this._text = text
         this.getDOMObject().textContent = text
     }
 
+    /**
+     * Sets the object CSS style
+     * @param attr - the CSS attribute 
+     * @param val - the CSS value
+     * @example
+     * xuiObj.setStyle("background-color","red")
+     */
     setStyle(attr:string, val:string) {
         if(this._dom_object instanceof HTMLElement) {
             this._dom_object.style.setProperty(attr,val) 
@@ -188,34 +244,42 @@ export class XUIObject extends XObject {
 
 
     
+
+    /**
+     * This method is used to show the object and trigger the onShow event
+     */
+    show() {
+        if(this._dom_object instanceof HTMLElement) {
+            const disp = (this._base_display) ? this._base_display : "block"
+            this._dom_object.style.display = <string>this._base_display
+            this._visible=true
+            this.onShow()
+        }
+    }
+    
+    /**
+     * This method is used to hide the object and trigger the onHide event
+     */
+
+    hide() {
+        
+        if(this._dom_object instanceof HTMLElement) {
+            const cs = getComputedStyle(this._dom_object)
+            if(cs) this._base_display = cs.getPropertyValue("display")
+            else this._base_display = "block"
+            this._visible=false
+            this.onHide()
+            this._dom_object.style.display = "none"
+        }
+    }
+
+    /**
+     * This method is used to toggle the object visibility
+     */
     toggle() {
         if(this._visible) this.hide()
         else this.show()
     }
-
-    show() {
-        if(this._dom_object instanceof HTMLElement && this._base_display) {
-            this._dom_object.style.display = this._base_display
-        }
-        this._visible=true
-        this.onShow()
-    }
-
-    hide() {
-        
-        const cs = getComputedStyle(this._dom_object)
-        
-        
-        if(cs) {
-            this._base_display = cs.getPropertyValue("display")
-        }
-        if(this._dom_object instanceof HTMLElement) {
-            this._dom_object.style.display = "none"
-        }
-        this._visible=false
-        this.onHide()
-    }
-
     
     
     
@@ -242,6 +306,9 @@ export class XUIObject extends XObject {
 
 
 
+    /**
+     * this method triggered when the XUIObject is shown
+     */
     async onShow()  {
         if (this._on_show) {
             if (typeof this._on_show === 'function') {
@@ -258,6 +325,9 @@ export class XUIObject extends XObject {
         })
     }
 
+    /**
+     * this method triggered when the XUIObject is hidden
+     */
     async onHide()  {
         if (this._on_hide) {
             if (typeof this._on_hide === 'function') {
@@ -274,50 +344,6 @@ export class XUIObject extends XObject {
         })
     }
 
-
-
-    /**
-     * triggers from Xpell main engine onFrame
-     * @param {int} frameNumber 
-     * 
-     * object that extends XUIObject can override this method and call super.onFrame
-     * to bubble the event to child objects 
-     */
-    async onFrame(frameNumber:number){
-        if(this._data_source && !this._on_frame_skip_data_source) {
-            if(XData.variables[this._data_source]) {
-                const ph = "_$"
-                if(this._format && this._format.indexOf(ph)>0) {
-                    this.setText(this._format.replace(ph,<string>XData.variables[this._data_source]))
-                } else {
-                    this.setText(XData.variables[this._data_source])
-                }
-            }
-            else if(XData.objects[this._data_source]) {
-                const ob = XData.objects[this._data_source]
-                if(this._format) {
-                    const replace_at_plus_one = (str:string,index:number, character:string) => {
-                        return str.substr(0, index) + character + str.substr(index +2);
-                    };
-                    let  trimmed = this._format.trim()
-
-                    let index,start_index=0
-
-                    //to do - optimization point = cache positions
-                    while ((index = trimmed.indexOf("_$", start_index)) > -1) {
-                        const f = trimmed.substr(index+2,1)
-                        const val = ob[f].toFixed(2)
-                        trimmed = replace_at_plus_one(trimmed,index,val)
-                        start_index = index + 2 + val.length ;
-                    }
-                    this.setText(trimmed)
-                } else {
-                    this.setText(ob.toString())
-                }
-            }
-        }
-        super.onFrame(frameNumber)
-    }
 }
 
 export default XUIObject

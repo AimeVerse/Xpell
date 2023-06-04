@@ -1,4 +1,4 @@
-import { _xu, XParser, XObject, IXObjectData, _xlog } from "xpell-core"
+import { _xu, XParser, XObject, XObjectData, _xlog ,_xd, _x} from "xpell-core"
 // import { XObject, IXObjectData } from "../XObject"
 // import XParser from "../XParser"
 // import * as _XC from "../XConst"
@@ -7,6 +7,7 @@ import * as CANNON from 'cannon-es'
 import { threeToCannon, ShapeType } from 'three-to-cannon';
 import _x3dobject_nano_commands from './X3DNanoCommands'
 import X3D from "./X3D"
+import { XEventListenerOptions, _xem } from "../XEM/XEventManager";
 // import { XLogger as _xlog } from '../XLogger'
 
 /**
@@ -15,6 +16,7 @@ import X3D from "./X3D"
 import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import { Object3D } from "three";
+import X3DLoader from "./X3DLoader";
 
 
 const reservedWords = { _children: "child objects", _position: "position", _rotation: "rotation", _scale: "scale" }
@@ -78,7 +80,7 @@ export class XVector3 {
 /**
  * @interface IX3DObjectData
  */
-export interface IX3DObjectData extends IXObjectData {
+export interface IX3DObjectData extends XObjectData {
     _cannon_shape?: CANNON.Shape | undefined,
     _enable_physics?: boolean,
     _mass?: number,
@@ -122,10 +124,11 @@ export class X3DObject extends XObject {
     protected _clock: THREE.Clock
     protected _fraction: number
     protected _animation_mixer!: THREE.AnimationMixer | null
-    protected _cache_cmd_txt!: string | null
-    protected _cache_jcmd: any
+    // protected _cache_cmd_txt!: string | undefined
+    // protected _cache_jcmd: any
     protected _current_action!: string | null
     protected _positional_audio: THREE.PositionalAudio | undefined | null
+    protected _xem_options:XEventListenerOptions = {_once:false,_support_html:true,_instance:_xem}
 
     protected _log_rules: {
         _import_animation: boolean,
@@ -153,7 +156,7 @@ export class X3DObject extends XObject {
         }
         if (defaults) {
             if (defaults._name) { threeObj.name = defaults._name }
-            _xu.mergeDefaultsWithData(<IXObjectData>_xdata, defaults, true)
+            _xu.mergeDefaultsWithData(<XObjectData>_xdata, defaults, true)
         }
         return _xdata
     }
@@ -167,6 +170,7 @@ export class X3DObject extends XObject {
 
     constructor(data: IX3DObjectData, defaults?: any) {
         super(data, defaults, true)
+        this.init(data,false)
         this.parse3d(data)
 
         this._animation = true
@@ -204,6 +208,7 @@ export class X3DObject extends XObject {
      * Dispose all object memory (destructor)
      */
     async dispose() {
+        this._on_frame = undefined
         this._three_class = null
         this._three_obj = null
         this._cannon_obj = null
@@ -213,10 +218,11 @@ export class X3DObject extends XObject {
     }
 
 
+    /**
+     * This method parses the X3DObject 3D data and sets the X3DObject properties
+     * @param data 
+     */
     parse3d(data: IX3DObjectData) {
-
-
-
         if (data._position) {
 
             this._position = new THREE.Vector3(data._position.x, data._position.y, data._position.z)
@@ -247,19 +253,16 @@ export class X3DObject extends XObject {
             this._fade_duration = 0.25
         }
 
-        // this._disable_frame_3d_state = <boolean>data["_disable_frame_3d_state"]
-
-        // let cdata = Object.keys(data);
-        // cdata.forEach(field => {
-        //     if (!reservedWords.hasOwnProperty(field) ) {
-        //         this[field] = <any>data[field];
-        //     }
-        // });
-
         this.parse(data, reservedWords)
 
     }
 
+    /**
+     * Sets the X3DObject position
+     * @param positionObject the new position X3DObject in the form of {x:number,y:number,z:number}
+     * @example setPosition({x:0,y:0,z:0})
+     * @comment effects only if Xpell engine controls the position (_disable_frame_3d_state = false - default)
+     */
     setPosition(positionObject: { x: number, y: number, z: number }) {
         this._position.set(positionObject.x, positionObject.y, positionObject.z) //incase Xpell engine controls the position
 
@@ -268,25 +271,48 @@ export class X3DObject extends XObject {
         // srcObj?.position.set(positionObject.x, positionObject.y, positionObject.z) //in case that other engine (like physics) controls the position
     }
 
+    /**
+     * Sets the X3DObject position from a THREE.Vector3 object
+     * @param newPosition the new position X3DObject in the form of THREE.Vector3
+     */
     setPositionFromVector3(newPosition: THREE.Vector3) {
         this.setPosition({ x: newPosition.x, y: newPosition.y, z: newPosition.z })
     }
 
+    /**
+     * Sets the X3DObject rotation
+     * @param rotationObject - The new rotation X3DObject in the form of {x:number,y:number,z:number,order?:string}
+     * @example setRotation({x:0,y:0,z:0,order:"XYZ"})
+     * @comment effects only if Xpell engine controls the position (_disable_frame_3d_state = false - default)
+     */
     setRotation(rotationObject: { x: number, y: number, z: number, order?: string }) {
         this._rotation.set(rotationObject.x, rotationObject.y, rotationObject.z, rotationObject.order) //incase Xpell engine controls the position
         this?._cannon_obj?.quaternion.setFromEuler(this._rotation.x, this._rotation.y, this._rotation.z)
     }
 
+    /**
+     * Sets the X3DObject rotation from a THREE.Euler object
+     * @param newRotation  The new rotation X3DObject in the form of THREE.Euler
+     */
     setRotationFromEuler(newRotation: THREE.Euler) {
         this.setRotation({ x: newRotation.x, y: newRotation.y, z: newRotation.z, order: newRotation.order })
     }
 
+    /**
+     * Sets the X3DObject rotation from a THREE.Quaternion object
+     * @param newQuaternion The new rotation X3DObject in the form of THREE.Quaternion
+     */
     setRotationFromQuaternion(newQuaternion: THREE.Quaternion) {
         this._rotation.setFromQuaternion(newQuaternion)
         // this.setRotation({ x: newQuaternion.x, y: newQuaternion.y, z: newQuaternion.z, order: newQuaternion.order })
     }
 
-
+    /**
+     * Sets the X3DObject scale
+     * @param newScale The new scale X3DObject in the form of {x:number,y:number,z:number}
+     * @example setScale({x:1,y:1,z:1})
+     * @comment effects only if Xpell engine controls the position (_disable_frame_3d_state = false - default)
+     */
     setScale(newScale: { x: number, y: number, z: number }) {
         this._scale.set(newScale.x, newScale.y, newScale.z)
         if (this._three_obj) {
@@ -299,6 +325,10 @@ export class X3DObject extends XObject {
         }
     }
 
+    /**
+     * Sets the X3DObject scale from a THREE.Vector3 object
+     * @param newScale The new scale X3DObject in the form of THREE.Vector3
+     */
     setScaleFromVector3(newScale: THREE.Vector3) {
         this.setScale({ x: newScale.x, y: newScale.y, z: newScale.z })
     }
@@ -325,12 +355,8 @@ export class X3DObject extends XObject {
 
 
 
-    load() { }
-
-
-
     /**
-     * @override
+     * This method gets the Three object of the X3DObject
      */
     getThreeObject(): THREE.Object3D | Promise<THREE.Object3D> {
         if (!this._three_obj && this._three_class) {
@@ -371,6 +397,13 @@ export class X3DObject extends XObject {
         return <THREE.Object3D>this._three_obj
     }
 
+    /**
+     * This method returns the Canon physic's object of the X3DObject
+     * @returns CANNON.Body
+     * @comment if the X3DObject physics should be enabled the 
+     *          _enable_physics attribute should be set to true
+     *          and the _enable_physics attribute for the main engine should be set to true
+     */
     getCannonObject(): CANNON.Body {
         if (!this._cannon_obj && this._enable_physics) {
             let offset = new CANNON.Vec3(0, 0, 0)
@@ -404,6 +437,12 @@ export class X3DObject extends XObject {
     }
 
 
+    /**
+     * This method creates Positional Audio from a source file and attach it to the 3D object
+     * @param source - the source file path (mp3, wav, ogg...)
+     * @param data - optional data object that can contain "autoplay" and "loop" boolean values
+     * @returns 
+     */
     async createPositionalAudio(source: string, data?: IX3DObjectData) {
         const sound = new THREE.PositionalAudio(X3D.world.audioListener);
         // load a sound and set it as the PositionalAudio object's buffer
@@ -517,9 +556,33 @@ export class X3DObject extends XObject {
     }
 
 
-    show() { this._visible = true }
+    /**
+     * Show the X3DObject (if it was hidden)
+     */
+    show() { 
+        this._visible = true 
+        if(this._three_obj) this._three_obj.visible = true
+    }
 
-    hide() { this._visible = false }
+    /**
+     * Hide the X3DObject
+     */
+    hide() { 
+        this._visible = false 
+        if(this._three_obj) this._three_obj.visible = false
+    }
+
+    /**
+     * Toggle the X3DObject visibility
+     */
+    toggle() {
+        if (this._visible) {
+            this.hide()
+        } else {
+            this.show()
+        }
+    }
+
 
     /**
      * Import animation from a THREE Object3D to the current object
@@ -561,7 +624,7 @@ export class X3DObject extends XObject {
      */
 
     async loadThreeObjectFromGLTF(modelUrl: string): Promise<THREE.Object3D> {
-        return new Promise(function (resolve, reject) {
+        return new Promise( (resolve, reject) => {
             const _onload = (gltf: any) => {
                 const child = gltf.scene
                 child.animations = gltf.animations
@@ -572,7 +635,16 @@ export class X3DObject extends XObject {
                 resolve(child)
             }
 
-            const _onprogress = (data: any) => { }
+            const _onprogress = (data: any) => { 
+                _xd._o["x3d-loader"] = {
+                    _model_url:modelUrl,
+                    _loaded:data.loaded,
+                    _total:data.total,
+                    _type:"GLTF"
+                }
+                // console.log("Loading GLTF", data.loaded, data.total,_xd._o)
+
+            }
 
             const _onerror = (error: any) => {
                 _xlog.error("ERROR loading GLTF", error);
@@ -584,9 +656,15 @@ export class X3DObject extends XObject {
         })
     }
 
-    async loadModel(modelUrl: string) {
-        if (this._log_rules._load_model) _xlog.log("Loading model " + modelUrl)
-        const model: THREE.Object3D = await this.loadThreeObjectFromGLTF(modelUrl)
+    /**
+     * Loads a 3d model from a GLTF/GLB file into the X3DObject and updates the Three object 
+     * @param modelUrl 
+     */
+    async loadModel(modelUrl?: string) {
+        const modelurl = modelUrl ? modelUrl : this._model_url
+        if (this._log_rules._load_model) _xlog.log("Loading model " + modelurl)
+        const model: THREE.Object3D = await this.loadThreeObjectFromGLTF(modelurl)
+        // if (this._log_rules._load_model) _xlog.log("AFTER Loading model " + modelurl)
         this._three_class = model.type
         this._three_obj = model
     }
@@ -609,7 +687,14 @@ export class X3DObject extends XObject {
                     resolve(obj)
                 }
 
-                const _onprogress = (data: any) => { }
+                const _onprogress = (data: any) => {
+                    _xd._o["x3d-loader"] = {
+                        _model_url:url,
+                        _loaded:data.loaded,
+                        _total:data.total,
+                        _type:"FBX"
+                    }
+                 }
 
                 const _onerror = (error: any) => {
                     _xlog.error(error);

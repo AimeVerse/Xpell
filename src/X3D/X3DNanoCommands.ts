@@ -9,8 +9,8 @@
 
 
 
- import { XNanoCommandPack,XCommand,_xem,_xlog,_xu,XData,XObject ,XNanoCommand, XCommandData} from "xpell-core"
-
+ import { XNanoCommandPack,XCommand,_xlog,_xu,XData,XObject ,XNanoCommand, XCommandData} from "xpell-core"
+import { _xem } from "../XEM/XEventManager"
 
 import * as THREE from 'three'
 

@@ -27,10 +27,10 @@ export {
     XData,XParser,XCommand,XModule,
     XLogger,XLogger as _xlog,
     XObjectManager,XObject,XObjectPack,type IXObjectData,
-    XEventManager, XEventManager as _xem,type XEventListener,type XEvent
-
+    type XEventListener,type XEvent
 } from "xpell-core"
 
+export {XEventManager,XEventManager as _xem,_XEventManager_WEB,type HTMLEventListenersIndex,type XEventListenerOptions} from "./src/XEM/XEventManager"
 export {XUI,type XUIApp} from "./src/XUI/XUI"
 export {XUIObject} from "./src/XUI/XUIObject"
 export {XUIObjects,XView,XButton,XForm,XHeader,XImage,XLabel,XLink,XList,XNavBar,XTextArea,XTextField,XVideo,XWebcam,XHTML,XInput,XSVG} from "./src/XUI/XUICoreObjects"
@@ -43,7 +43,7 @@ export {XGeometry,XGroup,XMaterial,XMesh,
     XCamera, type XCameraTypes,type XCameraData,
     XLight,type XLightData, type XLightTypes
 } from "./src/X3D/X3DCoreObjects"
-export {X3DPrimitives,XBox,XCone,XCylinder,XPlane,XSphere,XTorus,XCircle} from "./src/X3D/X3DPrivitives"
+export {X3DPrimitives,XBox,XCone,XCylinder,XPlane,XSphere,XTorus,XCircle} from "./src/X3D/X3DPrimitives"
 export {X3DWorld,XWorldStatus} from "./src/X3D/X3DWorld"
 export {XEditor,XTransformControls } from "./src/XUI/XEditor"
 export {X3DLoader} from "./src/X3D/X3DLoader"

@@ -363,6 +363,15 @@ export class XCircle extends XMesh {
     }
 }
 
+/**
+ * XModel 
+ * enable auo wrapper for GLB/GLTF models
+ * @example {
+ *     _id: "model-id",
+ *    _type: "xmodel",
+ *   _model_url: "/public/models/scene.gltf",
+ * }
+ */
 export class XModel extends X3DObject {
     static xtype = "xmodel"
 
@@ -373,10 +382,11 @@ export class XModel extends X3DObject {
     }
     
     async onCreate(): Promise<void> {
-        await this.loadModel(this._model_url)
-        await super.onCreate()
+        // await super.onCreate()
+        // console.log("XModel onCreate");
+        // // await this.loadModel(this._model_url)
         
-        
+        // console.log("sfter XModel onCreate");
     }
 
 

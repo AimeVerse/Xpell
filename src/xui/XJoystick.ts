@@ -4,8 +4,8 @@
  * Based on Nipple.js -  https://github.com/yoannmoinet/nipplejs
  */
 
-import  {XData, _xu, _xem,IXObjectData} from "xpell-core"
-
+import  {XData, _xu,IXObjectData} from "xpell-core"
+import { _xem } from "../XEM/XEventManager"
 import XUIObject from "./XUIObject"
 
 import nipplejs from 'nipplejs';

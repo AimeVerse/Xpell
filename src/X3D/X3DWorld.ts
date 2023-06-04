@@ -13,10 +13,10 @@ import { CannonDebugRenderer } from './X3DUtils';
 
 // import XUtils from '../XUtils';
 // import XData from '../XData';
-import {_xlog,_xu,XData, IXObjectData, _xem} from 'xpell-core'
+import {_xlog,_xu,XData,} from 'xpell-core'
 import {X3D,X3DApp,X3DObject,X3AxesHelper, XHelperData} from "./X3D"
 import { IX3DObjectData } from './X3DObject';
-
+import { _xem } from '../XEM/XEventManager';
 
 
 
@@ -183,7 +183,7 @@ export class X3DWorld {
         //get lights
         if (xworld._scene._lights) {
             Object.keys(xworld._scene._lights).forEach(async (light_name) => {
-                const lgt = xworld._scene._lights[light_name]
+                const lgt:any = (xworld._scene._lights) ? xworld._scene._lights[light_name] : null
                 let light = await X3D.create(lgt)
                 light.name = light_name
                 
@@ -205,8 +205,8 @@ export class X3DWorld {
         if(xworld._scene._objects) {
 
             Object.keys(xworld._scene._objects).forEach(async s3dobj => {
-                let ob = xworld._scene._objects[s3dobj]
-                ob.name = s3dobj
+                let ob:any = (xworld._scene._objects) ? xworld._scene._objects[s3dobj] : null
+                ob._name = s3dobj
                 let obj = await X3D.create(ob)
                 await this.addX3DObject(obj)
             })
@@ -223,7 +223,7 @@ export class X3DWorld {
 
         if (xworld._scene._controls) {
             Object.keys(xworld._scene._controls).forEach(async ctrl => {
-                let control = xworld._scene._controls[ctrl]
+                let control = (xworld._scene._controls) ? <any>xworld._scene._controls[ctrl] :  null
                 if (control._type == "orbit" && control._active) {
                     this.controls = new OrbitControls(this.defaultCamera, this.renderer["domElement"]);
                     if (control._params) {
@@ -359,7 +359,7 @@ export class X3DWorld {
     
             })
             
-            _xem.on("xtransform-controls-state-changed",(xevent:any) => {            
+            _xem.on("xtransform-controls-state-changed",(data:any) => {            
                 this.transformControls.setMode(<'translate' | 'rotate' | 'scale'>XData.variables["xtransform-controls-state"])
             })
             this.scene.add(this.transformControls)

@@ -4,7 +4,8 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader';
 import X3DObject from './X3DObject';
 import X3D from "./X3D"
-import {_xlog, _xem} from 'xpell-core';
+import {_xlog,_xd} from 'xpell-core';
+import { _xem } from '../XEM/XEventManager';
 
 
 
@@ -59,7 +60,12 @@ class X3DLoader {
         }
 
         const _onprogress = (data:any) => {
-            // this.loading=false
+            _xd._o["x3d-loader"] = {
+                _model_url:fileName,
+                _loaded:data.loaded,
+                _total:data.total,
+                _type:"GLTF"
+            }
 
         }
 
@@ -109,7 +115,12 @@ class X3DLoader {
         }
 
         const _onprogress = (data:any) => {
-            // this.loading=false
+            _xd._o["x3d-loader"] = {
+                _model_url:fileName,
+                _loaded:data.loaded,
+                _total:data.total,
+                _type:"FBX"
+            }
 
         }
 
@@ -134,7 +145,12 @@ class X3DLoader {
         }
 
         const _onprogress = (data:any) => {
-            // this.loading=false
+            _xd._o["x3d-loader"] = {
+                _model_url:fileName,
+                _loaded:data.loaded,
+                _total:data.total,
+                _type:"FBX"
+            }
 
         }
 
@@ -149,7 +165,7 @@ class X3DLoader {
     }
 
 
-    static async loadModelFromGLTF(modelUrl: string): Promise<THREE.Object3D> {
+    static async loadModelFromGLTF(modelUrl: string,traverse:boolean = true): Promise<THREE.Object3D> {
         return new Promise(function (resolve, reject) {
             const _onload = (gltf:any) => {
 
@@ -157,16 +173,21 @@ class X3DLoader {
 
                 child.animations = gltf.animations
 
-                // child.traverse((child2) => {
-                //     child2.frustumCulled = false
-                //     /** add more */
-                // })
+                child.traverse((grandson:THREE.Object3D) => {
+                    grandson.frustumCulled = false
+                    /** add more */
+                })
 
                 resolve(child)
             }
 
             const _onprogress = (data:any) => {
-                // this.loading=false
+                _xd._o["x3d-loader"] = {
+                    _model_url:modelUrl,
+                    _loaded:data.loaded,
+                    _total:data.total,
+                    _type:"GLTF"
+                }
 
             }
 
