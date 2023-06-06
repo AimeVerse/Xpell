@@ -11,6 +11,9 @@ export default {
     lib: {
       entry: index,
       name: 'xpell',
+
+      //exclude public folder
+      exclude: ['public'],
       // the proper extensions will be added
       fileName: format => `xpell.${format}.js`
     },
@@ -33,7 +36,7 @@ export default {
   },
   plugins: [dts({
     outputDir: ['dist'],
-    include: ['index.ts',"xpell-core"],
+    // include: ['index.ts',"xpell-core"],
     exclude: ['src/ignore','public'],
     // aliasesExclude: [/^@components/],
     staticImport: true,

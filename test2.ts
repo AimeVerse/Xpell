@@ -123,9 +123,73 @@ const xapp:XUIApp = {
 
 }
 
-XUI.loadApp(xapp)
 
+const app2 = {
+  "xpell": {
+      "version": 1
+  },
+  "_views": {
+      "_parent_element": "xplayer",
+      "main-page": {
+          "_type": "view",
+          "_id": "main-page",
+          "class": "main-page",
+          style:"background-color:blue;width:50vw;height:50vh",
+          "_children": [
+              {
+                  "_type": "view",
+                  "_text": "main-page",
+                  style:"font-size:20px",
+              }
+          ]
+      },
+      "page-2": {
+          "_type": "view",
+          "_id": "page-2",
+          "class": "main-page",
+          style:"background-color:red;width:50vw;height:50vh",
+          "_children": [
+              {
+                  "_type": "view",
+                  "_text": "main-page",
+                  style:"font-size:20px",
+              }
+          ]
+      },
+      "ev": {
+          "_type": "view",
+          "_id": "ev",
+          "class": "empty-view"
+      },
+    
+  },
+  "_controls": {
+      "_parent_element": "xcontrols",
+      
+      "edit-npc-button": {
+          "_type": "view",
+          "style": "display:none",
+          "class": "xview"
+      },
+      "login-button": {
+          "_type": "view",
+          "class": "aime-button",
+          "style": "",
+          "_children": [
+              {
+                  "_type": "image",
+                  "src": "https://cdn.aimeverse.com/u/icon-login",
+                  "class": "ximage",
+                  "_html_tag": "img"
+              }
+          ]
+      }
+  }
+}
 
+XUI.loadApp(app2)
+XUI.vm.showPage("main-page")
+XUI.vm.showPage("page-2")
 // document.addEventListener("custom",(e)=>{console.log("custom event fired")})
 
 // XUI.loadControl(view)
@@ -143,7 +207,7 @@ XUI.loadApp(xapp)
 // XUI.vm.hidePage("menu")
 // XUI.vm.showPage("page-2")
 // XUI.vm.hidePage("page-2")
-XUI.vm.showPage("left-menu")
+
 
 // setTimeout(() => {
 //   XUI.vm.hidePage("left-menu")

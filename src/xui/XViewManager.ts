@@ -17,31 +17,36 @@ export type XViewsPack = {
 }
 
 export class XViewManager {
-    viewMetadata: Record<string, XObjectData> = {}
-    views: Record<string, XView> = {}
-    activeView!: string | null
-    parentHTMLElement: string = "xplayer"
-
-    /**
-     * Xpell View Manager constructor
-     * @member viewMetadata This object contains the textual JSON representation of views (these are not XView objects, uses for caching views before loading)
-     * @member views View objects that are ready to use (show, hide...)
-     * @member activeView The screen active view (page)
-     */
-    constructor() {
-        this.init();
+    #_id:string = _xu.guid()
+    _log_rules = {
+        _init: false,
+        _create: false,
+        
     }
 
+    #_raw_views: Record<string, XObjectData> = {} //raw views data (XData)
+    #_views: Record<string, XView> = {}
+    #_active_view!: string | null
+    #_default_parent_element: string = "xplayer" //default parent HTML element ID for views
 
+   
+    constructor() {
+        this.init();
+        
+    }
+
+    get _id():string {return this.#_id}
+    get _active_view():string | null {return this.#_active_view}
+    get _default_parent_element():string {return this.#_default_parent_element}
 
     /**
      * Initialized the View Manager and register "hashchange" event on the window to control the url string
-     * @fire "xvm-loaded" event
+     * @fire "xui-vm-loaded" event
      */
     init() {
         //handle back functionality for browser
         window.addEventListener('hashchange', this.onBrowserUrlHashChanged)
-        _xlog.log("View Manager has been initialized")
+        if (this._log_rules._init) _xlog.log("View Manager has been initialized")
         _xem.fire("xui-vm-loaded")
     }
 
@@ -52,19 +57,19 @@ export class XViewManager {
      * @param auto_add - if true and the view data (view_data) contains a "name" string the new view will be added automatically to the view manager
      * @return {XView}
      */
-    createView(viewData:XObjectData, auto_add = true) {
+    async createView(viewData:XObjectData, auto_add = true) {
 
+        
+        let newView: XUIObject = XUI.create(viewData);        
+        if (this._log_rules._create) _xlog.log("View " + newView._id + " has been created in the View Manager")
+        const elem:string  = (newView._parent_element) ?<string>newView._parent_element : this.#_default_parent_element
+        document.querySelector("#" + elem)?.append(newView.getDOMObject());
+        await newView.onMount()
 
-        let new_view: XUIObject = XUI.create(viewData);
-        if (auto_add && viewData.hasOwnProperty("_id")) {
-            const elem:string  = (viewData._parent_element) ?<string>viewData._parent_element : this.parentHTMLElement
-            // console.log("elem",elem,viewData._parent_element);
-            
-            document.querySelector("#" + elem)?.append(new_view.getDOMObject());
-            new_view.onMount()
-            this.addView(new_view, <string>viewData._id)
+        if (auto_add && newView.hasOwnProperty("_id")) {
+            this.addView(newView, <string>newView._id)
         }
-        return new_view;
+        return newView;
     }
 
 
@@ -74,7 +79,8 @@ export class XViewManager {
      * @param {string}viewName The view name
      */
     addView(view: XView, viewName: string) {
-        this.views[viewName] = view;
+        this.#_views[viewName] = view;
+        console.log("View " + viewName + " has been added to the View Manager")
     }
 
     /**
@@ -83,7 +89,7 @@ export class XViewManager {
      * @returns XView
      */
     getView(viewName: string): XView {
-        return this.views[viewName];
+        return this.#_views[viewName];
     }
 
     /**
@@ -92,20 +98,19 @@ export class XViewManager {
      * @returns 
      */
     hasView(viewName: string): boolean {
-        return this.views.hasOwnProperty(viewName)
+        return this.#_views.hasOwnProperty(viewName)
     }
 
     addViewPack(vuz:XViewsPack): void {
         let rvuz = Object.keys(vuz);
         rvuz.forEach((vu) => {
-        
-            if(vu == "_parent_element") {this.parentHTMLElement = <string>vuz[vu]}
-            else {this.viewMetadata[vu] = <XObjectData>vuz[vu]}
+            if(vu == "_parent_element") {this.#_default_parent_element = <string>vuz[vu]}
+            else {this.#_raw_views[vu] = <XObjectData>vuz[vu]}
         });
     }
 
     addRawView(viewName: string, viewData:XObjectData): void {
-        this.viewMetadata[viewName] = viewData
+        this.#_raw_views[viewName] = viewData
     }
 
     /**
@@ -116,11 +121,11 @@ export class XViewManager {
     loadPage(defaultViewName: string): void {
         let anc = window.location.hash
         if (anc && anc.length > 1) {
-            this.activeView = anc.substring(1);
+            this.#_active_view = anc.substring(1);
         } else {
-            this.activeView = defaultViewName;
+            this.#_active_view = defaultViewName;
         }
-        this.showPage(this.activeView)
+        this.showPage(this.#_active_view)
     }
 
     /*TO-DO remove view */
@@ -136,7 +141,7 @@ export class XViewManager {
         let anc = window.location.hash
         if (anc && anc.length > 1) {
             let viewNameFromUrl = anc.substring(1);
-            if (XUI.vm.activeView != viewNameFromUrl) { //prevent double call on showPage
+            if (XUI.vm.#_active_view != viewNameFromUrl) { //prevent double call on showPage
                 XUI.vm.showPage(viewNameFromUrl)
             }
         }
@@ -148,17 +153,15 @@ export class XViewManager {
      * Show view on screen
      * @param {*} viewName 
      */
-    showView(viewName: string): void {
+    async showView(viewName: string): Promise<void> {
         let newView;
-        let oncreate = false;
         if (this.hasView(viewName)) {
             newView = this.getView(viewName);
         }
         else {
-            let vu = this.viewMetadata[viewName];
+            let vu = this.#_raw_views[viewName];
             vu.name = viewName;
-            newView = this.createView(vu)
-            oncreate = true;
+            newView = await this.createView(vu)
         }
         newView.show()
     }
@@ -180,7 +183,7 @@ export class XViewManager {
     * @param {*} viewName 
     */
     hidePage(viewName: string): void {
-        if (this.activeView == viewName) this.activeView = null
+        if (this.#_active_view == viewName) this.#_active_view = null
         this.hideView(viewName)
         XUI.openUrl("#");
     }
@@ -189,27 +192,30 @@ export class XViewManager {
      * Show view as page (set as active view and dismiss former active)
      * @param {*} viewName 
      */
-    showPage(viewName: string): void {
+    async showPage(viewName: string): Promise<XView> {
         let vu: XObjectData, newView;
-        let oncreate = false;
         if (this.hasView(viewName)) {
             newView = this.getView(viewName);
         }
         else {
-            vu = this.viewMetadata[viewName];
+            vu = this.#_raw_views[viewName];
             vu.name = viewName;
-            newView = this.createView(vu)
-            oncreate = true;
+            newView = await this.createView(vu)
         }
 
         //get the active (former) view hide it
         // let activeView = this.getView(this.activeView);
-        if (this.activeView) {
-            this.getView(this.activeView).hide();
+        
+        
+        if (this.#_active_view) {
+            const activeXView = this.getView(this.#_active_view)
+            if(activeXView) activeXView.hide()
+            else console.warn("XUI VM warning: active view not found 🧐",this.#_active_view);
         }
         newView.show();
-        this.activeView = viewName;
-        XUI.openUrl("#" + this.activeView);
+        this.#_active_view = viewName;
+        XUI.openUrl("#" + this.#_active_view);
+        return newView
     }
 
 

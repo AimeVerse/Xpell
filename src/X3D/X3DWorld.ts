@@ -15,9 +15,11 @@ import { CannonDebugRenderer } from './X3DUtils';
 // import XData from '../XData';
 import {_xlog,_xu,XData,} from 'xpell-core'
 import {X3D,X3DApp,X3DObject,X3AxesHelper, XHelperData} from "./X3D"
-import { IX3DObjectData } from './X3DObject';
 import { _xem } from '../XEM/XEventManager';
 
+import X3DLoader from './X3DLoader';
+import {X3DSceneBackground,X3DSceneBackgroundTypes as _bg_types,
+X3DSceneBackgroundHandler,createSceneBackgroundBasicHandlers} from "./X3DWorldSceneBackground"
 
 
 /**
@@ -56,16 +58,18 @@ export class X3DWorld {
     frameProcessTime!: number;
     audioListener!:THREE.AudioListener
     enablePhysics:boolean = true
-    private physicsWorld!:CANNON.World
+    private _physics_world!:CANNON.World
     _log_rules:{
-        addObject:boolean,
-        removeObject:boolean,
+        _add:boolean,
+        _remove:boolean,
         
     } = {
-        addObject:false,
-        removeObject:false
+        _add:false,
+        _remove:false
     }
-    private cannonDebugRenderer!: CannonDebugRenderer;
+    private _cannon_debug_renderer!: CannonDebugRenderer;
+
+    private _bg_handlers:Record<string,X3DSceneBackgroundHandler>  = {}
 
     constructor(xworld:X3DApp) {
         
@@ -77,9 +81,10 @@ export class X3DWorld {
         this.clock = new THREE.Clock();
         this.renderer = new THREE.WebGLRenderer()
         this.renderer.setPixelRatio(window.devicePixelRatio);
-        this.renderer.setSize(window.innerWidth, window.innerHeight);
+        this.renderer.setSize(window.innerWidth, window.innerHeight);        
         this.renderer.outputEncoding = THREE.sRGBEncoding;
-        this.renderer.setClearColor(0x000000, 1); // the default color
+        // this.renderer.setClearColor(0x000000, 1); // the default color
+        this.renderer.setClearColor(0x000000, 0);
         this.frameNumber = 0
         this.raycaster = new THREE.Raycaster()
          
@@ -92,36 +97,36 @@ export class X3DWorld {
         this.enablePhysics = (xworld._physics) ? xworld._physics._active : false
         if(this.enablePhysics) {
             _xlog.log("Physics engine (Cannon.JS) is active")
-            this.physicsWorld = new CANNON.World()
+            this._physics_world = new CANNON.World()
             
             // Tweak contact properties.
             // Contact stiffness - use to make softer/harder contacts
-            this.physicsWorld.defaultContactMaterial.contactEquationStiffness = 1e9
+            this._physics_world.defaultContactMaterial.contactEquationStiffness = 1e9
             
             // Stabilization time in number of timesteps
-            this.physicsWorld.defaultContactMaterial.contactEquationRelaxation = 4
+            this._physics_world.defaultContactMaterial.contactEquationRelaxation = 4
             
             const solver = new CANNON.GSSolver()
             solver.iterations = 7
             solver.tolerance = 0.1
-            this.physicsWorld.solver = new CANNON.SplitSolver(solver)
+            this._physics_world.solver = new CANNON.SplitSolver(solver)
             // use this to test non-split solver
             // cWorld.solver = solver
             
-            this.physicsWorld.gravity.set(0, -9.83, 0)
+            this._physics_world.gravity.set(0, -9.83, 0)
             
-            this.physicsWorld.broadphase = new CANNON.NaiveBroadphase();
+            this._physics_world.broadphase = new CANNON.NaiveBroadphase();
 
             if(xworld._physics._debug) {
                 
-                this.cannonDebugRenderer = new CannonDebugRenderer(this.scene,this.physicsWorld)
+                this._cannon_debug_renderer = new CannonDebugRenderer(this.scene,this._physics_world)
             }
 
         } else {
             _xlog.log("Physics engine is NOT Active")
         }
-
-
+        X3DLoader.loadDraco()
+        createSceneBackgroundBasicHandlers(this)
 
 
 
@@ -137,6 +142,11 @@ export class X3DWorld {
 
 
         let idx = 0
+
+        if(xworld._parent_element){
+            const pe = <string>xworld._parent_element
+            document.getElementById(pe)?.appendChild(this.renderer["domElement"]);
+        }
 
         if(xworld._scene._helpers){
             Object.keys(xworld._scene._helpers).forEach( (helperIndex:string) => {
@@ -211,16 +221,7 @@ export class X3DWorld {
                 await this.addX3DObject(obj)
             })
         }
-
-        if(xworld._parent_element){
-            const pe = <string>xworld._parent_element
-            document.getElementById(pe)?.appendChild(this.renderer["domElement"]);
-        }
-
         //this.gui = new dat.GUI();
-
-        
-
         if (xworld._scene._controls) {
             Object.keys(xworld._scene._controls).forEach(async ctrl => {
                 let control = (xworld._scene._controls) ? <any>xworld._scene._controls[ctrl] :  null
@@ -259,14 +260,29 @@ export class X3DWorld {
                 }
             })
         }
-
+        
+        if(xworld._scene._background) {
+            await this.setSceneBackground(xworld._scene._background)
+            
+        }
       
-        
-
-        
         this.render();
 
     }
+
+    addBackgroundHandler(type:string,handler:X3DSceneBackgroundHandler) {
+        this._bg_handlers[type] = handler
+    }
+
+    async setSceneBackground(bg:X3DSceneBackground) {
+        if(this._bg_handlers[bg._type]){
+            this._bg_handlers[bg._type](this.scene,bg._params)
+        }
+    }
+
+
+    
+        
 
     setAudioListener(){
         _xlog.log("Setting camera audio listener")
@@ -289,7 +305,7 @@ export class X3DWorld {
      */
     async addX3DObject(x3dObject:X3DObject) {
         if (x3dObject && !x3dObject._ignore_world) {
-            if(this._log_rules.addObject) {_xlog.log("XWorld adding ", x3dObject._id)}
+            if(this._log_rules._add) {_xlog.log("XWorld adding ", x3dObject._id)}
 
             this.x3dObjects[<string>x3dObject._id] = x3dObject
             const threeObject = await x3dObject.getThreeObject()
@@ -301,7 +317,7 @@ export class X3DWorld {
             if(this.enablePhysics && x3dObject._enable_physics) {
                 const cannonObject = x3dObject.getCannonObject()
                 if(cannonObject) {
-                    this.physicsWorld.addBody(cannonObject)
+                    this._physics_world.addBody(cannonObject)
                 }
             }
 
@@ -312,14 +328,14 @@ export class X3DWorld {
     }
 
     async removeX3DObject(objectId:string) {
-        if(this._log_rules.removeObject) _xlog.log("XWorld Removing " + objectId)
+        if(this._log_rules._remove) _xlog.log("XWorld Removing " + objectId)
         if(this.x3dObjects.hasOwnProperty(objectId)) {
             const x3dObject:X3DObject = <X3DObject>this.x3dObjects[objectId];
             (x3dObject.getThreeObject() as THREE.Object3D).removeFromParent()
-            if(x3dObject._cannon_obj) this.physicsWorld.removeBody(x3dObject._cannon_obj)
+            if(x3dObject._cannon_obj) this._physics_world.removeBody(x3dObject._cannon_obj)
             delete this.x3dObjects[objectId] 
         } else {
-            if(this._log_rules.removeObject) _xlog.log("XWorld has no X3DObject => " + objectId)
+            if(this._log_rules._remove) _xlog.log("XWorld has no X3DObject => " + objectId)
         }
     
     }
@@ -399,9 +415,9 @@ export class X3DWorld {
                 }
             }
 
-            if(this.enablePhysics && this.physicsWorld) {
-                this.physicsWorld.step(CWORLD_STEP);
-                if(this.cannonDebugRenderer) this.cannonDebugRenderer.update()
+            if(this.enablePhysics && this._physics_world) {
+                this._physics_world.step(CWORLD_STEP);
+                if(this._cannon_debug_renderer) this._cannon_debug_renderer.update()
             }
 
 
@@ -417,10 +433,10 @@ export class X3DWorld {
 
     /**
      * Adds background to the scene
-     * @param {THREE.Texture}environmentMap scene background
+     * @param {THREE.Texture}bgTexture scene background
      */
-    addBackground(environmentMap:THREE.Texture) {
-        this.scene.background = environmentMap
+    addBackground(bgTexture:THREE.Texture) {
+        this.scene.background = bgTexture
     }
 
     //draw screen

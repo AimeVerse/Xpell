@@ -27,7 +27,7 @@ export class XUIObject extends XObject {
     // text: string //depracted
     _text?: string
     _children: XUIObject[];
-    _visible:boolean = true
+    _visible:boolean 
     _parent_element?:string //used for mount parent HTML element id
     _on_click?: Function | string
     _on_show?: Function | string
@@ -47,7 +47,7 @@ export class XUIObject extends XObject {
         this._visible = true
         this._xem_options = <XEventListenerOptions>{_once:false, _support_html: true,_instance:_xem}
         
-        //this._base_display = "block"
+        // this._base_display = "block"
         this.addNanoCommandPack(_xuiobject_basic_nano_commands)
         this.init(data,skipParse)
         
@@ -170,7 +170,12 @@ export class XUIObject extends XObject {
             }
 
             //check style visibility
-            (<HTMLElement>dom_object).style.display = (this._visible) ? "block" : "none"
+            // (<HTMLElement>dom_object).style.display = (this._visible) ? "block" : "none"
+            // if (this._visible) {
+            if((<HTMLElement>dom_object).style.display == "none") {
+                this._visible = false
+            }
+            
             this._dom_object = dom_object;
             // this.onCreate()
         }

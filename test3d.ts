@@ -1,21 +1,7 @@
 
 import * as THREE from 'three'
-import { _x, IXObjectData, XObjectPack, _xd, XObject } from "xpell-core"
-// import { Xpell as _x } from "./src/Xpell"
-// import { XData } from "./src/XData"
-import { X3D, X3DApp, X3DObject } from "./src/X3D/X3D"
-import { XCameraData, XLightData } from './src/X3D/X3DCoreObjects'
-import { XLabel } from "./src/XUI/XUICoreObjects"
-import { X3DLoader as _loader, } from "./src/X3D/X3DLoader"
 
-import { XUI } from "./src/XUI/XUI"
-import { XUIObject } from "./src/XUI/XUIObject"
-import XJoystick from "./src/XUI/XJoystick"
-import { TopBar } from "./src/XUI/XDashboard"
-import { XEditor, XTransformControls } from "./src/XUI/XEditor"
-
-import { _xem } from "./src/XEM/XEventManager"
-
+import {XUI,_xem,X3D, X3DApp,_x,_xd} from "./index"
 
 export const world: X3DApp = {
     "_parent_element": "x3d-player",
@@ -25,6 +11,7 @@ export const world: X3DApp = {
         _debug: true
     },
     _scene: {
+        _raycast: true,
         _helpers: {
             "axes": {
                 _type: "axes",
@@ -39,14 +26,14 @@ export const world: X3DApp = {
                 _light: "ambient",
                 color: 0x888888
             },
-            "p1": {
-                _id: "directional-light",
-                _type: "light",
-                _light: "directional",
-                color: "hsl(0, 100%, 100%)",
-                intensity: 0.5,
-                _position: { x: 0, y: 3, z: 2 },
-            },
+            // "p1": {
+            //     _id: "directional-light",
+            //     _type: "light",
+            //     _light: "directional",
+            //     color: "hsl(0, 100%, 100%)",
+            //     intensity: 0.5,
+            //     _position: { x: 0, y: 3, z: 2 },
+            // },
         },
         _cameras: {
             "main-cam": {
@@ -115,15 +102,47 @@ export const world: X3DApp = {
                 _rotation: { x: Math.PI / 2, y: 0, z: 0 },
                 _enable_physics: true,
                 _mass: 0,
+               
                 // _on_frame: `follow-joystick`
             },
             "home": {
                 _id: "home",
                 _type: "xmodel",
                 _model_url: "https://cdn.aimeverse.com/get/a56801dc-09ba-4f50-a1ab-325571f84bc0",
-            }
+            },
+            // "home2": {
+            //     _id: "home2",
+            //     _type: "xmodel",
+            //     _model_url: "/public/stage-c.gltf",
+            // }
 
+        },
+        _background: {
+            _type: "gradient",
+            _params: {
+                _color: "red",
+                _color1:"red",
+                _color2:"blue",
+                // _direction_deg:"45",
+                _path:"/public/sky",
+                _px:"px.png",
+                _nx:"nx.png",
+                _py:"py.png",
+                _ny:"ny.png",
+                _pz:"pz.png",
+                _nz:"nz.png",
+
+
+                _url:"/public/industrial_sunset_02_puresky_1k.hdr"
+                // _url:"/public/digital_painting_moon.jpg" //shpere
+                // _url:"https://images.pexels.com/photos/3768263/pexels-photo-3768263.jpeg?cs=srgb&dl=pexels-castorly-stock-3768263.jpg&fm=jpg" //image
+                // _url: "https://cdn.aimeverse.com/get/8f0729b0-5f6f-491b-a067-acd3fca703b4", //video
+                //"/public/digital-screen.mp4"
+
+            }
         }
+            
+
 
     },
 }
@@ -138,6 +157,7 @@ async function main() {
     //load Xpell UI (XUI) Module
     _x.loadModule(XUI)
     _x.loadModule(X3D)
+    
     // XUI.importObject("joystick", XJoystick)
     // XUI.importObjectPack(XEditor)
 
@@ -175,21 +195,51 @@ async function main() {
             obj.emptyDataSource()
             
         },
+        
         _on:{
             "e1":(obj,data) => {
                 console.log("E1",data);
-            }
-
+            },    
         },
-        _once:{
-            "click":(obj,data) => {
-                console.log(obj,data);
-            },
-        }
-
-
     }
     XUI.loadObject(loadingLabel)
+
+    XUI.loadObject({
+        _id: "mysvg",
+        _type: "svg",
+        viewBox: "0 0 100 100",
+        height: "100px",
+        width: "100px",
+        _children: [
+            {
+                _type: "circle",
+                cx: "50",
+                cy: "50",
+                r: "40",
+                stroke: "green",
+                "stroke-width": "4",
+                fill: "yellow"
+            },
+            {
+                _type: "rect",
+                x: "15",
+                y: "15",
+                width: "70",
+                height: "70",
+                stroke: "red",
+                "stroke-width": "4",
+            }
+        ],
+        _on_frame: (obj, f) => {
+            // console.log("click", obj, e);
+            const colors = ["red", "green", "blue", "yellow", "orange", "purple"]
+            // obj.getDOMObject().children[0].style.fill = colors[f % colors.length]
+            obj.getDOMObject().children[1].style.fill = "hsl(" + f % 360 + ",100%,50%)"
+        },
+        _parent_element: "player",
+    })
+
+
     // _xd._o["loading-label"] = "loadingLabel"
     // console.log(_xd._o)
 

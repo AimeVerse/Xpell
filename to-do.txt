@@ -3,11 +3,10 @@
 
 
 -- Avatar Controller
--- Keyboard Controller
+-- Keyboard Controller 
 -- Collaboration
 -- Scene Editor
--- XAI
-    -- speak (tts)
+
 
 
 

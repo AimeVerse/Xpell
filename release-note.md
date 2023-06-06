@@ -6,10 +6,23 @@ XUI:
     - attribute _on_frame_skip_data_source is deprecated (use _process_data instead -> if false the data_source will not be processed in every frame)
     - new methods:
       - loadObject (creates a XUIObject and mount it to the views element - similar to loadControl)
-      - 
+    - SVG Support tag 
 X3D:
     - X3D loader sets loading percentage in XData "x3d-object" as {_model_url:"the loading model",_loaded:0:_total:1024}
     - new method loadObject(x3dObject) to 
+    - X3DObject new changes
+      - attributes
+        - _on_load - trigger when model loaded
+        - _on_click - trigger on raycast click from 3D objects.
+        - supported background for scene 
+          - solid-color
+          - gradient
+          - image
+          - video
+          - cube-texture
+          - sphere-texture
+          - hdri
+      - XLoader support draco loader
 
   XEM:
       - change "on" method listener and add options (XEventListener and XEventListenerOptions)

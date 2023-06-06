@@ -1,6 +1,6 @@
 import XUIObject from "./XUIObject";
 // import {Xpell as _x} from "../Xpell"
-import {_x, IXObjectData,XObjectPack } from "xpell-core";
+import {_x, IXObjectData,XObjectData,XObjectPack } from "xpell-core";
 
 
 
@@ -235,19 +235,128 @@ export class XHTML extends XUIObject {
 export class XSVG extends XUIObject {
     private _svg_data!: string;    
 
-    constructor(data:IXObjectData) {
+    constructor(data:XObjectData) {
         const defaults = {
             _type:"svg",
             _html_tag: "svg",
-            _svg_data: ""
+            _svg_data: "",
+            _html_ns: "http://www.w3.org/2000/svg",
+            xmlns:"http://www.w3.org/2000/svg"
 
         }
         super(data,defaults);
     }
 }
 
+
+export class XSVGCircle extends XUIObject {
+    private _svg_data!: string;    
+
+    constructor(data:XObjectData) {
+        const defaults = {
+            _type:"circle",
+            _html_tag: "circle",
+            _svg_data: "",
+            _html_ns: "http://www.w3.org/2000/svg",
+
+        }
+        super(data,defaults);
+    }
+}
+
+export class XSVGEllipse extends XUIObject {
+    private _svg_data!: string;    
+
+    constructor(data:XObjectData) {
+        const defaults = {
+            _type:"ellipse",
+            _html_tag: "ellipse",
+            _svg_data: "",
+            _html_ns: "http://www.w3.org/2000/svg",
+
+        }
+        super(data,defaults);
+    }
+}
+
+export class XSVGRect extends XUIObject {
+    private _svg_data!: string;    
+
+    constructor(data:XObjectData) {
+        const defaults = {
+            _type:"rect",
+            _html_tag: "rect",
+            _svg_data: "",
+            _html_ns: "http://www.w3.org/2000/svg",
+
+        }
+        super(data,defaults);
+    }
+}
+
+export class XSVGLine extends XUIObject {
+    private _svg_data!: string;    
+
+    constructor(data:XObjectData) {
+        const defaults = {
+            _type:"line",
+            _html_tag: "line",
+            _svg_data: "",
+            _html_ns: "http://www.w3.org/2000/svg",
+
+        }
+        super(data,defaults);
+    }
+}
+
+export class XSVGPolyline extends XUIObject {
+    private _svg_data!: string;    
+
+    constructor(data:XObjectData) {
+        const defaults = {
+            _type:"polyline",
+            _html_tag: "polyline",
+            _svg_data: "",
+            _html_ns: "http://www.w3.org/2000/svg",
+
+        }
+        super(data,defaults);
+    }
+}
+
+export class XSVGPolygon extends XUIObject {
+    private _svg_data!: string;    
+
+    constructor(data:XObjectData) {
+        const defaults = {
+            _type:"polygon",
+            _html_tag: "polygon",
+            _svg_data: "",
+            _html_ns: "http://www.w3.org/2000/svg",
+
+        }
+        super(data,defaults);
+    }
+}
+
+export class XSVGPath extends XUIObject {
+    private _svg_data!: string;    
+
+    constructor(data:XObjectData) {
+        const defaults = {
+            _type:"path",
+            _html_tag: "path",
+            _svg_data: "",
+            _html_ns: "http://www.w3.org/2000/svg",
+
+        }
+        super(data,defaults);
+    }
+}
+
+
 export class XButton extends XUIObject {
-    constructor(data:IXObjectData) {
+    constructor(data:XObjectData) {
         const defs = {
             _type : "button",
             class:"xbutton",
@@ -304,7 +413,14 @@ export class XUIObjects extends XObjectPack {
             "form":XForm,
             "webcam":XWebcam,
             "xhtml":XHTML,
-            "svg":XSVG
+            "svg":XSVG,
+            "circle":XSVGCircle,
+            "rect":XSVGRect,
+            "ellipse":XSVGEllipse,
+            "line":XSVGLine,
+            "polyline":XSVGPolyline,
+            "polygon":XSVGPolygon,
+            "path":XSVGPath,
             // "grid" : TO-DO,
             // "table": TO-DO,
         }

@@ -44,7 +44,10 @@ export class _XEventManager_WEB extends _XEventManager {
      *         console.log("XEM Event " + data)
      *    })
      */
-    on(eventName: string, listener: XEventListener, options?:XEventListenerOptions): string {
+    on(eventName: string, listener: XEventListener, options:XEventListenerOptions = {
+        _once:false,
+        _support_html:true
+    }): string {
         // console.log("on " + eventName  ,options._once)
         const id = super.on(eventName, listener, options)   
 
@@ -76,7 +79,7 @@ export class _XEventManager_WEB extends _XEventManager {
      * @param listener listener function to be called when event fired
      * @returns listener id
      */
-    once(eventName: string, listener: XEventListener,htmlEvent = false) {
+    once(eventName: string, listener: XEventListener,htmlEvent = true) {
         // console.log("once " + eventName);
         
         return this.on(eventName,listener,{_once:true,_support_html:htmlEvent})

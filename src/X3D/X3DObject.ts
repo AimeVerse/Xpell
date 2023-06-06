@@ -16,13 +16,15 @@ import { XEventListenerOptions, _xem } from "../XEM/XEventManager";
 import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import { Object3D } from "three";
-import X3DLoader from "./X3DLoader";
+import {X3DLoader} from "./X3DLoader";
 
 
 const reservedWords = { _children: "child objects", _position: "position", _rotation: "rotation", _scale: "scale" }
 const xpell_object_html_fields_mapping = {
     "_id": "id",
 };
+
+
 
 
 export type XVector3Data = {
@@ -77,12 +79,15 @@ export class XVector3 {
 }
 
 
+export type X3DListener = (x3dObject: X3DObject,event?:any) => void
+
+
 /**
  * @interface IX3DObjectData
  */
 export interface IX3DObjectData extends XObjectData {
     _cannon_shape?: CANNON.Shape | undefined,
-    _enable_physics?: boolean,
+    _enable_physics?: boolean
     _mass?: number,
     _position?: XVector3Data,
     _rotation?: XVector3Data,
@@ -91,11 +96,13 @@ export interface IX3DObjectData extends XObjectData {
     _fade_duration?: number,
     _three_class?: any,
     _threes_class_args?: Array<any>,
-    _on_frame?: string | Function | undefined,
     _disable_frame_3d_state?: boolean,
     _3d_set_once?: boolean,
     _positional_audio_source?: string,
     _model_url?: string
+    _on_load?: X3DListener
+    _on_click?: X3DListener
+
 }
 
 export class X3DObject extends XObject {
@@ -109,14 +116,14 @@ export class X3DObject extends XObject {
     _position!: THREE.Vector3
     _rotation!: THREE.Euler
     _scale!: THREE.Vector3
-    _on_frame: string | Function | undefined
     _visible!: boolean
     _model_url!: string
     _positional_audio_source!: string
     _3d_set_once!: boolean
     _fade_duration!: number
     _disable_frame_3d_state!: boolean
-
+    _on_load?: X3DListener | undefined
+    _on_click?: X3DListener | undefined
     /**
      * protected fields should not be override by XData object 
      */
@@ -171,6 +178,7 @@ export class X3DObject extends XObject {
     constructor(data: IX3DObjectData, defaults?: any) {
         super(data, defaults, true)
         this.init(data,false)
+        
         this.parse3d(data)
 
         this._animation = true
@@ -179,6 +187,7 @@ export class X3DObject extends XObject {
         this._ignore = reservedWords
         this._clock = new THREE.Clock();
         this._fraction = 0
+        this._loader = X3DLoader
         //this._threes_class_args = []
 
         if (this._positional_audio_source) {
@@ -190,7 +199,8 @@ export class X3DObject extends XObject {
         
         this.addXporterDataIgnoreFields(["_clock", "_ignore", "_three_obj","_log_rules",
             "_three_class", "_threes_class_args", "_positional_audio", "_current_action",
-            "_animation_clips", "_fraction", "_animation_mixer", "_cache_cmd_txt", "_cache_jcmd"])
+            "_animation_clips", "_fraction", "_animation_mixer", "_cache_cmd_txt", "_cache_jcmd",
+            ])
         const vectorHandler = (o:THREE.Vector3 | THREE.Euler) => {
             return {x:o.x,y:o.y,z:o.z}
         }
@@ -555,6 +565,7 @@ export class X3DObject extends XObject {
         }
     }
 
+    
 
     /**
      * Show the X3DObject (if it was hidden)
@@ -621,39 +632,12 @@ export class X3DObject extends XObject {
      * Loads a new 3D model to the X3DObject from a GLTF/GLB file
      * @param modelUrl - url of the model file
      * @returns Promise<THREE.Object3D>
+     * @deprecated
      */
 
     async loadThreeObjectFromGLTF(modelUrl: string): Promise<THREE.Object3D> {
-        return new Promise( (resolve, reject) => {
-            const _onload = (gltf: any) => {
-                const child = gltf.scene
-                child.animations = gltf.animations
-                child.traverse((child2: THREE.Object3D) => {
-                    child2.frustumCulled = false
-                    /** add more */
-                })
-                resolve(child)
-            }
-
-            const _onprogress = (data: any) => { 
-                _xd._o["x3d-loader"] = {
-                    _model_url:modelUrl,
-                    _loaded:data.loaded,
-                    _total:data.total,
-                    _type:"GLTF"
-                }
-                // console.log("Loading GLTF", data.loaded, data.total,_xd._o)
-
-            }
-
-            const _onerror = (error: any) => {
-                _xlog.error("ERROR loading GLTF", error);
-                reject(error)
-            }
-
-            const loader = new GLTFLoader()
-            loader.load(modelUrl, _onload, _onprogress, _onerror)
-        })
+        return X3DLoader.loadModelFromGLTF(modelUrl)
+        
     }
 
     /**
@@ -661,17 +645,40 @@ export class X3DObject extends XObject {
      * @param modelUrl 
      */
     async loadModel(modelUrl?: string) {
-        const modelurl = modelUrl ? modelUrl : this._model_url
+        const modelurl:any = modelUrl ? modelUrl : this._model_url
         if (this._log_rules._load_model) _xlog.log("Loading model " + modelurl)
-        const model: THREE.Object3D = await this.loadThreeObjectFromGLTF(modelurl)
+        const model: THREE.Object3D = await X3DLoader.loadModelFromGLTF(<string>modelUrl) //this.loadThreeObjectFromGLTF(modelurl)
         // if (this._log_rules._load_model) _xlog.log("AFTER Loading model " + modelurl)
         this._three_class = model.type
         this._three_obj = model
+        this._three_obj.name = <string>this._name
+        await this.onLoad()
+    }
+
+    /**
+     * This method is called after the 3D model is loaded
+     * if override this method, call super.onLoad() to activate the default onLoad method
+     */
+    async onLoad() {
+        if(this._on_load) {
+            await this._on_load(this)
+        }
     }
 
 
+    /**
+     * This method is called when the X3DObject is clicked
+     * if override this method, call super.onClick() to activate the default onClick method
+     */
+    async onClick(event?:any) {
+        if(this._on_click) {
+            await this._on_click(this,event)
+        }
+    }
+    
+
     async importAnimationFromGLTF(modelUrl: string, newName: string | undefined) {
-        const model: THREE.Object3D = await this.loadThreeObjectFromGLTF(modelUrl)
+        const model: THREE.Object3D = await X3DLoader.loadModelFromGLTF(modelUrl) //this.loadThreeObjectFromGLTF(modelUrl)
         this.importAnimations(model, newName)
     }
 

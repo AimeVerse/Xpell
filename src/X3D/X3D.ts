@@ -20,6 +20,8 @@ import X3DObject, { IX3DObjectData } from "./X3DObject"
 import { XCameraData, XLightData } from './X3DCoreObjects'
 import X3DPrimitives from "./X3DPrimitives"
 import X3DWorld from './X3DWorld'
+import { X3DLoader } from './X3DLoader'
+import { X3DSceneBackground } from './X3DWorldSceneBackground'
 // import X3DNPC from './X3DNPC'
 // import XObject from '../core/XObject';
 
@@ -39,25 +41,15 @@ export type X3DSceneControl = {
         [k: string]: any
     }
 }
-
-
-
-
 export type X3DPhysicsEngines = "cannon.js"
 export type X3DHelpers = "axes" | "skeleton"
-
-
 
 /**
  * X3DHelper Data 
  */
-
-
 export type X3AxesHelper = {
     size:number
 }
-
-
 /**
  * X3DHelper Data 
  */
@@ -87,29 +79,14 @@ export type X3DApp = {
         _cameras?: {
             [k: string]: XCameraData
         },
-        _background?: {
-            /**
-             * Background type
-             * @description solid-color | gradient | image | video | cube-texture | sphere-texture
-             * params for:
-             * solid-color: color:string
-             * gradient: color1, color2, direction
-             * image: url
-             * video: url
-             * cube-texture: [url1, url2, url3, url4, url5, url6]
-             * sphere-texture: url
-             */
-            _type: "solid-color" | "gradient" | "image" | "video" | "cube-texture" | "sphere-texture", 
-            _params: {
-                [k: string]: any
-            }
-        }
+        _background?: X3DSceneBackground
         _controls?: {
             [k: string]: X3DSceneControl
         }
         _objects?: {
             [k: string]: IX3DObjectData
         }
+        _raycast?:boolean
     },
 
 }
@@ -124,6 +101,9 @@ export class X3DModule extends XModule {
     status!: number;
     
 
+    _raycast_event = "click"
+    
+
     constructor() {
         super({ _name: "x3d" })
         this.importObjectPack(X3DPrimitives)
@@ -133,6 +113,7 @@ export class X3DModule extends XModule {
         //this.world = null
         this.x3dObjects = {}
         _xem.fire("x3d-init")
+        
     }
 
 
@@ -151,7 +132,7 @@ export class X3DModule extends XModule {
     async loadApp(x3dApp:X3DApp, autoRun = true) {
         this.world = new X3DWorld(x3dApp)
         this.status = X3DEngineStatus.Ready
-
+        if(x3dApp._scene._raycast) this.enableRaycast()
         window.addEventListener('resize', () => {
             X3D.onWindowResize()
         }, false);
@@ -243,51 +224,66 @@ export class X3DModule extends XModule {
         _xem.fire("x3d-world-load")
     }
 
-    get_objects_available() {
-        const rejected_words = ["material", "geometry", "mesh"];
-        const obj_names = Object.keys(X3DPrimitives.getObjects());
-        let shapes_list = [];
+    // get_objects_available() {
+    //     const rejected_words = ["material", "geometry", "mesh"];
+    //     const obj_names = Object.keys(X3DPrimitives.getObjects());
+    //     let shapes_list = [];
 
-        shapes_list = obj_names.filter((el) => !rejected_words.includes(el));
-        return shapes_list
+    //     shapes_list = obj_names.filter((el) => !rejected_words.includes(el));
+    //     return shapes_list
+    // }
+
+
+    enableRaycast(event = "click") {
+        this._raycast_event = event
+        document.addEventListener(event, this.raycast, false);
     }
 
 
+    disableRaycast() {
+        document.removeEventListener(this._raycast_event, this.raycast, false);
+    }
+
     raycast(e:any) {
-        const cam = this.world?.defaultCamera;
+        
+        const cam = X3D.world?.defaultCamera;
         const mouse = { x: 0, y: 0 }
-
+        
         const div = e.target
+        
+        // console.log("div",e.target,div.tagName.toLowerCase() == X3D.world.renderer.domElement.tagName.toLowerCase());
 
-
-        if (div.tagName.toLowerCase() != this.world?.renderer.domElement.tagName.toLowerCase()) return
+        if (div.tagName.toLowerCase() != X3D.world?.renderer.domElement.tagName.toLowerCase()) return
+        // console.log("div",div);
 
         if (e.which != 1) return;
 
+        
 
         mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
         mouse.y = - (e.clientY / window.innerHeight) * 2 + 1;
 
 
-        this.world?.raycaster.setFromCamera(mouse, cam);
+        X3D.world?.raycaster.setFromCamera(mouse, cam);
 
 
-        const intersects = this.world?.raycaster.intersectObjects(this.world.scene.children);
+        const intersects = X3D.world?.raycaster.intersectObjects(X3D.world.scene.children);
 
+        //array of all intersected x3d objects in the top level (parent.type = scene)
+        const x3dIntersectedObjects:Record<string,X3DObject> = {}
         intersects?.forEach((ints) => {
 
             if (ints?.object) {
                 let obj = ints.object
+                // console.log("obj",obj.name);
+                
                 let found = false
                 //search all child objects to find the root object
                 while (obj.parent && !found) {
                     if (obj.parent.type == "Scene") {
 
-                        const x3dObject = X3D._object_manager.getObjectByName(obj.name)
-                        if (x3dObject) {
-                            //X3D.world.setTransformControls(x3dObject)
-                            _xem.fire("raycast-data", {  x3dObject: x3dObject } )
-                        }
+                        const x3dObject:X3DObject = <X3DObject>X3D.getObject(obj.name)
+                        x3dIntersectedObjects[x3dObject._id] = x3dObject
                         found = true
                     }
                     else {
@@ -297,16 +293,22 @@ export class X3DModule extends XModule {
             }
         })
 
+        Object.keys(x3dIntersectedObjects).forEach((key) => {
+            x3dIntersectedObjects[key].onClick(e)
+        })
+
+        
+
     }
 
-    set_world_control_target(cameraTarget:THREE.Vector3) {
+    // set_world_control_target(cameraTarget:THREE.Vector3) {
 
-        if (this.world?.controls) {
-            //const cameraTarget = new THREE.Vector3(0.2,0.2,0)
-            //this.world.controls.target = cameraTarget
-            this.world.defaultCamera.position.set(cameraTarget.x, cameraTarget.y + 0.5, cameraTarget.z + 3)
-        }
-    }
+    //     if (this.world?.controls) {
+    //         //const cameraTarget = new THREE.Vector3(0.2,0.2,0)
+    //         //this.world.controls.target = cameraTarget
+    //         this.world.defaultCamera.position.set(cameraTarget.x, cameraTarget.y + 0.5, cameraTarget.z + 3)
+    //     }
+    // }
 
 
     // document.addEventListener('keydown', (event) => {
