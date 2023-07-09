@@ -198,6 +198,7 @@ export class X3DModule extends XModule {
     async loadObject(data: IX3DObjectData) {
         const obj = await this.create(data)
         this.world.addX3DObject(obj)
+        return obj
     }
 
     /**

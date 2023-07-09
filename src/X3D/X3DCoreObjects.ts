@@ -31,11 +31,20 @@ export const threeGeometries:{[name:string]:any} = {
 
 
 export const threeMaterials:{[name:string]:any} = {
-    "standard-material": THREE.MeshPhysicalMaterial,
     "basic-material": THREE.MeshBasicMaterial,
     "shader-material": THREE.ShaderMaterial,
-    "phong-material":THREE.MeshPhongMaterial
-
+    "phong-material":THREE.MeshPhongMaterial,
+    "lambert-material":THREE.MeshLambertMaterial,
+    "toon-material":THREE.MeshToonMaterial,
+    "line-material":THREE.LineBasicMaterial,
+    "line-dashed-material":THREE.LineDashedMaterial,
+    "points-material":THREE.PointsMaterial,
+    "sprite-material":THREE.SpriteMaterial,
+    "physical-material":THREE.MeshPhysicalMaterial,
+    "depth-material":THREE.MeshDepthMaterial,
+    "normal-material":THREE.MeshNormalMaterial,
+    "standard-material":THREE.MeshStandardMaterial,
+    "matcap-material":THREE.MeshMatcapMaterial,  
 }
 
 
@@ -175,7 +184,21 @@ export class XMaterial extends X3DObject {
         const s2t:{[name:string]:string} = {
             "_normal_map": "normalMap",   
             "_dp_map": "displacementMap",
-            "_texture_map": "map"
+            "_displacement_map": "displacementMap",
+            "_texture_map": "map",
+            "_roughness_map": "roughnessMap",
+            "_ao_map": "aoMap",
+            "_emissive_map": "emissiveMap",
+            "_light_map": "lightMap",
+            "_metalness_map": "metalnessMap",
+            "_bump_map": "bumpMap",
+            "_alpha_map": "alphaMap",
+            "_env_map": "envMap",
+            "_gradient_map": "gradientMap",
+            "_specular_map": "specularMap",
+            "_clearcoat_map": "clearcoatMap",
+            "_clearcoat_roughness_map": "clearcoatRoughnessMap",
+            "_clearcoat_normal_map": "clearcoatNormalMap",
         }
 
         let tca_params :{[name:string]:any} = {
@@ -205,6 +228,14 @@ export class XMaterial extends X3DObject {
                             } catch (e) {
                                 console.error("XMaterial unable to load texture for " + name + " reason:" + e)
                             }
+                        
+                        } else if (key == "video-texture") {
+                            try {
+                                tca_params[s2t[name]] = new THREE.VideoTexture(lmap["video-texture"]);
+                            } catch (e) {
+                                console.error("XMaterial unable to load texture for " + name + " reason:" + e)
+                            }
+                        
                         } else {
                             if (typeof lmap[key] == "string" && lmap[key].startsWith("$")) { // spell value
                                 const ks = lmap[key].split(" ")

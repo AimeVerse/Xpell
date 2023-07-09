@@ -87,5 +87,5 @@ export {X3DPrimitives,XBox,XCone,XCylinder,XPlane,XSphere,XTorus,XCircle} from "
 export {X3DWorld,XWorldStatus} from "./src/X3D/X3DWorld"
 export {XEditor,XTransformControls } from "./src/XUI/XEditor"
 export {X3DLoader} from "./src/X3D/X3DLoader"
-export {XDB} from "./src/XDB/XDB"
+export {XDB,XDB as _xdb,_XDataBase} from "./src/XDB/XDB"
 

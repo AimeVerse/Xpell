@@ -182,6 +182,18 @@ export class XUIObject extends XObject {
         return this._dom_object;
     }
 
+
+    /**
+     * DOM Getter 
+     * @returns the HTML DOM object same as getDOMObject()
+     */
+    get dom() {
+        return this.getDOMObject()
+    }
+
+    
+
+
     /**
      * Gets the HTML representation of the object
      * @returns the HTML representation of the object

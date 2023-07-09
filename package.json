@@ -1,6 +1,6 @@
 {
   "name": "xpell",
-  "version": "1.0.64",
+  "version": "1.0.68",
   "description": "Xpell UI JS Framework",
   "files": [
     "dist",
@@ -38,13 +38,13 @@
     "draco3d": "^1.5.6",
     "typedoc": "^0.23.10",
     "vite": "^3.0.2",
-    "vite-plugin-dts": "^1.7.2"
+    "vite-plugin-dts": "^1.0.5"
   },
   "dependencies": {
     "cannon-es": "^0.20.0",
     "nipplejs": "^0.9.1",
     "three": "^0.143.0",
     "three-to-cannon": "^4.2.0",
-    "xpell-core": "^0.0.514"
+    "xpell-core": "^0.0.515"
   }
 }

@@ -56,7 +56,10 @@ Xpell-Core:
             * getObject(objectId) -> gets an object from the module object manager
 
 
-
+XDB:  
+    - XDB package created
+    - data types : Objects + strings
+    - encoding - base64 / plain text
 
 
 1.0.5:

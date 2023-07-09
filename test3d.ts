@@ -26,14 +26,14 @@ export const world: X3DApp = {
                 _light: "ambient",
                 color: 0x888888
             },
-            // "p1": {
-            //     _id: "directional-light",
-            //     _type: "light",
-            //     _light: "directional",
-            //     color: "hsl(0, 100%, 100%)",
-            //     intensity: 0.5,
-            //     _position: { x: 0, y: 3, z: 2 },
-            // },
+            "p1": {
+                _id: "directional-light",
+                _type: "light",
+                _light: "directional",
+                color: "hsl(0, 100%, 100%)",
+                intensity: 1,
+                _position: { x: 0, y: 3, z: 2 },
+            },
         },
         _cameras: {
             "main-cam": {
@@ -102,11 +102,10 @@ export const world: X3DApp = {
                 _rotation: { x: Math.PI / 2, y: 0, z: 0 },
                 _enable_physics: true,
                 _mass: 0,
-               
-                // _on_frame: `follow-joystick`
+                
             },
-            "home": {
-                _id: "home",
+            "robot": {
+                _id: "robot",
                 _type: "xmodel",
                 _model_url: "https://cdn.aimeverse.com/get/a56801dc-09ba-4f50-a1ab-325571f84bc0",
             },
@@ -120,20 +119,20 @@ export const world: X3DApp = {
         _background: {
             _type: "gradient",
             _params: {
-                _color: "red",
+                // _color: "red",
                 _color1:"red",
                 _color2:"blue",
                 // _direction_deg:"45",
-                _path:"/public/sky",
-                _px:"px.png",
-                _nx:"nx.png",
-                _py:"py.png",
-                _ny:"ny.png",
-                _pz:"pz.png",
-                _nz:"nz.png",
+                // _path:"/public/sky",
+                // _px:"px.png",
+                // _nx:"nx.png",
+                // _py:"py.png",
+                // _ny:"ny.png",
+                // _pz:"pz.png",
+                // _nz:"nz.png",
 
 
-                _url:"/public/industrial_sunset_02_puresky_1k.hdr"
+                // _url:"/public/industrial_sunset_02_puresky_1k.hdr"
                 // _url:"/public/digital_painting_moon.jpg" //shpere
                 // _url:"https://images.pexels.com/photos/3768263/pexels-photo-3768263.jpeg?cs=srgb&dl=pexels-castorly-stock-3768263.jpg&fm=jpg" //image
                 // _url: "https://cdn.aimeverse.com/get/8f0729b0-5f6f-491b-a067-acd3fca703b4", //video
@@ -188,6 +187,7 @@ async function main() {
         _parent_element: "player",
         // _visible: false,
         style:"color:white",
+        _on_click: "log",
         _on_data:(obj,data:any) => {
             // console.log(data);
              

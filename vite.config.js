@@ -1,5 +1,10 @@
-import {resolve} from 'path'
+import {resolve,dirname} from 'path'
 import dts from 'vite-plugin-dts'
+import { fileURLToPath } from 'url';
+
+
+// const __filename = fileURLToPath(import.meta.url);
+// const __dirname = dirname(__filename);
 
 const index = resolve(__dirname, 'index.ts')
 
