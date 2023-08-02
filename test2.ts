@@ -22,10 +22,6 @@ _x.start()
 
 
 
-setTimeout(() => {
-    XData._o["my-data"] = "Hello World 2"
-}, 1000);
-
 // _xdb.encode = true
 
 
@@ -34,106 +30,159 @@ setTimeout(() => {
 
 
 
-class XTable extends XUIObject {
+// class XTable extends XUIObject {
 
-    _type = "xtable"
-    _html_tag: string = "table"
-    _fields: string[] = []
-    _data: any[] = []
-    _table_header: XUIObject 
-    constructor(data){
-        super(data,{},true)
-        this.parse(data)
-        // this._children
-        // console.log(this._fields);
-        this.createTableHeader()
+//     _type = "xtable"
+//     _html_tag: string = "table"
+//     _fields: string[] = []
+//     _data: any[] = []
+//     _table_header: XUIObject 
+//     constructor(data){
+//         super(data,{},true)
+//         this.parse(data)
+//         // this._children
+//         // console.log(this._fields);
+//         this.createTableHeader()
         
         
-    }
+//     }
 
-    createTableHeader(){
-        const tableHeader = {
-            _type:"xhtml",
-            _html_tag:"thead",
-            _children:[]
-        }
+//     createTableHeader(){
+//         const tableHeader = {
+//             _type:"xhtml",
+//             _html_tag:"thead",
+//             _children:[]
+//         }
 
-        this._fields.forEach(field => {
-            const cell = {
-                _type:"xhtml",
-                _html_tag:"th",
-                _text: field["_title"] 
-            }
-            tableHeader._children.push(cell)
-        });
-
-
-        this._table_header = XUI.create(tableHeader)
-        this._children.push(this._table_header)
-    }
+//         this._fields.forEach(field => {
+//             const cell = {
+//                 _type:"xhtml",
+//                 _html_tag:"th",
+//                 _text: field["_title"] 
+//             }
+//             tableHeader._children.push(cell)
+//         });
 
 
-    showData(){
-        if(this._data.length == 0) return
-        console.log(this._data);
+//         this._table_header = XUI.create(tableHeader)
+//         this._children.push(this._table_header)
+//     }
+
+
+//     showData(){
+//         if(this._data.length == 0) return
+//         console.log(this._data);
         
-        const tableBody = {
-            _type:"xhtml",
-            _html_tag:"tbody",
-            _children:[]
-        }
-        this._data.forEach(row => {
-            const tableRow = {
-                _type:"xhtml",
-                _html_tag:"tr",
-                _children:[]
-            }
-            this._fields.forEach(field => {
-                const cell = {
-                    _type:"xhtml",
-                    _html_tag:"td",
-                    _text:row[field._src]
-                }
-                tableRow._children.push(cell)
-            });
-            tableBody._children.push(tableRow)
-        }
+//         const tableBody = {
+//             _type:"xhtml",
+//             _html_tag:"tbody",
+//             _children:[]
+//         }
+//         this._data.forEach(row => {
+//             const tableRow = {
+//                 _type:"xhtml",
+//                 _html_tag:"tr",
+//                 _children:[]
+//             }
+//             this._fields.forEach(field => {
+//                 const cell = {
+//                     _type:"xhtml",
+//                     _html_tag:"td",
+//                     _text:row[field._src]
+//                 }
+//                 tableRow._children.push(cell)
+//             });
+//             tableBody._children.push(tableRow)
+//         }
 
-        );
-        const tbody = XUI.create(tableBody)
-        this.append(tbody)
-    }
+//         );
+//         const tbody = XUI.create(tableBody)
+//         this.append(tbody)
+//     }
 
 
 
     
-}
+// }
 
-XUI.importObject("xtable",XTable)
-
-
+// XUI.importObject("xtable",XTable)
 
 
 
-const myTable  = {
-    _type:"xtable",
-    _id:"my-table",
-    border:1,
-    _fields:[
-        {_title:"Name",_src:"_space_name"},
-        {_title:"Desc",_src:"_space_desc"},
-    ],
-    _data:[
-        {_space_name:"space-1",_space_desc:"the first space"},
-        {_space_name:"space-2",_space_desc:"the second space"}
-    ],
+
+const myView = {
+    _type:"view",
+    _id:"my-view",
     // _text:"Hello World",
-    // style:"width:100%;height:100%;background-color:red",
+    style:"width:100%;height:100%",
     _parent_element:"controls",
-    
+    _children:[
+        {
+            _id:"menu1",
+            _type:"view",
+            _text:"menu1",
+            style:"text-align:center",
+        },
+        {
+            _id:"menu2",
+            _type:"text",
+            _text:"menu2",
+            style:"text-align:center"
+        },
+        {
+            //submit button
+            _id:"menu3",
+            _type:"button",
+            _text:"submit",
+            style:"text-align:center",
+        }
+    ]
+    // _on_frame:(obj:XUIObject,frameNumber:number) => {
+    //     obj.setText("frame: " + frameNumber)
+    //     //change the text color every frame with hsl
+    //     obj.dom.style.color = "hsl(" + (frameNumber % 360) + ", 100%, 50%)";
+    // },
+    // _on_click:(obj:XUIObject,e:HTMLEvent) => {
+    //     console.log("clicked");
+    // }
+    // _data_source: "frame-number",
+    // _on_data:(obj:XUIObject,data:any) => {
+    //     obj.getDOMObject().textContent = data
+    // }
+
 }
 
-XUI.loadControl(myTable).showData()
+
+// setTimeout(() => {
+//     XData._o["my-data"] = "Hello World 2"
+// }, 1000);
+
+
+
+XUI.loadControl(myView)
+
+
+
+
+// const myTable  = {
+//     _type:"xtable",
+//     _id:"my-table",
+//     border:1,
+//     _fields:[
+//         {_title:"Name",_src:"_space_name"},
+//         {_title:"Desc",_src:"_space_desc"},
+//     ],
+//     _data:[
+//         {_space_name:"space-1",_space_desc:"the first space"},
+//         {_space_name:"space-2",_space_desc:"the second space"}
+//     ],
+//     // _text:"Hello World",
+//     // style:"width:100%;height:100%;background-color:red",
+//     _parent_element:"controls",
+    
+// }
+
+// XUI.loadControl(myTable).showData()
 
 
 // const xapp:XUIApp = {
@@ -345,3 +394,6 @@ XUI.loadControl(myTable).showData()
 //     // console.log(ttso.getVoices());
 
 // })
+
+
+

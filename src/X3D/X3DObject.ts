@@ -275,7 +275,13 @@ export class X3DObject extends XObject {
      * @comment effects only if Xpell engine controls the position (_disable_frame_3d_state = false - default)
      */
     setPosition(positionObject: { x: number, y: number, z: number }) {
-        this._position.set(positionObject.x, positionObject.y, positionObject.z) //incase Xpell engine controls the position
+        //check if position is typeof THREE.Vector3
+        if (positionObject instanceof THREE.Vector3) {
+            this._position.set(positionObject.x, positionObject.y, positionObject.z) //incase Xpell engine controls the position
+        }
+        else {
+            this._position = new THREE.Vector3(positionObject.x, positionObject.y, positionObject.z) //incase Xpell engine controls the position
+        }
 
         this._cannon_obj?.position.set(this._position.x, this._position.y, this._position.z)
         // const srcObj = (this._cannon_obj) ? this._cannon_obj : this._three_obj
@@ -297,8 +303,14 @@ export class X3DObject extends XObject {
      * @comment effects only if Xpell engine controls the position (_disable_frame_3d_state = false - default)
      */
     setRotation(rotationObject: { x: number, y: number, z: number, order?: string }) {
-        this._rotation.set(rotationObject.x, rotationObject.y, rotationObject.z, rotationObject.order) //incase Xpell engine controls the position
-        this?._cannon_obj?.quaternion.setFromEuler(this._rotation.x, this._rotation.y, this._rotation.z)
+        //check if rotation is typeof THREE.Euler
+        if(!rotationObject.order) rotationObject.order = "XYZ"
+        if (rotationObject instanceof THREE.Euler) {
+            this._rotation.set(rotationObject.x, rotationObject.y, rotationObject.z, rotationObject.order) //incase Xpell engine controls the position
+        } else {
+            this._rotation = new THREE.Euler(rotationObject.x, rotationObject.y, rotationObject.z, rotationObject.order) //incase Xpell engine controls the position
+        }
+        this?._cannon_obj?.quaternion.setFromEuler(this._rotation.x, this._rotation.y, this._rotation.z, this._rotation.order)
     }
 
     /**

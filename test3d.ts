@@ -96,7 +96,7 @@ export const world: X3DApp = {
                     side: 1,
                     transparent: true,
                     opacity: 1,
-                    wireframe: true
+                    // wireframe: true
                 },
                 _position: { x: 0, y: 0.01, z: 0 },
                 _rotation: { x: Math.PI / 2, y: 0, z: 0 },
@@ -204,40 +204,40 @@ async function main() {
     }
     XUI.loadObject(loadingLabel)
 
-    XUI.loadObject({
-        _id: "mysvg",
-        _type: "svg",
-        viewBox: "0 0 100 100",
-        height: "100px",
-        width: "100px",
-        _children: [
-            {
-                _type: "circle",
-                cx: "50",
-                cy: "50",
-                r: "40",
-                stroke: "green",
-                "stroke-width": "4",
-                fill: "yellow"
-            },
-            {
-                _type: "rect",
-                x: "15",
-                y: "15",
-                width: "70",
-                height: "70",
-                stroke: "red",
-                "stroke-width": "4",
-            }
-        ],
-        _on_frame: (obj, f) => {
-            // console.log("click", obj, e);
-            const colors = ["red", "green", "blue", "yellow", "orange", "purple"]
-            // obj.getDOMObject().children[0].style.fill = colors[f % colors.length]
-            obj.getDOMObject().children[1].style.fill = "hsl(" + f % 360 + ",100%,50%)"
-        },
-        _parent_element: "player",
-    })
+    // XUI.loadObject({
+    //     _id: "mysvg",
+    //     _type: "svg",
+    //     viewBox: "0 0 100 100",
+    //     height: "100px",
+    //     width: "100px",
+    //     _children: [
+    //         {
+    //             _type: "circle",
+    //             cx: "50",
+    //             cy: "50",
+    //             r: "40",
+    //             stroke: "green",
+    //             "stroke-width": "4",
+    //             fill: "yellow"
+    //         },
+    //         {
+    //             _type: "rect",
+    //             x: "15",
+    //             y: "15",
+    //             width: "70",
+    //             height: "70",
+    //             stroke: "red",
+    //             "stroke-width": "4",
+    //         }
+    //     ],
+    //     _on_frame: (obj, f) => {
+    //         // console.log("click", obj, e);
+    //         const colors = ["red", "green", "blue", "yellow", "orange", "purple"]
+    //         // obj.getDOMObject().children[0].style.fill = colors[f % colors.length]
+    //         obj.getDOMObject().children[1].style.fill = "hsl(" + f % 360 + ",100%,50%)"
+    //     },
+    //     _parent_element: "player",
+    // })
 
 
     // _xd._o["loading-label"] = "loadingLabel"
@@ -245,6 +245,11 @@ async function main() {
 
 
     await _xem.fire("e1", { "a": 1, "b": 2 },true)
+
+
+    X3D.getObject("robot")._on_frame = (obj, f) => {
+        obj._rotation.y += 0.01
+    }
     // console.log(_xem)
     // document.dispatchEvent(new CustomEvent("e1", { detail: { "a": 1, "b": 2 } }))
     

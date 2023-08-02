@@ -23,7 +23,7 @@ X3D:
           - sphere-texture
           - hdri
       - XLoader support draco loader
-
+      - X3DObject position/rotation/scale error fix for TransformControls
   XEM:
       - change "on" method listener and add options (XEventListener and XEventListenerOptions)
       - new "once" method to run the listener once (equiv to send options {once:true} to "on" method)

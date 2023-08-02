@@ -35,6 +35,10 @@ export default {
         // Provide global variables to use in the UMD build
         // for externalized deps
         globals: {
+          three: "THREE",
+          "cannon-es": "CANNON",
+          "three-to-cannon": "THREE_TO_CANNON",
+          nipplejs: "NippleJS"
         }
       }
     }
