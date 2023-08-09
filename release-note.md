@@ -14,6 +14,8 @@ X3D:
       - attributes
         - _on_load - trigger when model loaded
         - _on_click - trigger on raycast click from 3D objects.
+        - _load_animations - to load all animations from base model
+        - _play_all_animations - auto play model animations (calls _load_animations if necessary)
         - supported background for scene 
           - solid-color
           - gradient

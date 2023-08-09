@@ -99,6 +99,8 @@ export interface IX3DObjectData extends XObjectData {
     _disable_frame_3d_state?: boolean,
     _3d_set_once?: boolean,
     _positional_audio_source?: string,
+    _load_animations?: boolean,
+    _auto_play_animation?: boolean,
     _model_url?: string
     _on_load?: X3DListener
     _on_click?: X3DListener
@@ -122,6 +124,8 @@ export class X3DObject extends XObject {
     _3d_set_once!: boolean
     _fade_duration!: number
     _disable_frame_3d_state!: boolean
+    _load_animations: boolean = false
+    _auto_play_animation: boolean = false
     _on_load?: X3DListener | undefined
     _on_click?: X3DListener | undefined
     /**
@@ -146,6 +150,7 @@ export class X3DObject extends XObject {
             _play_animation: false,
             _load_model: false
         }
+    #_anim_loaded: boolean;
 
 
 
@@ -523,6 +528,8 @@ export class X3DObject extends XObject {
     }
 
 
+    
+
 
     /**
      * onFrame function for x3d-object
@@ -681,11 +688,25 @@ export class X3DObject extends XObject {
      * if override this method, call super.onLoad() to activate the default onLoad method
      */
     async onLoad() {
+        this.#_anim_loaded = false
+        if(this._load_animations) {
+            await this.loadAnimations()
+            this.#_anim_loaded = true
+        }
         if(this._on_load) {
             await this._on_load(this)
         }
     }
 
+    async onMount(): Promise<void> {
+        if(this._auto_play_animation) {
+            if(!this.#_anim_loaded) {
+                await this.loadAnimations()
+            }
+            this.playAllAnimations()
+        }
+        super.onMount()
+    }
 
     /**
      * This method is called when the X3DObject is clicked
@@ -750,9 +771,11 @@ export class X3DObject extends XObject {
      * loads animation on start or after create object
      */
     async loadAnimations() {
-
+        // console.log("loadAnimations",this._three_obj);
+        
         if (this._three_obj && this._three_obj.animations.length > 0) {
             const anim = this._three_obj.animations
+            
             this._animation_mixer = new THREE.AnimationMixer(this._three_obj)
             anim.forEach(__anim => {
                 if (this._animation_mixer) {
@@ -768,7 +791,21 @@ export class X3DObject extends XObject {
         this._animation_mixer?.stopAllAction()
     }
 
-
+    playAllAnimations() {
+        
+        Object.keys(this._animation_clips).forEach((clipName) => {
+            const clip = this._animation_clips[clipName]
+            // const clip = animationAction._clip.name
+                clip.reset()
+                clip.time = 0.0
+                // console.log("playAllAnimations",clip);
+                
+                clip.play()
+                this._current_action = clipName
+                // this.playAnimation(clipName)
+            
+        })
+    }
 
     // playRandomStateAnimation(state: string) {
     //     this.playAnimation(state + "-" + _xu.getRandomInt(1, this._npc_state_animations[state].length))

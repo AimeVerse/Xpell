@@ -107,7 +107,9 @@ export const world: X3DApp = {
             "robot": {
                 _id: "robot",
                 _type: "xmodel",
-                _model_url: "https://cdn.aimeverse.com/get/a56801dc-09ba-4f50-a1ab-325571f84bc0",
+                _model_url: "https://cdn.aimeverse.com/u/cakering-level",
+                // _load_animations: true,
+                _auto_play_animation: true,
             },
             // "home2": {
             //     _id: "home2",
@@ -198,7 +200,7 @@ async function main() {
         
         _on:{
             "e1":(obj,data) => {
-                console.log("E1",data);
+                // console.log("E1",data);
             },    
         },
     }
@@ -246,10 +248,11 @@ async function main() {
 
     await _xem.fire("e1", { "a": 1, "b": 2 },true)
 
-
-    X3D.getObject("robot")._on_frame = (obj, f) => {
-        obj._rotation.y += 0.01
-    }
+    const rob=X3D.getObject("robot")
+    // rob._on_frame = (obj, f) => {
+    //     obj._rotation.y += 0.01
+    // }
+    
     // console.log(_xem)
     // document.dispatchEvent(new CustomEvent("e1", { detail: { "a": 1, "b": 2 } }))
     
