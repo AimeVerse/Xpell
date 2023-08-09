@@ -150,7 +150,7 @@ export class X3DObject extends XObject {
             _play_animation: false,
             _load_model: false
         }
-    #_anim_loaded: boolean;
+    #_anim_loaded: boolean = false
 
 
 
