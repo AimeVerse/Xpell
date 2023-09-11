@@ -113,7 +113,7 @@ _x.start()
 const myView = {
     _type:"view",
     _id:"my-view",
-    // _text:"Hello World",
+    _text:"Hello World",
     style:"width:100%;height:100%",
     _parent_element:"controls",
     _children:[
@@ -136,7 +136,7 @@ const myView = {
             _text:"submit",
             style:"text-align:center",
         }
-    ]
+    ],
     // _on_frame:(obj:XUIObject,frameNumber:number) => {
     //     obj.setText("frame: " + frameNumber)
     //     //change the text color every frame with hsl
@@ -145,17 +145,17 @@ const myView = {
     // _on_click:(obj:XUIObject,e:HTMLEvent) => {
     //     console.log("clicked");
     // }
-    // _data_source: "frame-number",
-    // _on_data:(obj:XUIObject,data:any) => {
-    //     obj.getDOMObject().textContent = data
-    // }
+    _data_source: "my-data",
+    _on_data:(obj:XUIObject,data:any) => {
+        obj.setText(data)
+    }
 
 }
 
 
-// setTimeout(() => {
-//     XData._o["my-data"] = "Hello World 2"
-// }, 1000);
+setTimeout(() => {
+    XData._o["my-data"] = "Hello World 2"
+}, 1000);
 
 
 

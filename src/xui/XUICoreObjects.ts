@@ -150,7 +150,16 @@ export class XTextField extends XUIObject {
             class:"x" + tag,
             _html_tag:"input"
         }
-        super(data,defaults);
+        super(data,defaults,true);
+        if(this._text) this.value = this._text
+        this.parse(data)
+    }
+
+    setText(text:string) {
+        this._text = text
+        if(this.dom) {
+            (<HTMLInputElement>(this.dom)).value = text
+        }
     }
 }
 
@@ -400,6 +409,7 @@ export class XUIObjects extends XObjectPack {
     static getObjects() {
         return {
             "view":XView,
+            "div":XView,
             "label":XLabel,
             "link" :XLink,
             "button" :XButton,

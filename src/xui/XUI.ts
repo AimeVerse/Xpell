@@ -1,8 +1,8 @@
 
 /**
- * XUI.JS
+ * XUI Module - Xpell User Interface Module for HTML and CSS
  * @description Universal User Interface (UI) HTML Engine  for Javascript supporting devices & browsers
- * @author Tamir Fridman <tamirf@yahoo.com>
+ * @author Tamir Fridman <fridman.tamir@gmail.com>
  *
  */
 
@@ -11,13 +11,12 @@ import {XViewManager,XViewsPack} from "./XViewManager"
 import { _xlog,XParser,_xem,XModule,XModuleData, IXObjectData, XObjectData } from "xpell-core";
 
 import XUICoreObjects from "./XUICoreObjects"
-//  import SpellDashboardObjects from "./spell-dashboard"
-//  import SpellMoveControls  from "./sui-objects/spell-move-controls";
-// import * as _xc from "../XConst"
 
 
 
-
+/**
+ * XUIApp is the Xpell UI Application object, it can hold views and controls
+ */
 export type XUIApp = {
     xpell?: {
         version?: number //minimum xpell version for the app
@@ -28,9 +27,11 @@ export type XUIApp = {
         [k:string] : {} | string
     }
 }
-
 export const FIRST_USER_GESTURE = "first-user-gesture"
 
+/**
+ * XUI Module - Xpell User Interface Module for HTML and CSS
+ */
 export class XUIModule extends XModule {
     vm: XViewManager
     _first_gesture_occured : boolean
@@ -135,7 +136,7 @@ export class XUIModule extends XModule {
      * @param data - the XUIObject data
      * @returns XUIObject
      */
-    loadObject(data:IXObjectData): XUIObject {
+    loadObject(data:XObjectData): XUIObject {
         const xobj = this.create(data)
         const ctrl = xobj.getDOMObject()
         

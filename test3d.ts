@@ -44,7 +44,7 @@ export const world: X3DApp = {
                 _rotation: { x: 0, y: 0, z: 0 },
                 _disable_frame_3d_state: true,
                 _3d_set_once: true,
-                fov: 30,
+                fov: 50,
                 ratio: window.innerWidth / window.innerHeight,
                 far: 1000,
                 close: 0.01,
