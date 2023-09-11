@@ -89,7 +89,7 @@ export {XEditor,XTransformControls } from "./src/XUI/XEditor"
 export {X3DLoader} from "./src/X3D/X3DLoader"
 export {XDB,XDB as _xdb,_XDataBase} from "./src/XDB/XDB"
 
-export {XAI,XAI as _xai} from "./src/XAI/XAI"
+export {XAI,XAI as _xai,XAIModule} from "./src/XAI/XAI"
 export {XAIObject} from "./src/XAI/XAIObject"
 export {XAIObjects,XTTS} from "./src/XAI/XAICoreObjects"
 
