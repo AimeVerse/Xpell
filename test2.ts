@@ -13,6 +13,9 @@ _x.verbose()
 
 //load Xpell UI (XUI) Module
 _x.loadModule(XUI)
+
+_x.loadModule(XAI)
+
 // _x.loadModule(XAI)
 XUI.importObjectPack(XEditor)
 
@@ -20,7 +23,14 @@ XUI.importObjectPack(XEditor)
 // start Xpell frame engine
 _x.start()
 
+// console.log(XAI);
 
+
+// const tts = XAI.create({_type:"tts",_voice:"Samantha"})
+// tts.loadVoices()
+// console.log(tts.getVoices());
+
+// tts.speak("Hello World")
 
 // _xdb.encode = true
 
@@ -113,7 +123,7 @@ _x.start()
 const myView = {
     _type:"view",
     _id:"my-view",
-    _text:"Hello World",
+    // _text:"Hello World",
     style:"width:100%;height:100%",
     _parent_element:"controls",
     _children:[
@@ -135,6 +145,40 @@ const myView = {
             _type:"button",
             _text:"submit",
             style:"text-align:center",
+        },
+        {
+            _id: "search-form",
+            _type: "view",
+            class: "musicbox-search",
+            _children: [
+                {
+                    _id: "search-input",
+                    _type: "text",
+                    // class: "search-input",
+                    placeholder: "Youtube Search",
+                    _on_mount: (obj:XUIObject) => {
+                        console.log("search input mounted");
+                        
+                    },
+                    _on:{
+                        keyup: async (obj:XUIObject,e) => {
+                            console.log("key up");
+                            
+                            if(e.key == "Enter") {
+                                // obj.hide()
+                                XUI.getObject("search-form").hide()
+                                const q = obj.dom.value
+                                
+                            }
+                            //close on esc key
+                            else if(e.key == "Escape") {
+                                XUI.getObject("search-form").hide()
+                                obj.dom.value = ""
+                            }
+                        }
+                    }
+                }
+            ]
         }
     ],
     // _on_frame:(obj:XUIObject,frameNumber:number) => {
@@ -147,7 +191,7 @@ const myView = {
     // }
     _data_source: "my-data",
     _on_data:(obj:XUIObject,data:any) => {
-        obj.setText(data)
+        // obj.setText(data)
     }
 
 }

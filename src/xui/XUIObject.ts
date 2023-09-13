@@ -52,6 +52,7 @@ export class XUIObject extends XObject {
         this.init(data,skipParse)
         
         
+        
     }
 
 
@@ -65,56 +66,6 @@ export class XUIObject extends XObject {
         this._dom_object = null
         super.dispose()
     }
-
-
-
-
-    /**
-     * XUI Support For XEM & HTML Events
-     */
-
-    // parseEvents(options?:any) {
-    //     console.log("parseEvents",options);
-    //     Object.keys(this._on).forEach(eventName => {
-            
-    //         if(typeof this._on[eventName] === "function") {
-    //             console.log("parseEvents",eventName,this._on[eventName],options);
-    //             this.addEventListener(eventName,this._on[eventName],options)
-    //         }
-    //         // else if(typeof this._on[eventName] === "string") {
-    //         //     console.error("string event handler not supported yet")
-    //         // }
-    //         else {
-    //             throw new Error("event handler must be a function " +eventName)
-    //         }
-    //     })
-    //     const onceOptions:any = (options) ? options : {}
-    //     onceOptions._once = true
-
-    //     Object.keys(this._once).forEach(eventName => {
-    //         if(typeof this._once[eventName] === "function") {
-    //             this.addEventListener(eventName,this._once[eventName],onceOptions)
-    //         }
-    //         // else if(typeof this._on[eventName] === "string") {
-    //         //     console.error("string event handler not supported yet")
-    //         // }
-    //         else {
-    //             throw new Error("event handler must be a function")
-    //         }
-    //     })
-    //     // super.parseEvents(options)
-    //     // if (this._dom_object) {
-    //     //     this._events.forEach((event:string) => {
-    //     //         this._dom_object.addEventListener(event, (e:Event) => {
-    //     //             this.run(e.type)
-    //     //         })
-    //     //     })
-    //     // }
-
-    // }
-
-
-    
 
 
 

@@ -103,14 +103,7 @@ export class XTTS extends XAIObject {
 
             this.synth.speak(utter);
 
-            // return new Promise(resolve => {
-            //     const id = setInterval(() => {
-            //         if (PAIWebVoice.get_instance().synth.speaking === false) {
-            //             clearInterval(id);
-            //             resolve();
-            //         }
-            //     }, 100);
-            // });
+           
         }
     }
 

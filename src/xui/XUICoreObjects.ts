@@ -1,6 +1,7 @@
+import { _xem } from "../XEM/XEventManager";
 import XUIObject from "./XUIObject";
 // import {Xpell as _x} from "../Xpell"
-import {_x, IXObjectData,XObjectData,XObjectPack } from "xpell-core";
+import {_x, IXObjectData,XEventListenerOptions,XObjectData,XObjectPack } from "xpell-core";
 
 
 
@@ -152,7 +153,11 @@ export class XTextField extends XUIObject {
         }
         super(data,defaults,true);
         if(this._text) this.value = this._text
+        //incase of self parsing do parse & parseEvents
         this.parse(data)
+        this.parseEvents(this._xem_options)
+
+        
     }
 
     setText(text:string) {

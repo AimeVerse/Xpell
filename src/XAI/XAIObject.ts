@@ -10,7 +10,7 @@ const reservedWords = { _children:"child objects" }
 
 
 export class XAIObject extends XObject {
-    [k:string]: string | null | [] | undefined | Function | boolean | {}
+    // [k:string]: string | null | [] | undefined | Function | boolean | {}
     _ignore: {[k:string]:string}
     
 
