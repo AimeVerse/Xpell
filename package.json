@@ -42,7 +42,6 @@
   },
   "dependencies": {
     "cannon-es": "^0.20.0",
-    "nipplejs": "^0.9.1",
     "three": "^0.143.0",
     "three-to-cannon": "^4.2.0",
     "xpell-core": "^0.0.515"

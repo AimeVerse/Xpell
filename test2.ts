@@ -151,33 +151,47 @@ const myView = {
             _type: "view",
             class: "musicbox-search",
             _children: [
-                {
-                    _id: "search-input",
-                    _type: "text",
-                    // class: "search-input",
-                    placeholder: "Youtube Search",
-                    _on_mount: (obj:XUIObject) => {
-                        console.log("search input mounted");
-                        
+               {
+                _type:"xhtml",
+                _html_tag:"table",
+                class:"area-chart",
+                _children:[
+                    {
+                        _type:"xhtml",
+                        _html_tag:"tr",
+                        _children:[
+                            {
+                                _type:"xhtml",
+                                _html_tag:"td",
+                                _text:"10%",
+                                _style:"--start:0.4;--end:0.5"
+                            },
+                            {
+                                _type:"xhtml",
+                                _html_tag:"td",
+                                _text:"Desc"
+                            }
+                        ]
                     },
-                    _on:{
-                        keyup: async (obj:XUIObject,e) => {
-                            console.log("key up");
-                            
-                            if(e.key == "Enter") {
-                                // obj.hide()
-                                XUI.getObject("search-form").hide()
-                                const q = obj.dom.value
-                                
+                    {
+                        _type:"xhtml",
+                        _html_tag:"tr",
+                        _children:[
+                            {
+                                _type:"xhtml",
+                                _html_tag:"td",
+                                _text:"Name"
+                            },
+                            {
+                                _type:"xhtml",
+                                _html_tag:"td",
+                                _text:"Desc"
                             }
-                            //close on esc key
-                            else if(e.key == "Escape") {
-                                XUI.getObject("search-form").hide()
-                                obj.dom.value = ""
-                            }
-                        }
+                        ]
                     }
-                }
+                ]
+                
+               }
             ]
         }
     ],

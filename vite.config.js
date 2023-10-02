@@ -30,7 +30,7 @@ export default {
     rollupOptions: {
       // make sure to externalize deps that shouldn't be bundled
       // into your library
-      external: ["three","cannon-es","three-to-cannon","nipplejs"],
+      // external: ["three","cannon-es","three-to-cannon"],
       output: {
         // Provide global variables to use in the UMD build
         // for externalized deps
@@ -38,7 +38,7 @@ export default {
           three: "THREE",
           "cannon-es": "CANNON",
           "three-to-cannon": "THREE_TO_CANNON",
-          nipplejs: "NippleJS"
+          
         }
       }
     }

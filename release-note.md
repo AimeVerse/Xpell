@@ -1,3 +1,15 @@
+Xpell Release Notes
+
+
+
+1.7
+--------
+
+- build support cdn dist
+XUI: 
+    - No Joystick (remove nipple js)
+  
+
 1.1
 -------------
 XUI:
