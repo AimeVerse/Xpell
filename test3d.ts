@@ -2,12 +2,13 @@
 import * as THREE from 'three'
 
 import {XUI,_xem,X3D, X3DApp,_x,_xd} from "./index"
+import { setInterval } from 'timers/promises'
 
 export const world: X3DApp = {
     "_parent_element": "x3d-player",
     _physics: {
         _engine: "cannon.js",
-        _active: false,
+        _active: true,
         _debug: true
     },
     _scene: {
@@ -24,7 +25,7 @@ export const world: X3DApp = {
                 _id: "ambient-light",
                 _type: "light",
                 _light: "ambient",
-                color: 0x888888
+                color: "hsl(0, 0%, 100%)",
             },
             "p1": {
                 _id: "directional-light",
@@ -44,11 +45,11 @@ export const world: X3DApp = {
                 _rotation: { x: 0, y: 0, z: 0 },
                 _disable_frame_3d_state: true,
                 _3d_set_once: true,
+                _positional_audio_listener: true,
                 fov: 50,
                 ratio: window.innerWidth / window.innerHeight,
                 far: 1000,
                 close: 0.01,
-                _positional_audio_listener: true
             }
         },
         _controls: {
@@ -96,52 +97,56 @@ export const world: X3DApp = {
                     side: 1,
                     transparent: true,
                     opacity: 1,
-                    // wireframe: true
+                    wireframe: true
                 },
-                _position: { x: 0, y: 0.01, z: 0 },
+                _position: { x: 0, y: 1, z: 0 },
                 _rotation: { x: Math.PI / 2, y: 0, z: 0 },
-                _enable_physics: true,
-                _mass: 0,
+                // _enable_physics: true,
+                // _mass: 0,
+                // _on_frame:"rotation x:0.01 y:++0.01 z:--0.01",
                 
             },
             "robot": {
                 _id: "robot",
                 _type: "xmodel",
-                _model_url: "https://cdn.aimeverse.com/u/cakering-level",
+                _model_url: "public/maia-c.glb",
+                _position: { x: 0, y: 1.5, z: 0 },
+
                 // _load_animations: true,
                 _auto_play_animation: true,
             },
             // "home2": {
             //     _id: "home2",
             //     _type: "xmodel",
-            //     _model_url: "/public/stage-c.gltf",
+            //     _position: { x: -5, y: 1, z: 0 },
+            //     _model_url: "/public/stadium.glb",
             // }
 
         },
-        _background: {
-            _type: "gradient",
-            _params: {
-                // _color: "red",
-                _color1:"red",
-                _color2:"blue",
-                // _direction_deg:"45",
-                // _path:"/public/sky",
-                // _px:"px.png",
-                // _nx:"nx.png",
-                // _py:"py.png",
-                // _ny:"ny.png",
-                // _pz:"pz.png",
-                // _nz:"nz.png",
+        // _background: {
+        //     _type: "gradient",
+        //     _params: {
+        //         // _color: "red",
+        //         _color1:"red",
+        //         _color2:"blue",
+        //         // _direction_deg:"45",
+        //         // _path:"/public/sky",
+        //         // _px:"px.png",
+        //         // _nx:"nx.png",
+        //         // _py:"py.png",
+        //         // _ny:"ny.png",
+        //         // _pz:"pz.png",
+        //         // _nz:"nz.png",
 
 
-                // _url:"/public/industrial_sunset_02_puresky_1k.hdr"
-                // _url:"/public/digital_painting_moon.jpg" //shpere
-                // _url:"https://images.pexels.com/photos/3768263/pexels-photo-3768263.jpeg?cs=srgb&dl=pexels-castorly-stock-3768263.jpg&fm=jpg" //image
-                // _url: "https://cdn.aimeverse.com/get/8f0729b0-5f6f-491b-a067-acd3fca703b4", //video
-                //"/public/digital-screen.mp4"
+        //         // _url:"/public/industrial_sunset_02_puresky_1k.hdr"
+        //         // _url:"/public/digital_painting_moon.jpg" //shpere
+        //         // _url:"https://images.pexels.com/photos/3768263/pexels-photo-3768263.jpeg?cs=srgb&dl=pexels-castorly-stock-3768263.jpg&fm=jpg" //image
+        //         // _url: "https://cdn.aimeverse.com/get/8f0729b0-5f6f-491b-a067-acd3fca703b4", //video
+        //         //"/public/digital-screen.mp4"
 
-            }
-        }
+        //     }
+        // }
             
 
 
@@ -200,7 +205,9 @@ async function main() {
         
         _on:{
             "e1":(obj,data) => {
-                // console.log("E1",data);
+                obj.setText("event arrived")
+                console.log(data);
+                
             },    
         },
     }
@@ -245,10 +252,14 @@ async function main() {
     // _xd._o["loading-label"] = "loadingLabel"
     // console.log(_xd._o)
 
+  //fire the event every 1 second
 
-    await _xem.fire("e1", { "a": 1, "b": 2 },true)
+   
 
-    const rob=X3D.getObject("robot")
+    // const rob=X3D.getObject("robot")
+
+    // console.log(rob);
+    
     // rob._on_frame = (obj, f) => {
     //     obj._rotation.y += 0.01
     // }
@@ -257,6 +268,7 @@ async function main() {
     // document.dispatchEvent(new CustomEvent("e1", { detail: { "a": 1, "b": 2 } }))
     
 }
+
 // console.log(X3D.world)
 
 // _xem.on("e1", (data) => { console.log(data) },{_once:true,_support_html:true})

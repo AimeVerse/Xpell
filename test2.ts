@@ -40,180 +40,85 @@ _x.start()
 
 
 
-// class XTable extends XUIObject {
+class Xfield extends XUIObject {
 
-//     _type = "xtable"
-//     _html_tag: string = "table"
-//     _fields: string[] = []
-//     _data: any[] = []
-//     _table_header: XUIObject 
-//     constructor(data){
-//         super(data,{},true)
-//         this.parse(data)
-//         // this._children
-//         // console.log(this._fields);
-//         this.createTableHeader()
-        
-        
-//     }
-
-//     createTableHeader(){
-//         const tableHeader = {
-//             _type:"xhtml",
-//             _html_tag:"thead",
-//             _children:[]
-//         }
-
-//         this._fields.forEach(field => {
-//             const cell = {
-//                 _type:"xhtml",
-//                 _html_tag:"th",
-//                 _text: field["_title"] 
-//             }
-//             tableHeader._children.push(cell)
-//         });
-
-
-//         this._table_header = XUI.create(tableHeader)
-//         this._children.push(this._table_header)
-//     }
-
-
-//     showData(){
-//         if(this._data.length == 0) return
-//         console.log(this._data);
-        
-//         const tableBody = {
-//             _type:"xhtml",
-//             _html_tag:"tbody",
-//             _children:[]
-//         }
-//         this._data.forEach(row => {
-//             const tableRow = {
-//                 _type:"xhtml",
-//                 _html_tag:"tr",
-//                 _children:[]
-//             }
-//             this._fields.forEach(field => {
-//                 const cell = {
-//                     _type:"xhtml",
-//                     _html_tag:"td",
-//                     _text:row[field._src]
-//                 }
-//                 tableRow._children.push(cell)
-//             });
-//             tableBody._children.push(tableRow)
-//         }
-
-//         );
-//         const tbody = XUI.create(tableBody)
-//         this.append(tbody)
-//     }
-
-
-
+    static xtype = "xfield"
     
-// }
+    _title:string
+    _textId:string
+    _placeholder:string
+    style:string = "display:flex;flex-direction:row;justify-content:flex-start;align-items:center;gap:10px"
 
-// XUI.importObject("xtable",XTable)
+    constructor(data){
+        super(data,{_type:Xfield.xtype},true)
+        this.parse(data)
+        this.parseEvents()
+        
+        if(this._title) this.append(
+            {
+                _type:"view",
+                _text:this._title,
+            })
+        if(!this._textId) this._textId = this._id + "-text"
+        
+        this.append(
+            {
+                _type:"input",
+                _id:this._textId,
+                placeholder:this._placeholder,
+            })
+        
+    } 
+}
+
+XUI.importObject("xfield",Xfield)
 
 
-
+const createField = (title,textId,placeholder?) => {
+    if(!placeholder) placeholder = title
+    return {
+        _type:"view",
+        
+        _children:[
+            {
+                _type:"view",
+                _text:title,
+            },
+            {
+                _type:"input",
+                _id:textId,
+                placeholder:placeholder,
+            },
+            {
+                _type:"xfield",
+                _id:"xfield-" + textId,
+                _title:title,
+            }
+        ]
+    }
+}
 
 const myView = {
     _type:"view",
     _id:"my-view",
     // _text:"Hello World",
-    style:"width:100%;height:100%",
+    style:"width:100%;height:100%;background-color:white",
     _parent_element:"controls",
     _children:[
+        // createField("First Name","first-name"),
+        // createField("Last Name","last-name"),
+        // createField("Email","email","please enter your email"),
         {
-            _id:"menu1",
-            _type:"view",
-            _text:"menu1",
-            style:"text-align:center",
-        },
-        {
-            _id:"menu2",
-            _type:"text",
-            _text:"menu2",
-            style:"text-align:center"
-        },
-        {
-            //submit button
-            _id:"menu3",
-            _type:"button",
-            _text:"submit",
-            style:"text-align:center",
-        },
-        {
-            _id: "search-form",
-            _type: "view",
-            class: "musicbox-search",
-            _children: [
-               {
-                _type:"xhtml",
-                _html_tag:"table",
-                class:"area-chart",
-                _children:[
-                    {
-                        _type:"xhtml",
-                        _html_tag:"tr",
-                        _children:[
-                            {
-                                _type:"xhtml",
-                                _html_tag:"td",
-                                _text:"10%",
-                                _style:"--start:0.4;--end:0.5"
-                            },
-                            {
-                                _type:"xhtml",
-                                _html_tag:"td",
-                                _text:"Desc"
-                            }
-                        ]
-                    },
-                    {
-                        _type:"xhtml",
-                        _html_tag:"tr",
-                        _children:[
-                            {
-                                _type:"xhtml",
-                                _html_tag:"td",
-                                _text:"Name"
-                            },
-                            {
-                                _type:"xhtml",
-                                _html_tag:"td",
-                                _text:"Desc"
-                            }
-                        ]
-                    }
-                ]
-                
-               }
-            ]
+            _type:"xfield",
+            _id:"xfield-" + 1,
+            _title:"my field",
         }
-    ],
-    // _on_frame:(obj:XUIObject,frameNumber:number) => {
-    //     obj.setText("frame: " + frameNumber)
-    //     //change the text color every frame with hsl
-    //     obj.dom.style.color = "hsl(" + (frameNumber % 360) + ", 100%, 50%)";
-    // },
-    // _on_click:(obj:XUIObject,e:HTMLEvent) => {
-    //     console.log("clicked");
-    // }
-    _data_source: "my-data",
-    _on_data:(obj:XUIObject,data:any) => {
-        // obj.setText(data)
-    }
+        
+
+    ]
+   
 
 }
-
-
-setTimeout(() => {
-    XData._o["my-data"] = "Hello World 2"
-}, 1000);
 
 
 

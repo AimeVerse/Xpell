@@ -205,7 +205,7 @@ export class X3DObject extends XObject {
         this.addXporterDataIgnoreFields(["_clock", "_ignore", "_three_obj","_log_rules",
             "_three_class", "_threes_class_args", "_positional_audio", "_current_action",
             "_animation_clips", "_fraction", "_animation_mixer", "_cache_cmd_txt", "_cache_jcmd",
-            "_on","_xem_options","_on_load","_on_click"
+            "_on","_xem_options","_on_load","_on_click","_loader"
             ])
         const vectorHandler = (o:THREE.Vector3 | THREE.Euler) => {
             return {x:o.x,y:o.y,z:o.z}

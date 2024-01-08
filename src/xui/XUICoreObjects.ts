@@ -94,7 +94,8 @@ export class XWebcam extends XUIObject {
         }
         super(data,defaults,true)
         this.parse(data)
-        
+        this.parseEvents(this._xem_options)
+
         this.autoplay = true
         this.muted = true
         this._video_constraints = {
@@ -152,17 +153,21 @@ export class XTextField extends XUIObject {
             _html_tag:"input"
         }
         super(data,defaults,true);
-        if(this._text) this.value = this._text
+        if(data._text) {
+            this.value = data._text
+            data._text = undefined
+        }
+
         //incase of self parsing do parse & parseEvents
         this.parse(data)
         this.parseEvents(this._xem_options)
-
+        
         
     }
 
     setText(text:string) {
-        this._text = text
         if(this.dom) {
+            this._text = text;
             (<HTMLInputElement>(this.dom)).value = text
         }
     }
