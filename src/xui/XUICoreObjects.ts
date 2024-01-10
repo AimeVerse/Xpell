@@ -1,7 +1,7 @@
-import { _xem } from "../XEM/XEventManager";
+// import { _xem } from "../XEM/XEventManager";
 import XUIObject from "./XUIObject";
 // import {Xpell as _x} from "../Xpell"
-import {_x, IXObjectData,XEventListenerOptions,XObjectData,XObjectPack } from "xpell-core";
+import {_x, IXObjectData,XEventListenerOptions,XObjectData,XObjectPack ,_xem} from "../Core/Xpell"
 
 
 

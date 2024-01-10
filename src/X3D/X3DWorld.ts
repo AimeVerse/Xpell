@@ -13,9 +13,9 @@ import { CannonDebugRenderer } from './X3DUtils';
 
 // import XUtils from '../XUtils';
 // import XData from '../XData';
-import {_xlog,_xu,XData,} from 'xpell-core'
+import {_xlog,_xu,XData,_xem} from '../Core/Xpell';
 import {X3D,X3DApp,X3DObject,X3AxesHelper, XHelperData} from "./X3D"
-import { _xem } from '../XEM/XEventManager';
+// import { _xem } from '../XEM/XEventManager';
 
 import X3DLoader from './X3DLoader';
 import {X3DSceneBackground,X3DSceneBackgroundTypes as _bg_types,

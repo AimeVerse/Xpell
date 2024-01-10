@@ -2,8 +2,8 @@
 // import XUtils from "../XUtils"
 // import XData from "../XData"
 // import XObject, { IXObjectData } from "../XObject"
-import { XUtils,_xd,XObject , XObjectData, _XEventManager} from "xpell-core"
-import { _xem ,XEventListenerOptions} from "../XEM/XEventManager";
+import { XUtils,_xd,XObject , XObjectData,_xem,XEventListenerOptions} from "../Core/Xpell"
+// import { _xem ,XEventListenerOptions} from "../XEM/XEventManager";
 import XUI from "./XUI";
 // import * as _XC from "../XConst"
 import _xuiobject_basic_nano_commands from "./XUINanoCommands"

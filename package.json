@@ -43,7 +43,6 @@
   "dependencies": {
     "cannon-es": "^0.20.0",
     "three": "^0.143.0",
-    "three-to-cannon": "^4.2.0",
-    "xpell-core": "^0.0.515"
+    "three-to-cannon": "^4.2.0"
   }
 }

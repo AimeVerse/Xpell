@@ -1,5 +1,5 @@
 import X3DObject, { IX3DObjectData } from './X3DObject'
-import { IXObjectData, XObjectPack } from 'xpell-core'
+import { IXObjectData, XObjectPack } from '../Core/Xpell'
 import { XCamera, XGeometry, XLight, XMaterial, XMesh, XGroup } from './X3DCoreObjects'
 import * as THREE from 'three'
 import * as CANNON from 'cannon-es'

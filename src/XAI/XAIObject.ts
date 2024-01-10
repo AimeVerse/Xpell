@@ -1,6 +1,6 @@
 
-import {_xlog,XObjectPack,IXObjectData,XObject,_xu } from "xpell-core"
-import { _xem } from "../XEM/XEventManager"
+import {_xlog,IXObjectData,XObject,_xu,_xem } from "../Core/Xpell"
+// import { _xem } from "../XEM/XEventManager"
 // import XObject, { IXObjectData } from "../XObject"
 // import * as _XC from "../XConst"
 

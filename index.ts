@@ -36,7 +36,7 @@
 const XFolder = "./src/"
 
 /**
- * Xpell-Core exports
+ * Xpell Core exports
  */
 
 export {
@@ -48,12 +48,10 @@ export {
     XObjectManager,XObject,XObjectPack,type IXObjectData,type XDataXporterHandler,
     type XObjectData,type XObjectOnEventIndex,type XObjectOnEventHandler,
     type XEventListener,type XEvent,
-    type XNanoCommandPack,type XNanoCommand
-} from "xpell-core"
-
-export {XEventManager,XEventManager as _xem,_XEventManager_WEB,
+    type XNanoCommandPack,type XNanoCommand,
+    XEventManager,XEventManager as _xem,_XEventManager,
     type HTMLEventListenersIndex,type XEventListenerOptions
-} from "./src/XEM/XEventManager"
+} from "./src/Core/Xpell"
 
 export {XUI,type XUIApp,XUIModule} from "./src/XUI/XUI"
 
@@ -94,6 +92,6 @@ export {XAIObject} from "./src/XAI/XAIObject"
 export {XAIObjects,XTTS} from "./src/XAI/XAICoreObjects"
 
 
-import {Xpell} from "xpell-core"
+import {Xpell} from "./src/Core/Xpell"
 export default Xpell
 

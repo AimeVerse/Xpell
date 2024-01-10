@@ -5,8 +5,8 @@
  * @description manage views activities
  * */
 
-import {_x,_xlog,_xu,XObjectData} from "xpell-core"
-import  _xem from "../XEM/XEventManager"
+import {_x,_xlog,_xu,XObjectData,_xem} from "../Core/Xpell"
+// import  _xem from "../XEM/XEventManager"
 import XUI from "./XUI"
 import XView from "./XUICoreObjects"
 import XUIObject from "./XUIObject"

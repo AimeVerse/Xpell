@@ -1,11 +1,11 @@
 
-import {XData, XEventManager,_x} from "xpell-core"
+import {XData, XEventManager,_x,_xem} from "./src/Core/Xpell"
 // import { Xpell as _x } from "./src/Xpell"
 import { XUI, XUIApp, XUIObject } from "./src/XUI/XUI"
 import {XAI} from "./src/XAI/XAI"
 import { XEditor, XTransformControls } from "./src/XUI/XEditor"
 import { XLabel } from "./src/XUI/XUICoreObjects"
-import {_xem} from "./src/XEM/XEventManager"
+// import {_xem} from "./src/XEM/XEventManager"
 import {_xdb} from "./index"
 //display Xpell engine info
 _x.verbose()
@@ -71,7 +71,7 @@ class Xfield extends XUIObject {
     } 
 }
 
-XUI.importObject("xfield",Xfield)
+XUI.importObject("xfield",<any>Xfield)
 
 
 const createField = (title,textId,placeholder?) => {

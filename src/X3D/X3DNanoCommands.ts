@@ -9,8 +9,8 @@
 
 
 
- import { XNanoCommandPack,XCommand,_xlog,_xu,XData,XObject ,XNanoCommand, XCommandData} from "xpell-core"
-import { _xem } from "../XEM/XEventManager"
+ import { _xem,XNanoCommandPack,XCommand,_xlog,_xu,XData,XObject ,XNanoCommand, XCommandData} from "../Core/Xpell"
+// import { _xem } from "../XEM/XEventManager"
 
 import * as THREE from 'three'
 
@@ -164,7 +164,7 @@ export const _x3dobject_nano_commands:XNanoCommandPack = {
     //     }
     // },
     "follow-joystick": (ns_cmd,x3dObject?:XObject) => {
-        const x3do:X3DObject = <X3DObject>x3dObject
+        const x3do:X3DObject = <any>x3dObject
         const jm = XData.objects["joy-move"]
         if (jm && x3do) {
 

@@ -1,4 +1,4 @@
-import { Xpell, XUtils, XData, _xlog } from 'xpell-core'
+import { Xpell, XUtils, XData, _xlog } from '../Core/Xpell'
 
 
 

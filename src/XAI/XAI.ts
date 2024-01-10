@@ -7,8 +7,8 @@
  */
 
 // import XUIObject from "./XUIObject"
-import {XModule,XModuleData,XParser } from "xpell-core"
-import { _xem } from "../XEM/XEventManager"
+import {XModule,XModuleData,_xem } from "../Core/Xpell"
+// import { _xem } from "../XEM/XEventManager"
 // import * as _xc from "../XConst"
 import {XAIObjects} from "./XAICoreObjects"
 

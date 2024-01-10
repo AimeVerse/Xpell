@@ -1,4 +1,4 @@
-import { _xu, XParser, XObject, XObjectData, _xlog ,_xd, _x} from "xpell-core"
+import { _xu, XObject, XObjectData, _xlog ,_xd, _x,XEventListenerOptions, _xem} from "../Core/Xpell"
 // import { XObject, IXObjectData } from "../XObject"
 // import XParser from "../XParser"
 // import * as _XC from "../XConst"
@@ -7,15 +7,13 @@ import * as CANNON from 'cannon-es'
 import { threeToCannon, ShapeType } from 'three-to-cannon';
 import _x3dobject_nano_commands from './X3DNanoCommands'
 import X3D from "./X3D"
-import { XEventListenerOptions, _xem } from "../XEM/XEventManager";
+// import { XEventListenerOptions, _xem } from "../XEM/XEventManager";
 // import { XLogger as _xlog } from '../XLogger'
 
 /**
  * Extended imports
  */
 import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader';
-import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
-import { Object3D } from "three";
 import {X3DLoader} from "./X3DLoader";
 
 
@@ -86,6 +84,7 @@ export type X3DListener = (x3dObject: X3DObject,event?:any) => void
  * @interface IX3DObjectData
  */
 export interface IX3DObjectData extends XObjectData {
+    [key: string]: any //overcome TS index signature error
     _cannon_shape?: CANNON.Shape | undefined,
     _enable_physics?: boolean
     _mass?: number,
@@ -104,10 +103,12 @@ export interface IX3DObjectData extends XObjectData {
     _model_url?: string
     _on_load?: X3DListener
     _on_click?: X3DListener
-
 }
 
 export class X3DObject extends XObject {
+    declare _id: string
+    declare _type: string
+    declare _name: string
     _three_class: any
     _threes_class_args!: Array<any>
     _three_obj!: THREE.Object3D | null
@@ -182,7 +183,7 @@ export class X3DObject extends XObject {
 
     constructor(data: IX3DObjectData, defaults?: any) {
         super(data, defaults, true)
-        this.init(data,false)
+        super.init(data,false)
         
         this.parse3d(data)
 
