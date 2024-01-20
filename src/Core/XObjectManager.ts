@@ -1,5 +1,3 @@
-import { get } from "core-js/core/dict";
-import XEM from "./XEventManager"
 import XLogger from "./XLogger";
 import XObject, { XObjectPack } from "./XObject";
 

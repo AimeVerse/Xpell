@@ -1,9 +1,12 @@
 Xpell Release Notes
 
 
+1.1.0
+-------
+- Xpell core inside (no external dependencies)
+- Wormholes included
 
-
-1.7
+1.0.7
 --------
 
 - build support cdn dist
@@ -11,7 +14,7 @@ XUI:
     - No Joystick (remove nipple js)
   
 
-1.1
+1.0.1
 -------------
 XUI:
     - XUIObject new attribute : _parent_element_id to indicate the HTML parent element to mount the object to (if this attribute is undefined the object will be mount to the ViewManager default parent element)
