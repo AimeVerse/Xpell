@@ -233,6 +233,22 @@ export const _x3dobject_nano_commands:XNanoCommandPack = {
             // };
         }
     },
+    // "orbit speed:0.2 radius:2"
+    "orbit": (cmd,x3dObject?:XObject) => {
+        
+        
+        const xobj = <X3DObject>x3dObject
+        let radius:any =  1
+        let speed:any = 0.02
+        if(cmd._params) {
+            if (cmd._params.radius) radius = cmd._params.radius
+            if (cmd._params.speed) speed = cmd._params.speed
+        }
+        const angle:any = <number>xobj._frame_number * speed
+        xobj._position.x = radius * Math.cos(angle)
+        xobj._position.z = radius * Math.sin(angle)
+        xobj._position.y = 3 + Math.sin(angle)
+    },
     //follow-keypoint detector:detector-name index:detected-object-index keypoint:keypoint-number
     // "follow-keypoint": (ns_cmd) => {
 
