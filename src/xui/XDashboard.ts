@@ -1,6 +1,6 @@
 import { XUI } from "./XUI"
 import XUIObject from "./XUIObject"
-import  {XData, IXObjectData } from "xpell-core"
+import  {XData, IXObjectData } from "../Core/Xpell"
 
 const vStyle =  `position:absolute;top:0;left:0;width:100vw;height:40px;text-align:left;padding:10px;color:white;background-color:black`
 

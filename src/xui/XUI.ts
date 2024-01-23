@@ -8,7 +8,7 @@
 
 import XUIObject from "./XUIObject"
 import {XViewManager,XViewsPack} from "./XViewManager"
-import { _xlog,XParser,_xem,XModule,XModuleData, IXObjectData, XObjectData } from "xpell-core";
+import { _xlog,XParser,_xem,XModule,XModuleData, IXObjectData, XObjectData } from "../Core/Xpell"
 
 import XUICoreObjects from "./XUICoreObjects"
 
@@ -51,9 +51,11 @@ export class XUIModule extends XModule {
         this._first_gesture_occured = false
         _xem.fire("xui-loaded")
 
+
     }
 
 
+    
 
 
 

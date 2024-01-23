@@ -1,9 +1,9 @@
 // import _xem from "../XEventManager";
 // import _xlog from "../XLogger";
 // import { XObjectPack } from "../XObject";
-import {_xlog,XObjectPack,XObjectData } from "xpell-core"
+import {_xlog,XObjectPack,XObjectData,_xem } from "../Core/Xpell"
 import XAIObject from "./XAIObject";
-import { _xem } from "../XEM/XEventManager";
+// import { _xem } from "../XEM/XEventManager";
 
 /**
  * Xpell Web TTS (Text to Speech)

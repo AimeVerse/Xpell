@@ -1,0 +1,80 @@
+Xpell 
+
+Developer Guide
+
+
+# Background
+
+Modern development process is involved with a lot of interaction (API calls) to external systems and frameworks, although most of the modern systems have a flexible and easy to use API’s the variety of systems, frameworks and services requires a constant translation process for almost every API.
+
+If the application is a game, a metaverse application or any ecommerce app that wants to show 3D models.
+
+# Xpell Real-Time Interpreter
+Xpell was developed in order to ease the process of development and the communication with the satellite services, frameworks and systems.
+
+With real-time interpretation/translation abilities using an internal AI engine (NLP for the real-time translation) the Xpell can understand human language (English) and translate it to any required API/Prompt.
+
+# Xpell Internal Architecture
+
+
+The Xpell interpreter receives an input command in a human language (English - or with more specific prompt using Text/JSON format) and translate it to an XCommand (Xpell basic command).
+
+The XCommand is being routed by the Xpell to  XModule (Xpell Module that uses as a wrapper to an external engine).
+
+The XModule execute the translated command and creates (if required) an XObject (Xpell Object that wraps an external object).
+
+# Xpell Module
+Xpell module uses to handle specific activities (modularity) and it helps to wrap external engines, for example a module which is responsible on the User Interface in a web application will wrap the UI framework (HTML & Javascript in this case) and will create XObjects related to the UI elements like labels, text fields, views and more UI components.
+
+The XModule is a base class for every module, meaning if you want to develop a new module you need to extend this class.
+
+## Properties:
+
+### XObjectManager
+This component is any module responsible for managing the XObject that this module creates and manages. 
+The XObjectManager is accessible also via the alias “om” (your_module.om)
+
+## Methods:
+
+### load
+This method runs when the module is being loaded, and can be overridden.
+
+### create
+Creates an XObject that is being handled by this module.
+
+### execute
+Execute XCommand on this module
+
+### run
+Runs a text command on this module (converts the text to an XCommand and calls the execute method).
+
+### onFrame
+invoked on any frame and bubbles the event to the module XObjects.
+
+### ImportIObject
+Imports an XObject to the module, imported objects require a name (string) that will be used in the create method.
+
+### ImportIObjectPack
+Imports an XObject Pack - an object with many XObject to be imported. 
+
+
+Wormholes
+Wormholes serve as the networking protocol in Xpell, facilitating all the communication between the client and the server, as well as other services based on Xpell.
+
+Wormholes protocol is implemented on top of Websocket and TCP protocols.
+
+
+Xpell Message
+The Xpell Message is the network object that is being transmitted on the Wormholes protocol.
+
+Xpell Message Format
+Xpell messages are based on JSON format:
+
+{
+    "_module": "module-name",
+    "_op": "operation-name",
+    "_params": {
+        "param1": "value1",
+        "param2": "value2"
+    }
+}

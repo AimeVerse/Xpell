@@ -1,6 +1,5 @@
 
 import * as THREE from 'three'
-import { X3D } from './X3D'
 import { RGBELoader } from 'three/examples/jsm/loaders/RGBELoader.js'
 import X3DWorld from './X3DWorld'
 

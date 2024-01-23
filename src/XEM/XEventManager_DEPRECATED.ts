@@ -6,7 +6,7 @@
  */
 
 
-import {_XEventManager ,XEventListener} from "xpell-core";
+import {_XEventManager ,XEventListener} from "../Core/Xpell";
 
 
 

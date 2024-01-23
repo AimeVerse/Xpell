@@ -13,9 +13,9 @@ import { CannonDebugRenderer } from './X3DUtils';
 
 // import XUtils from '../XUtils';
 // import XData from '../XData';
-import {_xlog,_xu,XData,} from 'xpell-core'
+import {_xlog,_xu,XData,_xem} from '../Core/Xpell';
 import {X3D,X3DApp,X3DObject,X3AxesHelper, XHelperData} from "./X3D"
-import { _xem } from '../XEM/XEventManager';
+// import { _xem } from '../XEM/XEventManager';
 
 import X3DLoader from './X3DLoader';
 import {X3DSceneBackground,X3DSceneBackgroundTypes as _bg_types,
@@ -360,17 +360,17 @@ export class X3DWorld {
                     this.transformControlX3dObject?.setPositionFromVector3(pos)
                     this.transformControlX3dObject?.setRotationFromEuler(rot)
                     this.transformControlX3dObject?.setScaleFromVector3(scale)
-                    XData.variables["tc-pos-x"] = pos.x.toFixed(2)
-                    XData.variables["tc-pos-y"] = pos.y.toFixed(2)
-                    XData.variables["tc-pos-z"] = pos.z.toFixed(2)
+                    // XData.variables["tc-pos-x"] = pos.x.toFixed(2)
+                    // XData.variables["tc-pos-y"] = pos.y.toFixed(2)
+                    // XData.variables["tc-pos-z"] = pos.z.toFixed(2)
                     
-                    XData.variables["tc-rot-x"] = rot.x.toFixed(2)
-                    XData.variables["tc-rot-y"] = rot.y.toFixed(2)
-                    XData.variables["tc-rot-z"] = rot.z.toFixed(2)
+                    // XData.variables["tc-rot-x"] = rot.x.toFixed(2)
+                    // XData.variables["tc-rot-y"] = rot.y.toFixed(2)
+                    // XData.variables["tc-rot-z"] = rot.z.toFixed(2)
                     
-                    XData.variables["tc-scale-x"] = scale.x.toFixed(2)
-                    XData.variables["tc-scale-y"] = scale.y.toFixed(2)
-                    XData.variables["tc-scale-z"] = scale.z.toFixed(2)
+                    // XData.variables["tc-scale-x"] = scale.x.toFixed(2)
+                    // XData.variables["tc-scale-y"] = scale.y.toFixed(2)
+                    // XData.variables["tc-scale-z"] = scale.z.toFixed(2)
                 }
     
             })

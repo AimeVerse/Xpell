@@ -9,8 +9,8 @@
 
 import * as THREE from 'three'
 
-import { _xlog ,XData,XModule,XModuleData, XObject} from 'xpell-core';
-import { _xem } from '../XEM/XEventManager';
+import { _xlog ,_xem,IXData,XData,XModule,XModuleData, XObject, XObjectData} from '../Core/Xpell';
+// import { _xem } from '../XEM/XEventManager';
 // import XModule from "../XModule"
 // import { XEventManager, XEventList } from "../XEventManager"
 // import  from "../XData";
@@ -149,11 +149,11 @@ export class X3DModule extends XModule {
      * @return {X3DObject}
      * @override 
      */
-    async create(data:IX3DObjectData) {
+    async create(data:IX3DObjectData ) {
 
         // if (this.om.hasObjectClass(<string>data._type)) {
             if (this._log_rules.createObject) {
-                _xlog.log("X3D | creating " + data._type);
+                _xlog.log("X3D | creating " );
             }
 
         //     const xclass = this.om.getObjectClass(<string>data._type)
@@ -163,7 +163,7 @@ export class X3DModule extends XModule {
         // } else return null
 
         
-        return await super.create(data)
+        return await super.create(<XObjectData>data)
     }
 
 
@@ -283,7 +283,7 @@ export class X3DModule extends XModule {
                 while (obj.parent && !found) {
                     if (obj.parent.type == "Scene") {
 
-                        const x3dObject:X3DObject = <X3DObject>X3D.getObject(obj.name)
+                        const x3dObject:X3DObject = <any>X3D.getObject(obj.name)
                         x3dIntersectedObjects[x3dObject._id] = x3dObject
                         found = true
                     }

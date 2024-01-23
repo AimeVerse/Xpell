@@ -5,8 +5,8 @@ import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader';
 import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader';
 import X3DObject from './X3DObject';
 import X3D from "./X3D"
-import {_xlog,_xd} from 'xpell-core';
-import { _xem } from '../XEM/XEventManager';
+import {_xlog,_xd,_xem} from '../Core/Xpell';
+// import { _xem } from '../XEM/XEventManager';
 
 
 

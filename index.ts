@@ -4,24 +4,6 @@
  * Library Entry Point
  * 
  * @description Universal User Interface (UI) Engine for Javascript supporting devices & browsers
- * @author Fridman Fridman <tamirf@yahoo.com>
- * @since  22/07/2022
- * @Copyright Fridman Tamir 2022, all right reserved
- *
- *      This program is free software; you can redistribute it and/or
- *		modify it under the terms of the GNU General Public License
- *		as published by the Free Software Foundation; either version
- *		3 of the License, or (at your option) any later version.
- *
- */
-
-
-/**
- * Xpell - Real-Time User Interface Platform
- * Typescript Edition
- * Library Entry Point
- * 
- * @description Universal User Interface (UI) Engine for Javascript supporting devices & browsers
  * @author Fridman Fridman <fridman.tamir@gmail.com>
  * @since  22/07/2022
  * @Copyright Fridman Tamir 2022, all right reserved
@@ -36,7 +18,7 @@
 const XFolder = "./src/"
 
 /**
- * Xpell-Core exports
+ * Xpell Core exports
  */
 
 export {
@@ -48,12 +30,13 @@ export {
     XObjectManager,XObject,XObjectPack,type IXObjectData,type XDataXporterHandler,
     type XObjectData,type XObjectOnEventIndex,type XObjectOnEventHandler,
     type XEventListener,type XEvent,
-    type XNanoCommandPack,type XNanoCommand
-} from "xpell-core"
-
-export {XEventManager,XEventManager as _xem,_XEventManager_WEB,
+    type XNanoCommandPack,type XNanoCommand,
+    XEventManager,XEventManager as _xem,_XEventManager,
     type HTMLEventListenersIndex,type XEventListenerOptions
-} from "./src/XEM/XEventManager"
+} from "./src/Core/Xpell"
+
+export {Wormholes,Wormholes as _wh,WormholeEvents,type MessageType} from "./src/Wormholes/Wormholes"
+
 
 export {XUI,type XUIApp,XUIModule} from "./src/XUI/XUI"
 
@@ -94,6 +77,6 @@ export {XAIObject} from "./src/XAI/XAIObject"
 export {XAIObjects,XTTS} from "./src/XAI/XAICoreObjects"
 
 
-import {Xpell} from "xpell-core"
+import {Xpell} from "./src/Core/Xpell"
 export default Xpell
 
