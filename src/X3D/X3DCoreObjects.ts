@@ -12,7 +12,12 @@ export const threeCameras:{[name:string]:any} = {
 export const threeLights:{[name:string]:any} = {
     "ambient": THREE.AmbientLight,
     "directional": THREE.DirectionalLight,
-    "spotlight":THREE.SpotLight
+    "spotlight":THREE.SpotLight,
+    "hemisphere":THREE.HemisphereLight,
+    "point":THREE.PointLight,
+    "rectArea":THREE.RectAreaLight,
+    "lightE":THREE.Light,
+    "lightProbe":THREE.LightProbe,
 }
 
 export const threeGeometries:{[name:string]:any} = {
@@ -93,7 +98,7 @@ export class XCamera extends X3DObject {
 /**
  * supported Three light type 
  */
-export type  XLightTypes = "ambient" | "directional" | "spotlight" 
+export type  XLightTypes = "ambient" | "directional" | "spotlight" | "hemisphere" | "point" | "rectArea" | "lightE" | "lightProbe"
 
 /**
  * XLight Data 
@@ -122,9 +127,41 @@ export class XLight extends X3DObject {
         this.parseFields(data,fieldsToParse,true) //parse Camera fields
         this._type = XLight.xtype
         this._three_class = threeLights[<string>data._light]
-        this._threes_class_args = [this.color, this.intensity]
+        this._threes_class_args = [this._color, this._intensity]
+    }
+
+    // constructor(data:XLightData, skyColor:THREE.Color | number, groundColor:THREE.Color | number) {
+    //     super(data) // parse parent class fields (X3dDObject & XObject)
+    //     this._type = XLight.xtype
+    //     this._three_class = threeLights[<string>data._light]
+    //     this._threes_class_args = [skyColor, groundColor, this.intensity]
+    // }
+}
+
+export class HemisphereLight extends XLight {
+    _skyColor: THREE.Color | number;
+    _groundColor: THREE.Color | number;
+
+    constructor(data: HemisphereLightData) {
+        super(data); // Initialize the base class
+
+        // Default values for hemisphere light specific properties
+        this._skyColor = data._skyColor || 0xffffff; // default white
+        this._groundColor = data._groundColor || 0xffffff; // default white
+
+        // Override or set specific properties for HemisphereLight
+        this._light = "hemisphere"; // Assuming "hemisphere" is a valid XLightType
+        this._three_class = threeLights["hemisphere"]; // Specific Three.js class for hemisphere lights
+        this._threes_class_args = [this._skyColor, this._groundColor, this._intensity]; // Arguments for Three.js hemisphere light
     }
 }
+
+// Assuming HemisphereLightData extends XLightData with _skyColor and _groundColor
+export interface HemisphereLightData extends XLightData {
+    _skyColor?: THREE.Color | number;
+    _groundColor?: THREE.Color | number;
+}
+
 
 export class XGeometry extends X3DObject {
     // width:number
