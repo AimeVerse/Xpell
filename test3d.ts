@@ -228,7 +228,7 @@ export const world: X3DApp = {
                 _type: "light",
                 _light: "spotlight",
                 _color: "hsl(0, 100%, 50%)",
-                intensity: 1,
+                _intensity: 1,
                 _position: { x: 0, y: 3, z: 2},
                
                 _on_mount: (obj) => {
@@ -456,7 +456,7 @@ export const world: X3DApp = {
         //     }
         // }
             
-
+            }}
 
     },
 }
