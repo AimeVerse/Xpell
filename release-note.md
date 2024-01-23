@@ -1,5 +1,9 @@
 Xpell Release Notes
 
+1.1.3
+-------
+- Fix color light & intensity error
+- "orbit" X3D nano-command
 
 1.1.0
 -------
