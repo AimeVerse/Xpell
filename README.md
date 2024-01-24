@@ -14,6 +14,8 @@ More about the Xpell engine please refer to the [xpell-core](xpell-core.md) file
 - [XUI](xui.md) - User Interface (HTML & CSS) module
 - [X3D](x3d.md) - 3D engine manager (Three.js)
 - [XAI](xai.md) - AI Module Manager
+- [XDB](xdb.md) - Database Module Manager
+- [Wormholes](wormholes.md) - Communication between modules
 
 # Getting Started
 To begin using Xpell, install the framework and import it into your frontend application. From there, you can utilize its various modules to create a high-performance, real-time UI.
@@ -30,7 +32,7 @@ npm install xpell
 
  ---
 
- Author: Fridman Fridman <tamirf@yahoo.com>
+ Author: Fridman Fridman <fridman.tamir@gmail.com>
 
  License:  GPL-3 
 

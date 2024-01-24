@@ -227,13 +227,13 @@ export const world: X3DApp = {
                 _id: "spotlight-light",
                 _type: "light",
                 _light: "spotlight",
-                _color: "hsl(0, 100%, 50%)",
+                _color: "#ff0000",//red 
                 _intensity: 1,
                 _position: { x: 0, y: 3, z: 2},
                
                 _on_mount: (obj) => {
-                    console.log(obj)
-                    console.log(obj._three_obj.color)
+                    // console.log(obj)
+                    // console.log(obj._three_obj.color.toHexString())
                 },
                 _on_frame: (obj, f) => 
                 {
@@ -363,19 +363,12 @@ export const world: X3DApp = {
                 },
                 _material: {
                     _type: "standard-material",
-                    color: 0xf3aadd,
+                    color: 0xffffff,
                 },
        
                 _position: {x: 3, y: 4, z: 0},
                 _rotation: {x: 0, y: 0, z: 0},
-                _on_frame:  (obj, f) => {
-                    const radius = 3
-                    const speed = 0.02
-                    const angle = f * speed
-                    obj._position.x = radius * Math.cos(angle)
-                    obj._position.z = radius * Math.sin(angle)
-                    obj._position.y = 3 + Math.sin(angle)
-                },
+                _on_frame:  "orbit speed:0.2 radius:2",
 
                 "square": {
                     _id:"my-square",
@@ -432,10 +425,10 @@ export const world: X3DApp = {
 
         },
         _background: {
-            _type: "gradient",
+            _type: "solid",
             _params: {
                 // _color: "red",
-                _color1:"grey",
+                _color1:"black",
                 // _color2:"blue",
                 // _direction_deg:"45",
                 // _path:"/public/sky",
