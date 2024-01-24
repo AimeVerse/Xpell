@@ -184,10 +184,10 @@ export class X3DModule extends XModule {
      * Add X3DObject to the object manager and world
      * @param x3dObject X3DObject 
      */
-    add(x3dObject: X3DObject) {
+    async add(x3dObject: X3DObject) {
         //this.om.addObject(<any>x3dObject)
         this._object_manager.addObject(<any>x3dObject)
-        this.world?.addX3DObject(x3dObject)
+        await this.world?.addX3DObject(x3dObject)
     }
 
     /**
@@ -197,7 +197,7 @@ export class X3DModule extends XModule {
      */
     async loadObject(data: IX3DObjectData) {
         const obj = await this.create(data)
-        this.world.addX3DObject(obj)
+        await this.world.addX3DObject(obj)
         return obj
     }
 
