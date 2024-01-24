@@ -5,6 +5,7 @@ Xpell Release Notes
 -------
 - Xpell core inside (no external dependencies)
 - Wormholes included
+- x3d load async fix
 
 1.0.7
 --------
