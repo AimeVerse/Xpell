@@ -30,7 +30,7 @@
   "license": "GPL-3",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/fridman-tamir/Xpell"
+    "url": "git+https://github.com/AIMEVerse/Xpell"
   },
   "devDependencies": {
     "@types/node": "^18.0.6",

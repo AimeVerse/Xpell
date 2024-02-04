@@ -38,7 +38,7 @@ npm install xpell
 
  First Release: 22/07/2022
 
- Copyright Fridman Tamir 2022, all right reserved
+ Copyright Aime Technologies 2022, all right reserved
 
 
 
