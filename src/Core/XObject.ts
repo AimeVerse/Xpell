@@ -7,7 +7,7 @@ import XCommand, { XCommandData } from "./XCommand";
 import XParser from "./XParser"
 import { XLogger as _xlog } from "./XLogger";
 import { XEventListenerOptions, XEventManager as _xem } from "./XEventManager";
-import { _xobject_basic_nano_commands, XNanoCommandPack,XNanoCommand } from "./XNanoCommands";
+import { _xobject_basic_nano_commands, XNanoCommandPack, XNanoCommand } from "./XNanoCommands";
 import _xd, { XDataObject } from "./XData";
 
 export interface IXData {
@@ -34,35 +34,35 @@ export interface IXObjectData extends IXData {
     _children?: Array<XObject | XObjectData>
     _name?: string
     _data_source?: string
-    _on?:XObjectOnEventIndex
+    _on?: XObjectOnEventIndex
     _on_create?: string | Function | undefined
     _on_mount?: string | Function | undefined
     _on_frame?: string | Function | undefined
     _on_data?: string | Function | undefined
-    _process_frame?: boolean 
-    _process_data?: boolean 
-    
+    _process_frame?: boolean
+    _process_data?: boolean
+
 }
 
 export interface XDataXporterHandler {
-    (inst:any): any
+    (inst: any): any
 }
 
 export type XDataInstanceXporter = {
-    cls:any, //the Object Class to replace with the exporter output
-    handler:XDataXporterHandler //the class handler (exporter function)
+    cls: any, //the Object Class to replace with the exporter output
+    handler: XDataXporterHandler //the class handler (exporter function)
 }
 
 export type XDataXporter = {
-    _ignore_fields : string[],
-    _instance_xporters:{
-        [id:string]: XDataInstanceXporter
+    _ignore_fields: string[],
+    _instance_xporters: {
+        [id: string]: XDataInstanceXporter
     }
 }
 
 export type XObjectOnEventHandler = (xObject: XObject, data?: any) => void
 export interface XObjectOnEventIndex {
-    [eventName:string]:XObjectOnEventHandler
+    [eventName: string]: XObjectOnEventHandler
 }
 
 export type XObjectData = {
@@ -72,29 +72,30 @@ export type XObjectData = {
     _children?: Array<XObject | XObjectData>
     _name?: string
     _data_source?: string
-    _on?:XObjectOnEventIndex
-    _once?:XObjectOnEventIndex
+    _on?: XObjectOnEventIndex
+    _once?: XObjectOnEventIndex
     _on_create?: string | Function | undefined
     _on_mount?: string | Function | undefined
     _on_frame?: string | Function | undefined
     _on_data?: string | Function | undefined
-    _process_frame?: boolean 
-    _process_data?: boolean 
+    _process_frame?: boolean
+    _process_data?: boolean
 }
 
 /**
  * XObject class
  * @class XObject
  */
-export class XObject  {
+export class XObject {
     [k: string]: string | null | [] | undefined | Function | boolean | number | {}
     _id: string;
     _type: string;
     _children: Array<XObject | XObjectData> = []
+    _parent: XObject | null = null
     _name?: string
     _data_source?: string //XData source
-    _on:XObjectOnEventIndex = {}
-    _once:XObjectOnEventIndex = {}
+    _on: XObjectOnEventIndex = {}
+    _once: XObjectOnEventIndex = {}
     _on_create?: string | Function | undefined
     _on_mount?: string | Function | undefined
     _on_frame?: string | Function | undefined
@@ -107,16 +108,16 @@ export class XObject  {
     _process_data: boolean = true
 
 
-    protected _xem_options:XEventListenerOptions
+    protected _xem_options: XEventListenerOptions
 
     //local cache for nano commands
 
     protected _nano_commands: { [k: string]: XNanoCommand } = {}
     protected _cache_cmd_txt?: string;
     protected _cache_jcmd?: any;
-    protected _event_listeners_ids: {[eventName:string]:string} = {}
-    protected _xporter:XDataXporter = {
-        _ignore_fields: ["_to_xdata_ignore_fields", "_xporter","_children","_on","_once","_on_create","_on_mount","_on_frame","_on_data","_process_frame","_process_data"],
+    protected _event_listeners_ids: { [eventName: string]: string } = {}
+    protected _xporter: XDataXporter = {
+        _ignore_fields: ["_to_xdata_ignore_fields", "_xporter", "_children", "_on", "_once", "_on_create", "_on_mount", "_on_frame", "_on_data", "_process_frame", "_process_data"],
         _instance_xporters: {}
     }
 
@@ -140,18 +141,22 @@ export class XObject  {
         this.addNanoCommandPack(_xobject_basic_nano_commands)
 
         //add Xporter ignore field and instance handler (uses as example also)
-        this.addXporterDataIgnoreFields(["_nano_commands"]) 
-        this.addXporterInstanceXporter(XObject,(objectInstance: XObject) => {
+        this.addXporterDataIgnoreFields(["_nano_commands"])
+        this.addXporterInstanceXporter(XObject, (objectInstance: XObject) => {
             return objectInstance.toXData()
         })
         this._xem_options = {
-            _instance:_xem
+            // _instance:_xem
+            _object: this
+
         }
-        this.init(data,skipParse)
+        this.init(data, skipParse)
+        // console.log(this._children);
         
+
     }
 
-    init(data?:any,skipParse?:boolean) {
+    init(data?: any, skipParse?: boolean) {
         if (!skipParse && data) {
             // if() {
             delete data._id // delete the _id field to remove duplication by the parse function
@@ -161,27 +166,27 @@ export class XObject  {
         }
     }
 
-    parseEvents(options?:XEventListenerOptions) {
+    parseEvents(options?: XEventListenerOptions) {
         Object.keys(this._on).forEach(eventName => {
-            if(typeof this._on[eventName] === "function") {
-                this.addEventListener(eventName,this._on[eventName],options)
+            if (typeof this._on[eventName] === "function") {
+                this.addEventListener(eventName, this._on[eventName], options)
             }
             // else if(typeof this._on[eventName] === "string") {
             //     console.error("string event handler not supported yet")
             // }
             else {
-                throw new Error("event handler must be a function " +eventName)
+                throw new Error("event handler must be a function " + eventName)
             }
         })
 
-        const onceOptions:XEventListenerOptions =  {}
-        Object.assign(onceOptions,options)
+        const onceOptions: XEventListenerOptions = {}
+        Object.assign(onceOptions, options)
         onceOptions._once = true
         // console.log("once options",onceOptions._once);
-        
+
         Object.keys(this._once).forEach(eventName => {
-            if(typeof this._once[eventName] === "function") {
-                this.addEventListener(eventName,this._once[eventName],onceOptions)
+            if (typeof this._once[eventName] === "function") {
+                this.addEventListener(eventName, this._once[eventName], onceOptions)
             }
             // else if(typeof this._on[eventName] === "string") {
             //     console.error("string event handler not supported yet")
@@ -193,19 +198,20 @@ export class XObject  {
     }
 
 
-    addEventListener(eventName:string,handler:XObjectOnEventHandler,options?:XEventListenerOptions) {
-
-        const xem = (this._xem_options._instance) ? this._xem_options._instance : _xem
-        const event_listener_id = xem.on(eventName,(eventData) => {  handler(this,eventData)},options)
+    addEventListener(eventName: string, handler: XObjectOnEventHandler, options?: XEventListenerOptions) {
+        if (!options) {
+            options = this._xem_options
+        } else {
+            options._object = this
+        }
+        const event_listener_id = _xem.on(eventName, (eventData) => { handler(this, eventData) }, options)
         this._event_listeners_ids[eventName] = event_listener_id
-        // console.log("regstering event  name " + eventName)
     }
 
 
-    removeEventListener(eventName:string) {
-        // console.log("removing event  name " + eventName);
-        if(this._event_listeners_ids[eventName]) {
-            this._xem_options._instance?.remove(this._event_listeners_ids[eventName])
+    removeEventListener(eventName: string) {
+        if (this._event_listeners_ids[eventName]) {
+            _xem.remove(this._event_listeners_ids[eventName])
             delete this._event_listeners_ids[eventName]
         }
     }
@@ -221,7 +227,7 @@ export class XObject  {
      * Append a child XObject to this XObject
      * @param xobject 
      */
-    append(xobject:XObject) {
+    append(xobject: XObject) {
         this._children?.push(xobject)
     }
 
@@ -249,7 +255,7 @@ export class XObject  {
      * List of fields to ignore when exporting the xobject to XData or string format
      * @param <string[]> ignoreFields - an array with all the fields to ignore 
      */
-    addXporterDataIgnoreFields(ignoreFields:string[]) {
+    addXporterDataIgnoreFields(ignoreFields: string[]) {
         this._xporter._ignore_fields = this._xporter._ignore_fields.concat(ignoreFields)
     }
 
@@ -257,11 +263,11 @@ export class XObject  {
      * Add XData Xporter instance handler
      * @param <XDataInstanceXporter> ie - the instance exporter object
      */
-    addXporterInstanceXporter(classOfInstance:any,handler:XDataXporterHandler) {
+    addXporterInstanceXporter(classOfInstance: any, handler: XDataXporterHandler) {
         const xporterName = XUtils.guid()
         this._xporter._instance_xporters[xporterName] = {
-            cls:classOfInstance,
-            handler:handler
+            cls: classOfInstance,
+            handler: handler
         }
     }
 
@@ -271,17 +277,17 @@ export class XObject  {
         this._process_data = false
         this._process_frame = false
         this.removeAllEventListeners()
-        if(this._children) {
+        if (this._children) {
             this._children.forEach(child => {
                 if (typeof child.dispose == "function") {
-                     child.dispose()
+                    child.dispose()
                 }
             })
         }
         this._children = []
     }
 
-   
+
 
     /**
      * Parse data to the XObject
@@ -296,6 +302,9 @@ export class XObject  {
                 this[field] = <any>data[field];
             }
         });
+       
+    
+        
     }
 
     /**
@@ -365,11 +374,20 @@ export class XObject  {
         }
         //propagate event to children
         this._children.forEach((child) => {
+            child._parent = this
             if (child.onCreate && typeof child.onCreate === 'function') {
                 child.onCreate()
             }
         })
 
+    }
+
+    protected checkAndRunInternalFunction  (func: any,...params:any)  {
+        if (typeof func == "function") {
+            func(this,...params)
+        } else if (typeof func == "string") {
+            this.run(this._id + " " + func) //
+        }
     }
 
     /**
@@ -382,13 +400,15 @@ export class XObject  {
      * }
      */
     async onMount() {
+
+
+        //run on mount event
         if (this._on_mount) {
-            if (typeof this._on_mount == "function") {
-                this._on_mount(this)
-            } else if (typeof this._on_mount == "string") {
-                this.run(this._id + " " + this._on_mount) //
-            }
+            this.checkAndRunInternalFunction(this._on_mount)
+        } else if (this._on && this._on["mount"]) {
+            this.checkAndRunInternalFunction(this._on["mount"])
         }
+
         //propagate event to children
         this._children.forEach((child) => {
             if (child.onMount && typeof child.onMount === 'function') {
@@ -399,7 +419,7 @@ export class XObject  {
 
 
     emptyDataSource() {
-        if(this._data_source && typeof this._data_source === "string") {
+        if (this._data_source && typeof this._data_source === "string") {
             _xd.delete(this._data_source)
         }
     }
@@ -411,11 +431,16 @@ export class XObject  {
      * if override this method make sure to call super.onData(data) to run the _on_data attribute
      */
     async onData(data: any) {
-        if (this._on_data && this._process_data) {
-            if (typeof this._on_data == "function") {
-                this._on_data(this, data)
-            } else if (typeof this._on_data == "string") {
-                this.run(this._id + " " + this._on_data) 
+        if (this._process_data) {
+            if (this._on_data) {
+                // if (typeof this._on_data == "function") {
+                //     this._on_data(this, data)
+                // } else if (typeof this._on_data == "string") {
+                //     this.run(this._id + " " + this._on_data) 
+                // }
+                this.checkAndRunInternalFunction(this._on_data,data)
+            } else if (this._on && this._on["data"]) {
+                this.checkAndRunInternalFunction(this._on["data"],data)
             }
         }
     }
@@ -442,16 +467,24 @@ export class XObject  {
      */
     async onFrame(frameNumber: number) {
         //
-        if (this._on_frame && this._process_frame) {
-            if (typeof this._on_frame == "function") {
-                await this._on_frame(this, frameNumber)
-            } else if (typeof this._on_frame == "string") {
-                await this.run(this._id + " " + this._on_frame) //
+        // if (this._on_frame && this._process_frame) {
+        //     if (typeof this._on_frame == "function") {
+        //         await this._on_frame(this, frameNumber)
+        //     } else if (typeof this._on_frame == "string") {
+        //         await this.run(this._id + " " + this._on_frame) //
+        //     }
+        // }
+
+        if(this._process_frame) {
+            if (this._on_frame) {
+                this.checkAndRunInternalFunction(this._on_frame,frameNumber)
+            } else if (this._on && this._on["frame"]) {
+                this.checkAndRunInternalFunction(this._on["frame"],frameNumber)
             }
         }
 
-        if(this._data_source && this._process_data) {
-            if(_xd.has(this._data_source)) {
+        if (this._data_source && this._process_data) {
+            if (_xd.has(this._data_source)) {
                 await this.onData(_xd._o[this._data_source])
             }
         }
@@ -465,7 +498,7 @@ export class XObject  {
     }
 
 
-    
+
 
 
     /**
@@ -526,7 +559,7 @@ export class XObject  {
                     const funcStr = tf.toString()
                     if (!funcStr.startsWith("class")) { //in case of class reference it being ignored
                         out[field] = funcStr
-                    } 
+                    }
                 } else if (typeof tf === "object") {
                     const xporters = Object.keys(this._xporter._instance_xporters)
                     let regField = true
@@ -537,7 +570,7 @@ export class XObject  {
                             regField = false
                         }
                     })
-                    
+
                     if (regField) {
                         out[field] = tf
                     }
@@ -550,9 +583,9 @@ export class XObject  {
         })
         //children are being created separately
         out._children = []
-        if(this._children.length>0) {
+        if (this._children.length > 0) {
             this._children.forEach(child => {
-                if(typeof child.toXData === "function") {
+                if (typeof child.toXData === "function") {
                     (out._children as Array<IXData>)?.push(child.toXData())
                 }
             })

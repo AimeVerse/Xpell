@@ -1,5 +1,5 @@
 
-import {XData, XEventManager,_x,_xem} from "./src/Core/Xpell"
+import {XData, XEventManager,_x,_xd,_xem} from "./src/Core/Xpell"
 // import { Xpell as _x } from "./src/Xpell"
 import { XUI, XUIApp, XUIObject } from "./src/XUI/XUI"
 import {XAI} from "./src/XAI/XAI"
@@ -38,7 +38,7 @@ _x.start()
 
 // _xdb.saveObject("test",{a:1,b:2})
 
-
+// _xem._log_rules.register = true
 
 class Xfield extends XUIObject {
 
@@ -104,14 +104,69 @@ const myView = {
     // _text:"Hello World",
     style:"width:100%;height:100%;background-color:white",
     _parent_element:"controls",
+    _on_mount:(obj:XUIObject) => {
+        console.log("root mounted");
+    },
     _children:[
         // createField("First Name","first-name"),
         // createField("Last Name","last-name"),
         // createField("Email","email","please enter your email"),
         {
-            _type:"xfield",
-            _id:"xfield-" + 1,
-            _title:"my field",
+            _type:"view",
+            _text:"number1",
+            // _on_mount:(obj:XUIObject) => {
+            //     console.log("1 mounted");
+            // },
+            _data_source:"test",
+            _on: {
+                "click":(obj:XUIObject,e:any) => {
+                    console.log("1 clicked",obj);
+                },
+                "data":(obj:XUIObject,data) => {
+                    obj.setText(data)
+                },
+                "mount":(obj:XUIObject) => {
+                    console.log("1 mounted");
+                }
+            },
+            
+
+        },
+        {
+            _id:"number2",
+            _type:"view",
+            _text:"number2",
+            _on_mount:(obj:XUIObject) => {
+                console.log("2 mounted");
+            },
+            _on_click:(obj:XUIObject,e:HTMLEvent) => {
+                console.log("2 clicked",obj);
+                _xd._o["test"] = "test data"
+            }
+        },
+        {
+            _type:"view",
+            _text:"number3",
+            _on_frame:(obj:XUIObject,fn) => {
+                obj.setText("frame " + fn)
+            }
+        },
+        {
+            _type:"view",
+            _text:"number4",
+            _on:{
+                "frame":(obj:XUIObject,fn) => {
+                    obj.setText("frame " + fn  )
+                }
+            }
+        },
+        {
+            _type:"view",
+            _text:"data source",
+            _data_source:"test",
+            _on_data:(obj:XUIObject,fn) => {
+                obj.setText("data " + fn)
+            }
         }
         
 
@@ -122,7 +177,12 @@ const myView = {
 
 
 
-XUI.loadControl(myView)
+const xobj = XUI.loadControl(myView)
+
+
+
+
+
 
 
 

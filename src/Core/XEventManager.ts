@@ -40,7 +40,8 @@ export type HTMLEventListenersIndex = {
 export type XEventListenerOptions = {
     _once?: boolean,
     _support_html?: boolean
-    _instance?: _XEventManager
+    // _instance?: _XEventManager,
+    _object?: any
 }
 
 /**
@@ -112,19 +113,20 @@ export class _XEventManager {
         _once: false,
         _support_html: true
     }): string {
-        // console.log("on " + eventName  ,options._once)
+        // console.log("on " + eventName  ,options)
         const id = this.onEvent(eventName, listener, options)
-
+        
         if (options && options._support_html) {
 
             const htmlListener: EventListener = (e: Event) => {
-                //listener(e) 
-                // console.log(e);
-
                 const dout = (e instanceof CustomEvent) ? e.detail : e
-                this.fire(eventName, dout, false)
+                this.fire(eventName, dout, false /*prevent recursive fire*/)
             }
-            document.addEventListener(eventName, htmlListener)
+            if(options._object){
+                options._object.dom.addEventListener(eventName, htmlListener)
+            } else {
+                document.addEventListener(eventName, htmlListener)
+            }
             this._html_event_listeners[id] = {
                 _event_name: eventName,
                 _listener: htmlListener
@@ -192,15 +194,14 @@ export class _XEventManager {
     async fire(eventName: string, data?: any, supportHtmlEvents = true) {
         if (this._events[eventName]) {
             const eventsToRemove: Array<string> = []
-            // console.log(this._events[eventName]);
-            if (supportHtmlEvents) document.dispatchEvent(new CustomEvent(eventName, { detail: data }))
+            if (supportHtmlEvents) {
+                console.log("XEMMMM " + this._events[eventName], eventName, supportHtmlEvents);
+                
+                document.dispatchEvent(new CustomEvent(eventName, { detail: data }))
+            }
             this._events[eventName].forEach((listener) => {
-                // console.log("fire " + eventName,listener);
-
                 if (!supportHtmlEvents) listener(data)
                 if (listener._options && listener._options._once && listener._id) {
-                    // console.log("remove once",listener._id,listener._options,listener._options._once);
-
                     eventsToRemove.push(listener._id)
                 }
             });

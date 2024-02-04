@@ -1,5 +1,10 @@
 Xpell Release Notes
 
+1.1.4
+-------
+- XObject has _parent XObject attribute
+- XObject _on event fire events for objects
+
 1.1.3
 -------
 - Fix color light & intensity error

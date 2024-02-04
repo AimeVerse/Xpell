@@ -13,7 +13,7 @@ import {_XEventManager ,XEventListener} from "../Core/Xpell";
 export type XEventListenerOptions =  {
     _once?: boolean,
     _support_html?: boolean
-    _instance?:_XEventManager
+    // _instance?:_XEventManager
 }
 
 export type HTMLEventListenersIndex = {

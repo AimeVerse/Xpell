@@ -140,7 +140,7 @@ export class X3DObject extends XObject {
     // protected _cache_jcmd: any
     protected _current_action!: string | null
     protected _positional_audio: THREE.PositionalAudio | undefined | null
-    protected _xem_options:XEventListenerOptions = {_once:false,_support_html:true,_instance:_xem}
+    protected _xem_options:XEventListenerOptions = {_once:false,_support_html:true}
 
     protected _log_rules: {
         _import_animation: boolean,

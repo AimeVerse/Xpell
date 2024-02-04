@@ -45,7 +45,7 @@ export class XUIObject extends XObject {
         this._html = "";
         this._children = [];
         this._visible = true
-        this._xem_options = <XEventListenerOptions>{_once:false, _support_html: true,_instance:_xem}
+        this._xem_options = <XEventListenerOptions>{_once:false, _support_html: true}
         
         // this._base_display = "block"
         this.addNanoCommandPack(_xuiobject_basic_nano_commands)
@@ -171,12 +171,13 @@ export class XUIObject extends XObject {
      * 
      */
     mount(parentElementId:string){
-        document.getElementById(parentElementId)?.append(this.getDOMObject())
-        this.onMount()
+        const obj = document.getElementById(parentElementId)
+        if(obj) {
+            obj.append(this.getDOMObject())
+            this.onMount()
+        }
     }
-    
-
-  
+        
     
     //check if XUI or IXData 
     append(xObject:XUIObject | XObjectData | any) {
@@ -186,9 +187,12 @@ export class XUIObject extends XObject {
         this._children.push(<XUIObject>xObject)
         if (this._dom_object) {
             this._dom_object.appendChild(xObject.getDOMObject())
-            xObject.mount()
+            xObject.onMount()
         }
+        return xObject
     }
+
+
 
     /** */
     setText(text:string)
@@ -260,16 +264,16 @@ export class XUIObject extends XObject {
     
     async onMount() {
         //check for _on_click event definition
-        const sthis = this
-        if (sthis._on_click) {
-            if (typeof sthis._on_click === 'function') {
-                this.getDOMObject().addEventListener("click", (e) => { (<Function>sthis._on_click)(sthis,e) })
-            }
-            else if (typeof sthis._on_click === 'string') {
-                this.getDOMObject().addEventListener("click", (e) => {sthis.run(sthis._id + " " + sthis._on_click) })
+        // const sthis = this
+        
+        await super.onMount()
+        
+        
+        if (this._on_click) {
+            if (typeof this._on_click === 'function') {
+                this.dom.addEventListener("click", (e) => { (<Function>this._on_click)(this,e) })
             }
         }
-        await super.onMount()
     }
 
 
@@ -279,13 +283,18 @@ export class XUIObject extends XObject {
      */
     async onShow()  {
         if (this._on_show) {
-            if (typeof this._on_show === 'function') {
-                 <Function>this._on_show(this) 
-            }
-            else if (typeof this._on_show === 'string') {
-                this.run(this._id + " " + this._on_show) 
-            }
+            // if (typeof this._on_show === 'function') {
+            //      <Function>this._on_show(this) 
+            // }
+            // else if (typeof this._on_show === 'string') {
+            //     this.run(this._id + " " + this._on_show) 
+            // }
+            this.checkAndRunInternalFunction(this._on_show)
+        } else if (this._on && this._on.show) {
+            this.checkAndRunInternalFunction(this._on.show)
         }
+
+
         this._children.forEach((child: XObject) => {
             if (child.onShow && typeof child.onShow === 'function') {
                 child.onShow()
@@ -298,13 +307,17 @@ export class XUIObject extends XObject {
      */
     async onHide()  {
         if (this._on_hide) {
-            if (typeof this._on_hide === 'function') {
-                 <Function>this._on_hide(this) 
-            }
-            else if (typeof this._on_hide === 'string') {
-                this.run(this._id + " " + this._on_hide) 
-            }
+            // if (typeof this._on_hide === 'function') {
+            //      <Function>this._on_hide(this) 
+            // }
+            // else if (typeof this._on_hide === 'string') {
+            //     this.run(this._id + " " + this._on_hide) 
+            // }
+            this.checkAndRunInternalFunction(this._on_hide)
+        } else if (this._on && this._on.hide) {
+            this.checkAndRunInternalFunction(this._on.hide)
         }
+
         this._children.forEach((child: XObject) => {
             if (child.onHide && typeof child.onHide === 'function') {
                 child.onHide()
