@@ -147,8 +147,7 @@ export class XObject {
         })
         this._xem_options = {
             // _instance:_xem
-            _object: this
-
+            // _object: this
         }
         this.init(data, skipParse)
         
@@ -199,10 +198,8 @@ export class XObject {
     addEventListener(eventName: string, handler: XObjectOnEventHandler, options?: XEventListenerOptions) {
         if (!options) {
             options = this._xem_options
-        } else {
-            options._object = this
-        }
-        const event_listener_id = _xem.on(eventName, (eventData) => { handler(this, eventData) }, options)
+        } 
+        const event_listener_id = _xem.on(eventName, (eventData) => { handler(this, eventData) }, options, this)
         this._event_listeners_ids[eventName] = event_listener_id
     }
 

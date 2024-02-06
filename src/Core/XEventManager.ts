@@ -41,7 +41,7 @@ export type XEventListenerOptions = {
     _once?: boolean,
     _support_html?: boolean
     // _instance?: _XEventManager,
-    _object?: any
+    // _object?: any
 }
 
 /**
@@ -112,7 +112,7 @@ export class _XEventManager {
     on(eventName: string, listener: XEventListener, options: XEventListenerOptions = {
         _once: false,
         _support_html: true
-    }): string {
+    },callObject:any = null): string {
         const id = this.onEvent(eventName, listener, options)
         
         if (options && options._support_html) {
@@ -121,8 +121,8 @@ export class _XEventManager {
                 const dout = (e instanceof CustomEvent) ? e.detail : e
                 this.fire(eventName, dout, false /*prevent recursive fire*/)
             }
-            if(options._object){
-                options._object.dom.addEventListener(eventName, htmlListener)
+            if(callObject){
+                callObject.dom.addEventListener(eventName, htmlListener)
             } else {
                 document.addEventListener(eventName, htmlListener)
             }
@@ -142,8 +142,8 @@ export class _XEventManager {
      * @param listener listener function to be called when event fired
      * @returns listener id
      */
-    once(eventName: string, listener: XEventListener, htmlEvent = true) {
-        return this.on(eventName, listener, { _once: true, _support_html: htmlEvent })
+    once(eventName: string, listener: XEventListener, htmlEvent = true,callObject:any = null) {
+        return this.on(eventName, listener, { _once: true, _support_html: htmlEvent },callObject)
     }
 
     /**
