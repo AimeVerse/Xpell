@@ -1,9 +1,10 @@
 Xpell Release Notes
 
-1.1.5
+1.1.6
 -------
-- XObject add _parent to Xporter ignore list
-- XUIObject set _parent append
+- XObject add "_parent" to Xporter ignore list
+- XUIObject set "_parent" append
+- XUIObject add "_dom_object","_html","_xem_options" to Xporter ignore list
 
 1.1.4
 -------

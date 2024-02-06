@@ -10,7 +10,7 @@ const index = resolve(__dirname, 'index.ts')
 
 export default {
   server: {
-    port: 3000
+    port: 3001
   },
   build: {
     lib: {

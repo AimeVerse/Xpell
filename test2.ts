@@ -183,6 +183,7 @@ const xobj = XUI.loadControl(myView)
 
 
 
+console.log("obj",xobj.toXData());
 
 
 
