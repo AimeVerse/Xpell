@@ -92,8 +92,6 @@ export class WormholeInstance {
         _xlog.log("Wormhole is opening...");
 
         _xem.on(WormholeEvents.ResponseDataArrived, (e) => {
-            // console.log(e);
-
             const edata = e.sed
             sthis._data_waiters[edata["waiterID"]]?.(edata.data)
         })
@@ -183,7 +181,6 @@ export class WormholeInstance {
     sendSync(message: any, checkXProtocol = true): Promise<WormholeMessage | any> {
         return new Promise((resolve, reject) => {
             Wormholes.send(message, (data:any) => {
-                // console.log("data-waiter got response", data,checkXProtocol);
                 //new addition for xprotocol
                 // data = data.data
                 let res
@@ -225,7 +222,6 @@ export class WormholeInstance {
 
     //         if (!cb) {
     //             cb = (data: string) => {
-    //                 console.log("data-waiter got response", data)
     //             }
     //         }
     //         this.dataWaiters[wormholeMessage.id] = cb
@@ -233,7 +229,7 @@ export class WormholeInstance {
     //         {
     //             this.ws.send(formData)
     //         } catch (ex) {
-    //             console.log("ERROR" + ex);
+    //             console.error("ERROR" + ex);
 
     //         }
     //     }

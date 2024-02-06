@@ -199,5 +199,4 @@ export const world:X3DApp = {
 
 
 await X3D.loadApp(world)
-// console.log(X3D.world)
 

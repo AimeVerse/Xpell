@@ -113,7 +113,6 @@ export class _XEventManager {
         _once: false,
         _support_html: true
     }): string {
-        // console.log("on " + eventName  ,options)
         const id = this.onEvent(eventName, listener, options)
         
         if (options && options._support_html) {
@@ -131,7 +130,6 @@ export class _XEventManager {
                 _event_name: eventName,
                 _listener: htmlListener
             }
-            // console.log(this._html_event_listeners[id]);
 
         }
         return id
@@ -145,8 +143,6 @@ export class _XEventManager {
      * @returns listener id
      */
     once(eventName: string, listener: XEventListener, htmlEvent = true) {
-        // console.log("once " + eventName);
-
         return this.on(eventName, listener, { _once: true, _support_html: htmlEvent })
     }
 
@@ -195,8 +191,6 @@ export class _XEventManager {
         if (this._events[eventName]) {
             const eventsToRemove: Array<string> = []
             if (supportHtmlEvents) {
-                console.log("XEMMMM " + this._events[eventName], eventName, supportHtmlEvents);
-                
                 document.dispatchEvent(new CustomEvent(eventName, { detail: data }))
             }
             this._events[eventName].forEach((listener) => {
@@ -205,8 +199,6 @@ export class _XEventManager {
                     eventsToRemove.push(listener._id)
                 }
             });
-
-
             eventsToRemove.forEach((listenerId) => this.remove(listenerId))
         }
 

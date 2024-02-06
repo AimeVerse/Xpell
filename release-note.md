@@ -1,5 +1,10 @@
 Xpell Release Notes
 
+1.1.5
+-------
+- XObject add _parent to Xporter ignore list
+- XUIObject set _parent append
+
 1.1.4
 -------
 - XObject has _parent XObject attribute

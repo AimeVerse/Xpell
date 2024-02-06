@@ -184,7 +184,8 @@ export class XUIObject extends XObject {
         if(!(xObject instanceof XUIObject)) {
             xObject = XUI.create(xObject)
         }
-        this._children.push(<XUIObject>xObject)
+        //this._children.push(<XUIObject>xObject)
+        super.append(xObject)
         if (this._dom_object) {
             this._dom_object.appendChild(xObject.getDOMObject())
             xObject.onMount()

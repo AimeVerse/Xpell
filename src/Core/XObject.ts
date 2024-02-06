@@ -117,7 +117,7 @@ export class XObject {
     protected _cache_jcmd?: any;
     protected _event_listeners_ids: { [eventName: string]: string } = {}
     protected _xporter: XDataXporter = {
-        _ignore_fields: ["_to_xdata_ignore_fields", "_xporter", "_children", "_on", "_once", "_on_create", "_on_mount", "_on_frame", "_on_data", "_process_frame", "_process_data"],
+        _ignore_fields: ["_to_xdata_ignore_fields", "_xporter", "_children", "_on", "_once", "_on_create", "_on_mount", "_on_frame", "_on_data", "_process_frame", "_process_data","_parent"],
         _instance_xporters: {}
     }
 
@@ -151,7 +151,6 @@ export class XObject {
 
         }
         this.init(data, skipParse)
-        // console.log(this._children);
         
 
     }
@@ -182,7 +181,6 @@ export class XObject {
         const onceOptions: XEventListenerOptions = {}
         Object.assign(onceOptions, options)
         onceOptions._once = true
-        // console.log("once options",onceOptions._once);
 
         Object.keys(this._once).forEach(eventName => {
             if (typeof this._once[eventName] === "function") {
@@ -229,6 +227,7 @@ export class XObject {
      */
     append(xobject: XObject) {
         this._children?.push(xobject)
+        xobject._parent = this
     }
 
     /**

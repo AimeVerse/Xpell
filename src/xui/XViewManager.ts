@@ -80,7 +80,6 @@ export class XViewManager {
      */
     addView(view: XView, viewName: string) {
         this.#_views[viewName] = view;
-        // console.log("View " + viewName + " has been added to the View Manager")
     }
 
     /**

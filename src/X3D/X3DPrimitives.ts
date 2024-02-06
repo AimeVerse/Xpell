@@ -383,10 +383,8 @@ export class XModel extends X3DObject {
     
     async onCreate(): Promise<void> {
         // await super.onCreate()
-        // console.log("XModel onCreate");
         // // await this.loadModel(this._model_url)
         
-        // console.log("sfter XModel onCreate");
     }
 
 

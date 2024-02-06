@@ -27,7 +27,6 @@ class _X3DLoader {
         
     loadDraco() {
 
-        // console.log("loading draco");
         
         this.dracoLoader = new DRACOLoader();
         this.dracoLoader.setDecoderPath( 'https://www.gstatic.com/draco/versioned/decoders/1.5.6/' )

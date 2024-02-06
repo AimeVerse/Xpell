@@ -249,14 +249,8 @@ export class X3DModule extends XModule {
         
         const cam = X3D.world?.defaultCamera;
         const mouse = { x: 0, y: 0 }
-        
         const div = e.target
-        
-        // console.log("div",e.target,div.tagName.toLowerCase() == X3D.world.renderer.domElement.tagName.toLowerCase());
-
         if (div.tagName.toLowerCase() != X3D.world?.renderer.domElement.tagName.toLowerCase()) return
-        // console.log("div",div);
-
         if (e.which != 1) return;
 
         
@@ -276,7 +270,7 @@ export class X3DModule extends XModule {
 
             if (ints?.object) {
                 let obj = ints.object
-                // console.log("obj",obj.name);
+                // ("obj",obj.name);
                 
                 let found = false
                 //search all child objects to find the root object

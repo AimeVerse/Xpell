@@ -588,7 +588,8 @@ export class X3DObject extends XObject {
         if (!(x3dObject instanceof X3DObject)) {
             x3dObject = await X3D.create(<IX3DObjectData>x3dObject)
         }
-        this._children.push(x3dObject as XObject);
+        // this._children.push(x3dObject as XObject);
+        super.append(<XObject>x3dObject)
         if (this._three_obj) {
             this._three_obj.add((<X3DObject>x3dObject).getThreeObject() as THREE.Object3D)
         }
@@ -772,8 +773,6 @@ export class X3DObject extends XObject {
      * loads animation on start or after create object
      */
     async loadAnimations() {
-        // console.log("loadAnimations",this._three_obj);
-        
         if (this._three_obj && this._three_obj.animations.length > 0) {
             const anim = this._three_obj.animations
             
@@ -799,8 +798,6 @@ export class X3DObject extends XObject {
             // const clip = animationAction._clip.name
                 clip.reset()
                 clip.time = 0.0
-                // console.log("playAllAnimations",clip);
-                
                 clip.play()
                 this._current_action = clipName
                 // this.playAnimation(clipName)
