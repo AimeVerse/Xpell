@@ -188,15 +188,15 @@ export class XUIObject extends XObject {
         super.append(xObject)
         if (this.dom) {
             
-            // this.dom.appendChild(xObject.dom)
-            // //promisify onMount
-            // return new Promise((resolve) => {
-            //     xObject.onMount().then(() => {
-            //         resolve(xObject)
-            //     })
-            // })
-            const dom = xObject.dom
-            xObject.mount(this._id)
+            this.dom.appendChild(xObject.dom)
+            //promisify onMount
+            return new Promise((resolve) => {
+                xObject.onMount().then(() => {
+                    resolve(xObject)
+                })
+            })
+            // const dom = xObject.dom
+            // xObject.mount(this._id)
 
         } 
         else
