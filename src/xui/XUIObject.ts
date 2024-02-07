@@ -173,7 +173,7 @@ export class XUIObject extends XObject {
     mount(parentElementId:string){
         const obj = document.getElementById(parentElementId)
         if(obj) {
-            obj.append(this.dom)
+            obj.append(this.getDOMObject())
             this.onMount()
         }
     }
@@ -187,16 +187,20 @@ export class XUIObject extends XObject {
         //this._children.push(<XUIObject>xObject)
         super.append(xObject)
         if (this.dom) {
-            //this.dom.appendChild(xObject.dom)
-            //promisify onMount
+            
+            // this.dom.appendChild(xObject.dom)
+            // //promisify onMount
             // return new Promise((resolve) => {
             //     xObject.onMount().then(() => {
             //         resolve(xObject)
             //     })
             // })
+            const dom = xObject.dom
             xObject.mount(this._id)
 
-        
+        } 
+        else
+        {
 
             return xObject
         }
