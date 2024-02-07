@@ -196,9 +196,7 @@ export class XUIObject extends XObject {
             // })
             xObject.mount(this._id)
 
-        } 
-        else
-        {
+        
 
             return xObject
         }
