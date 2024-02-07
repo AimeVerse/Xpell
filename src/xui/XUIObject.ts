@@ -186,12 +186,12 @@ export class XUIObject extends XObject {
         }
         //this._children.push(<XUIObject>xObject)
         super.append(xObject)
-        if (this.dom) {
+        if (this._dom_object instanceof HTMLElement) {
             
-            this.dom.appendChild(xObject.dom)
+            this._dom_object.appendChild(xObject.dom)
             //promisify onMount
-            return new Promise((resolve) => {
-                xObject.onMount().then(() => {
+            return new Promise(async (resolve) => {
+                await xObject.onMount().then(() => {
                     resolve(xObject)
                 })
             })

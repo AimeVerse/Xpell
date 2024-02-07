@@ -192,20 +192,28 @@ const onMountErrorView = {
                 console.log("1 mounted");
             }
         },
+        {
+            _type:"view",
+            _text:"number2",
+            _on_mount:(obj:XUIObject) => {
+                console.log("2 mounted");
+            }
+        
+        }
     ]
 }
 
 
 
 const xobj = XUI.loadControl( onMountErrorView )
-XUI.getObject("number1").append({
-    _type:"view",
-    _text:"number2",
-    _on_mount:(obj:XUIObject) => {
-        console.log("2 mounted");
-    }
+// XUI.getObject("number1").append({
+//     _type:"view",
+//     _text:"number2",
+//     _on_mount:(obj:XUIObject) => {
+//         console.log("2 mounted");
+//     }
 
-})
+// })
 
 
 
