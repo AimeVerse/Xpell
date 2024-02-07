@@ -173,7 +173,7 @@ export class XUIObject extends XObject {
     mount(parentElementId:string){
         const obj = document.getElementById(parentElementId)
         if(obj) {
-            obj.append(this.getDOMObject())
+            obj.appendChild(this.getDOMObject())
             this.onMount()
         }
     }
