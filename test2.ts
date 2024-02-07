@@ -176,14 +176,42 @@ const myView = {
 }
 
 
+const onMountErrorView = {
+    _type:"view",
+    _id:"on-mount-error-view",
+    _parent_element:"controls",
+    _on_mount:(obj:XUIObject) => {
+        console.log("root mounted");
+    },
+    _children:[
+        {
+            _id:"number1",
+            _type:"view",
+            _text:"number1",
+            _on_mount:(obj:XUIObject) => {
+                console.log("1 mounted");
+            }
+        },
+    ]
+}
 
-const xobj = XUI.loadControl(myView)
+
+
+const xobj = XUI.loadControl( onMountErrorView )
+XUI.getObject("number1").append({
+    _type:"view",
+    _text:"number2",
+    _on_mount:(obj:XUIObject) => {
+        console.log("2 mounted");
+    }
+
+})
 
 
 
 
 
-console.log("obj",xobj.toXData());
+// console.log("obj",xobj.toXData());
 
 
 
