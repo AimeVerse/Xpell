@@ -1,5 +1,11 @@
 Xpell Release Notes
 
+
+11 Feb 2024
+-------------
+- Wormholes events fire error fix
+
+
 1.1.6
 -------
 - XObject add "_parent" to Xporter ignore list

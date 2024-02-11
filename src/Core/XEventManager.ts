@@ -58,12 +58,14 @@ export interface XEventListener {
  */
 export class _XEventManager {
     _log_rules: {
+        fire: any
         register: boolean,
         remove: boolean,
 
     } = {
             register: false,
-            remove: false
+            remove: false,
+            fire: false
         }
 
     //events dictionary object and listeners list
@@ -192,9 +194,13 @@ export class _XEventManager {
             const eventsToRemove: Array<string> = []
             if (supportHtmlEvents) {
                 document.dispatchEvent(new CustomEvent(eventName, { detail: data }))
+                if(this._log_rules.fire) _xlog.log("XEM Fire HTML Event:" + eventName, data)
             }
             this._events[eventName].forEach((listener) => {
-                if (!supportHtmlEvents) listener(data)
+                if (!supportHtmlEvents) {
+                    if(this._log_rules.fire) _xlog.log("XEM Fire Xpell Event:" + eventName, data)
+                    listener(data)
+                }
                 if (listener._options && listener._options._once && listener._id) {
                     eventsToRemove.push(listener._id)
                 }

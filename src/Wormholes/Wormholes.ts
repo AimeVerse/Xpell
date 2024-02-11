@@ -16,7 +16,7 @@
 import {
     XData as _xd,
     XLogger as _xlog,
-    XEventManager as _xem,
+    _xem,
     XUtils as _xu
 } from "../Core/Xpell"
 
@@ -50,15 +50,36 @@ export class WormholeInstance {
     _ws: null | WebSocket
     _ready: boolean
     _data_waiters: WaitersPack
-    _listener: void | undefined;
+    _log_rules: { [key:string]: boolean}
+    _on_open?: CallableFunction
 
     constructor() {
         this._ws = null;
         this._ready = false
         this._data_waiters = {}
+        this._log_rules = {
+            _open: false,
+            _connect: false,
+            _disconnect: false,
+            _send: false,
+            _receive: false
+        }
     }
 
 
+    /**
+     * Set the log rules for the wormhole
+     */
+    verbose(val: boolean) {
+            
+        this._log_rules ={
+            _open: val,
+            _connect: val,
+            _disconnect: val,
+            _send: val,
+            _receive: val
+        }
+    }
 
     private createMessage(msg: object, type: MessageType = MessageType.JSON): WormholeMessage {
         const oData: string = this.stringify(msg)
@@ -89,7 +110,7 @@ export class WormholeInstance {
         //     const edata = JSON.parse(e.detail)
         //     sthis.dataWaiters[edata.data["eid"]]?.(edata.data)
         // })
-        _xlog.log("Wormhole is opening...");
+        if(this._log_rules._open) _xlog.log("Wormhole is opening...");
 
         _xem.on(WormholeEvents.ResponseDataArrived, (e) => {
             const edata = e.sed
@@ -99,11 +120,19 @@ export class WormholeInstance {
         if (this._ws) {
             this._ws.onopen = async () => {
                 this._ready = true
-                _xlog.log("Wormhole has been created");
-                _xd.variables[WormholeEvents.WormholeOpen] = true
+                if(this._log_rules._open) _xlog.log("Wormhole has been created");
+                _xd._o[WormholeEvents.WormholeOpen] = true
                 // let event = new CustomEvent("wormhole-open")
                 // document.dispatchEvent(event)
-                _xem.fire(WormholeEvents.WormholeOpen, {}, true)
+                _xem.fire(WormholeEvents.WormholeOpen, {}, false)
+                if (this._on_open)
+                {
+                    try {
+                        this._on_open()
+                    } catch (e) {
+                        _xlog.error(e)
+                    }
+                }
 
             }
 
@@ -119,10 +148,8 @@ export class WormholeInstance {
                         "waiterID": ddata["eid"],
                         data: ddata
                     }
-
-                    // let event = new CustomEvent(WormholeEvents.ResponseDataArrived, { detail: JSON.stringify(sed) })
-                    // document.dispatchEvent(event)
-                    _xem.fire(WormholeEvents.ResponseDataArrived, { sed: sed })
+                    _xem.fire(WormholeEvents.ResponseDataArrived, { sed: sed },false)
+                    if(this._log_rules._receive) _xlog.log("Wormhole received message", ddata)
 
                 } catch (e) {
                     _xlog.error(e);
@@ -131,14 +158,10 @@ export class WormholeInstance {
             };
 
             this._ws.onclose = async () => {
-                // websocket is closed.
-                //document.removeEventListener("wh-data-res")
                 this._ready = false
-                _xlog.log("Wormholer is closed...");
-                _xd.variables[WormholeEvents.WormholeOpen] = false
-                // let event = new CustomEvent("wormhole-closed")
-                // document.dispatchEvent(event)
-                _xem.fire(WormholeEvents.WormholeClose)
+                if(this._log_rules._open) _xlog.log("Wormholer is closed...");
+                _xd._o[WormholeEvents.WormholeOpen] = false
+                _xem.fire(WormholeEvents.WormholeClose,{},false)
             };
         }
     }
@@ -160,12 +183,13 @@ export class WormholeInstance {
 
             if (!cb) {
                 cb = (data: string) => {
-                    _xlog.log("data-waiter got response", data)
+                    _xlog.log("[Wormhole default callback] data ->", data)
                 }
             }
             this._data_waiters[wormholeMessage.id] = cb
             try {
                 this._ws.send(JSON.stringify(wormholeMessage))
+                if(this._log_rules._send) _xlog.log("Wormhole sent message", wormholeMessage)
             } catch (ex) {
                 _xlog.log("ERROR" + ex);
 
@@ -208,6 +232,12 @@ export class WormholeInstance {
         return no
     }
 
+
+    onOpen(cb: CallableFunction) {
+        if(cb && typeof cb === "function") {
+            this._on_open = cb
+        }
+    }
     // sendWebMBlob(blob) {
     //     // Create a new FormData object
     //     const formData = new FormData();
