@@ -148,6 +148,7 @@ export class XObject {
         this._xem_options = {
             // _instance:_xem
             // _object: this
+            _support_html: true
         }
         this.init(data, skipParse)
         
