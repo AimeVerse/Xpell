@@ -124,7 +124,7 @@ export class WormholeInstance {
                 _xd._o[WormholeEvents.WormholeOpen] = true
                 // let event = new CustomEvent("wormhole-open")
                 // document.dispatchEvent(event)
-                _xem.fire(WormholeEvents.WormholeOpen, {}, false)
+                _xem.fire(WormholeEvents.WormholeOpen, {}, true)
                 if (this._on_open)
                 {
                     try {
@@ -148,7 +148,7 @@ export class WormholeInstance {
                         "waiterID": ddata["eid"],
                         data: ddata
                     }
-                    _xem.fire(WormholeEvents.ResponseDataArrived, { sed: sed },false)
+                    _xem.fire(WormholeEvents.ResponseDataArrived, { sed: sed },true)
                     if(this._log_rules._receive) _xlog.log("Wormhole received message", ddata)
 
                 } catch (e) {
@@ -161,7 +161,7 @@ export class WormholeInstance {
                 this._ready = false
                 if(this._log_rules._open) _xlog.log("Wormholer is closed...");
                 _xd._o[WormholeEvents.WormholeOpen] = false
-                _xem.fire(WormholeEvents.WormholeClose,{},false)
+                _xem.fire(WormholeEvents.WormholeClose,{},true)
             };
         }
     }

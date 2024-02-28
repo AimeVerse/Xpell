@@ -166,6 +166,7 @@ export class XObject {
     }
 
     parseEvents(options?: XEventListenerOptions) {
+        if(!options) options = this._xem_options
         Object.keys(this._on).forEach(eventName => {
             if (typeof this._on[eventName] === "function") {
                 this.addEventListener(eventName, this._on[eventName], options)
