@@ -63,7 +63,13 @@ export class XUIObject extends XObject {
      */
      async dispose(){
         
-        this._dom_object = null
+        this._dom_object = undefined
+        this._html = undefined
+        this._base_display = undefined
+        this._text = undefined
+        this._on_click = undefined
+        this._on_show = undefined
+        this._on_hide = undefined
         super.dispose()
     }
 
@@ -224,7 +230,50 @@ export class XUIObject extends XObject {
         }
     }
 
+    /**
+     * Adds a css class to the object
+     * @param className - the css class name
+     */
+    addClass(className:string) {
+        if(this._dom_object instanceof HTMLElement) {
+            this._dom_object.classList.add(className)
+        }
+    }
 
+    /**
+     * Removes a css class from the object
+     * @param className - the css class name
+     */
+    removeClass(className:string) {
+        if(this._dom_object instanceof HTMLElement) {
+            this._dom_object.classList.remove(className)
+        }
+    }
+
+    /**
+     * Toggles a css class on the object
+     * @param className - the css class name
+     */
+    toggleClass(className:string) {
+        if(this._dom_object instanceof HTMLElement) {
+            this._dom_object.classList.toggle(className)
+        }
+    }
+
+
+    /**
+     * Replaces a css class on the object
+     * @param oldClass class to be replaced
+     * @param newClass new class to replace the old class
+     */
+    replaceClass(oldClass:string, newClass:string) {
+        
+        if(this._dom_object instanceof HTMLElement) {
+            this._dom_object.classList.replace(oldClass,newClass)
+        } else {
+            this.class = newClass
+        }
+    }
     
 
     /**
@@ -233,7 +282,7 @@ export class XUIObject extends XObject {
     show() {
         if(this._dom_object instanceof HTMLElement) {
             const disp = (this._base_display) ? this._base_display : "block"
-            this._dom_object.style.display = <string>this._base_display
+            this._dom_object.style.display = disp
             this._visible=true
             this.onShow()
         }
@@ -263,6 +312,12 @@ export class XUIObject extends XObject {
         else this.show()
     }
     
+
+    click() {
+        if(this._dom_object instanceof HTMLElement) {
+            this._dom_object.click()
+        }
+    }
     
     
     
@@ -293,17 +348,12 @@ export class XUIObject extends XObject {
      */
     async onShow()  {
         if (this._on_show) {
-            // if (typeof this._on_show === 'function') {
-            //      <Function>this._on_show(this) 
-            // }
-            // else if (typeof this._on_show === 'string') {
-            //     this.run(this._id + " " + this._on_show) 
-            // }
             this.checkAndRunInternalFunction(this._on_show)
         } else if (this._on && this._on.show) {
             this.checkAndRunInternalFunction(this._on.show)
+        } else if (this._once && this._once.show) {
+            this.checkAndRunInternalFunction(this._once.show)
         }
-
 
         this._children.forEach((child: XObject) => {
             if (child.onShow && typeof child.onShow === 'function') {
@@ -317,15 +367,11 @@ export class XUIObject extends XObject {
      */
     async onHide()  {
         if (this._on_hide) {
-            // if (typeof this._on_hide === 'function') {
-            //      <Function>this._on_hide(this) 
-            // }
-            // else if (typeof this._on_hide === 'string') {
-            //     this.run(this._id + " " + this._on_hide) 
-            // }
             this.checkAndRunInternalFunction(this._on_hide)
         } else if (this._on && this._on.hide) {
             this.checkAndRunInternalFunction(this._on.hide)
+        } else if (this._once && this._once.hide) {
+            this.checkAndRunInternalFunction(this._once.hide)
         }
 
         this._children.forEach((child: XObject) => {

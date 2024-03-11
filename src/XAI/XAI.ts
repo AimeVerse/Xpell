@@ -7,7 +7,7 @@
  */
 
 // import XUIObject from "./XUIObject"
-import {XModule,XModuleData,_xem } from "../Core/Xpell"
+import {XModule,XModuleData,_x,_xem } from "../Core/Xpell"
 // import { _xem } from "../XEM/XEventManager"
 // import * as _xc from "../XConst"
 import {XAIObjects} from "./XAICoreObjects"
@@ -40,8 +40,6 @@ export class XAIModule extends XModule {
 }
 
 export const XAI = new XAIModule({ _name: "xai" })
-
+_x.loadModule(XAI)
 export default XAI
-export {
-   
-}
+export {XAIObjects}

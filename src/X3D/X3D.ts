@@ -22,6 +22,7 @@ import X3DPrimitives from "./X3DPrimitives"
 import X3DWorld from './X3DWorld'
 import { X3DLoader } from './X3DLoader'
 import { X3DSceneBackground } from './X3DWorldSceneBackground'
+import { _x } from '../Core/Xpell';
 // import X3DNPC from './X3DNPC'
 // import XObject from '../core/XObject';
 
@@ -113,6 +114,8 @@ export class X3DModule extends XModule {
         //this.world = null
         this.x3dObjects = {}
         _xem.fire("x3d-init")
+        
+        _x.loadModule(this)
         
     }
 

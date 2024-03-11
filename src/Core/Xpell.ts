@@ -73,7 +73,7 @@ export class XpellEngine {
     /**
      * Enable Xpell logs to console
      */
-    verbose(){
+    set verbose(val : boolean){
         _xlog.enabled=true
     }
    

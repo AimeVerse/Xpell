@@ -94,7 +94,7 @@ export class XWebcam extends XUIObject {
         }
         super(data,defaults,true)
         this.parse(data)
-        this.parseEvents(this._xem_options)
+        // this.parseEvents(this._xem_options)
 
         this.autoplay = true
         this.muted = true
@@ -160,7 +160,7 @@ export class XTextField extends XUIObject {
 
         //incase of self parsing do parse & parseEvents
         this.parse(data)
-        this.parseEvents(this._xem_options)
+        // this.parseEvents(this._xem_options)
         
         
     }

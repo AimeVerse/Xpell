@@ -31,6 +31,7 @@ import XObjectManager from "./XObjectManager";
 import * as _XC from "./XConst"
 import { XObjectData, XObject, XObjectPack } from "./XObject";
 import XCommand, { XCommandData } from "./XCommand";
+import { _xd } from "./Xpell";
 
 
 
@@ -190,12 +191,14 @@ export class XModule {
      */
     async onFrame(frameNumber: number) {
         const omObjects = this.#_object_manger._objects
-        Object.keys(omObjects).forEach(key => {
+        const keys = Object.keys(omObjects)
+        keys.forEach(key => {
             const onFrameCallBack:XObject = <any>omObjects[key]
             if (onFrameCallBack && onFrameCallBack.onFrame && typeof onFrameCallBack.onFrame === 'function') {
                 onFrameCallBack?.onFrame(frameNumber)
             }
         })
+        _xd._o[this._name + "-om-objects"] = keys.length        
     }
 
 

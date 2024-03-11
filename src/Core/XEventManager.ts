@@ -33,7 +33,8 @@ export type XEvent = {
 export type HTMLEventListenersIndex = {
     [id: string]: {
         _listener: Function
-        _event_name: string
+        _event_name: string,
+        _object?: any
     }
 }
 
@@ -44,13 +45,17 @@ export type XEventListenerOptions = {
     // _object?: any
 }
 
+
+// (data: any): void
+
 /**
  * This interface define the listener callable function (provided with "on" method)
  */
 export interface XEventListener {
     _id?: string
-    (data: any): void
+    _callback?: Function
     _options?: XEventListenerOptions
+    // _object?: any
 }
 
 /**
@@ -88,16 +93,23 @@ export class _XEventManager {
      *         console.log("XEM Event " + data)
      *    })
      */
-    onEvent(eventName: string, listener: XEventListener, options?: XEventListenerOptions): string {
+    onEvent(eventName: string, listener: Function, options?: XEventListenerOptions, callObj?: any): string {
         if (!this._events[eventName]) {
             this._events[eventName] = [];
         }
-        this._events[eventName].push(listener)
-        listener._id = _xu.guid()
-        listener._options = options
-        this._listeners_to_event_index[listener._id] = eventName
-        if (this._log_rules.register) _xlog.log("XEM Register " + eventName, listener._id)
-        return listener._id
+        const xlistener:XEventListener = {
+            _id: _xu.guid(),
+            _options: options,
+            // _object: callObj,
+            _callback: listener,
+        }
+        // listener._id = _xu.guid()
+        // listener._options = options
+        // listener._object = callObj
+        this._events[eventName].push(xlistener)
+        this._listeners_to_event_index[<any>xlistener._id] = eventName
+        if (this._log_rules.register) _xlog.log("XEM Register " + eventName, xlistener._id)
+        return <any>xlistener._id
     }
 
     /**
@@ -111,26 +123,29 @@ export class _XEventManager {
    *         console.log("XEM Event " + data)
    *    })
    */
-    on(eventName: string, listener: XEventListener, options: XEventListenerOptions = {
+    on(eventName: string, listener: Function, options: XEventListenerOptions = {
         _once: false,
         _support_html: true
-    },callObject:any = null): string {
-        const id = this.onEvent(eventName, listener, options)
-        
-        if (options && options._support_html) {
+    }, callObject?: any): string {
+        const id = this.onEvent(eventName, listener, options, callObject)
 
+        if (options) {
             const htmlListener: EventListener = (e: Event) => {
                 const dout = (e instanceof CustomEvent) ? e.detail : e
-                this.fire(eventName, dout, false /*prevent recursive fire*/)
+                listener(dout)
+                if(options._once) this.remove(id)
             }
-            if(callObject){
+            if (callObject ) {
                 callObject.dom.addEventListener(eventName, htmlListener)
+                if (this._log_rules.register) _xlog.log("XEM Register  " + eventName + " to " + callObject._id)
             } else {
                 document.addEventListener(eventName, htmlListener)
+                if (this._log_rules.register) _xlog.log("XEM Register  " + eventName + " to document")
             }
             this._html_event_listeners[id] = {
                 _event_name: eventName,
-                _listener: htmlListener
+                _listener: htmlListener,
+                _object: callObject
             }
 
         }
@@ -144,8 +159,8 @@ export class _XEventManager {
      * @param listener listener function to be called when event fired
      * @returns listener id
      */
-    once(eventName: string, listener: XEventListener, htmlEvent = true,callObject:any = null) {
-        return this.on(eventName, listener, { _once: true, _support_html: htmlEvent },callObject)
+    once(eventName: string, listener: Function, callObject: any = null) {
+        return this.on(eventName, listener, { _once: true }, callObject)
     }
 
     /**
@@ -157,6 +172,7 @@ export class _XEventManager {
             const eventName = this._listeners_to_event_index[listenerId]
             this._events[eventName].forEach((listener, index) => {
                 if (listener._id == listenerId) {
+                    this._events[eventName][index] = null as any
                     this._events[eventName].splice(index, 1)
                 }
             })
@@ -171,14 +187,14 @@ export class _XEventManager {
    * @param listenerId 
    */
     remove(listenerId: string): void {
-        this.removeEvent(listenerId)
         if (this._html_event_listeners[listenerId]) {
-
             const eventName = this._html_event_listeners[listenerId]._event_name
             const listener = this._html_event_listeners[listenerId]._listener
-
-            document.removeEventListener(eventName, <any>listener)
+            const obj = this._html_event_listeners[listenerId]._object
+            if(obj) obj.dom.removeEventListener(eventName, listener)
+            else document.removeEventListener(eventName, <any>listener)
         }
+        this.removeEvent(listenerId)
     }
 
 
@@ -189,18 +205,12 @@ export class _XEventManager {
      * @param data - the data to pass to the event
      * @param supportHtmlEvents - if true the event will be fired as HTML event too
      */
-    async fire(eventName: string, data?: any, supportHtmlEvents = true) {
-        if (this._events[eventName]) {
+    async fire(eventName: string, data?: any, callObject?: any) {
+        const xevt: XEventListener[] | undefined = this._events[eventName]
+        if (xevt) {
             const eventsToRemove: Array<string> = []
-            if (supportHtmlEvents) {
-                document.dispatchEvent(new CustomEvent(eventName, { detail: data }))
-                if(this._log_rules.fire) _xlog.log("XEM Fire HTML Event:" + eventName, data)
-            }
-            this._events[eventName].forEach((listener) => {
-                if (!supportHtmlEvents) {
-                    if(this._log_rules.fire) _xlog.log("XEM Fire Xpell Event:" + eventName, data)
-                    listener(data)
-                }
+            xevt.forEach((listener) => {
+                if(listener._callback) listener._callback(data)
                 if (listener._options && listener._options._once && listener._id) {
                     eventsToRemove.push(listener._id)
                 }

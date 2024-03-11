@@ -8,7 +8,7 @@
 
 import XUIObject from "./XUIObject"
 import {XViewManager,XViewsPack} from "./XViewManager"
-import { _xlog,XParser,_xem,XModule,XModuleData, IXObjectData, XObjectData } from "../Core/Xpell"
+import { _xlog,XParser,_xem,XModule,XModuleData, IXObjectData, XObjectData, _x, _xu } from "../Core/Xpell"
 
 import XUICoreObjects from "./XUICoreObjects"
 
@@ -36,6 +36,7 @@ export class XUIModule extends XModule {
     vm: XViewManager
     _first_gesture_occured : boolean
     private _controls_element!: string
+    private _player_element!: any
 
     /**
      * @fires "xui-loaded" event
@@ -143,12 +144,23 @@ export class XUIModule extends XModule {
         const ctrl = xobj.getDOMObject()
         
         
-        const pe = (xobj._parent_element) ? xobj._parent_element : this._object_element;
+        if (xobj._parent_element) {
+            document.querySelector("#" + xobj._parent_element)?.append(ctrl)
+        } else if (this._player_element) {
+            this._player_element.appendChild(ctrl)
+        } else {
+            throw "No parent element for the object"
+        }
         
-        document.querySelector("#" + pe)?.append(ctrl)
         if (xobj.onMount && typeof xobj.onMount === 'function') {
             xobj.onMount()
         }
+
+        if(xobj.onShow && typeof xobj.onShow === 'function') {
+            xobj.onShow()
+        }
+
+
         return xobj
     }
 
@@ -174,12 +186,31 @@ export class XUIModule extends XModule {
 
     }
 
-    async onFrame(frameNumber:number) {
-        super.onFrame(frameNumber) //bubble event to all the active objects in the object manager (om)
+    // async onFrame(frameNumber:number) {
+    //     super.onFrame(frameNumber) //bubble event to all the active objects in the object manager (om)
+    // }
+
+    /**
+     * This method creates a player element and append it to the DOM
+     * @param playerId - optional id of the player element
+     * @param elementId - optional id of the element to append the player to, if not provided the player will be appended to the body
+     * @returns HTMLDivElement
+     */
+    createPlayer(playerId:string = "xplayer",elementId?:string,cssClass?:string): HTMLDivElement {
+        const dobj = (elementId) ? document.getElementById(elementId) : document.body
+        const div = document.createElement("div")
+        div.id = playerId
+        div.className = (cssClass) ? cssClass : "xplayer"
+        div.style.width = "100%"
+        div.style.height = "100%"
+        this._player_element = div
+        if(dobj) dobj.appendChild(div)
+        return div
     }
 }
 
 export const XUI = new XUIModule({ _name: "xui" })
+_x.loadModule(XUI)
 
 export default XUI
 export {

@@ -154,6 +154,7 @@ export class XObjectManager {
         } 
         return null
     }
+    
 }
 
 export default XObjectManager

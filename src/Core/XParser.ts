@@ -40,6 +40,7 @@ export class XParser {
      * @param {string} txt 
      */
     static parse(txt:string,module?:string):XCommand {        
+    
         const carr:string[] = txt.split(" ")
         let rv = new XCommand()
         if(module){
@@ -72,76 +73,153 @@ export class XParser {
     }
 
 
+    static replaceSpacesInQuotes(inputString:string,replaceWith:string = '_%20_') {
+        return inputString.replace(/(['"])(.*?)\1/g, (match, quote, content) => {
+            // Replace spaces only within the content inside quotes
+            return content.replace(/\s/g, replaceWith);
+        });
+    }
+
+
+    static parseXpellCommand(command:string,module?:string) {
+        // Split the command into its parts (assuming space-separated)
+        command = XParser.replaceSpacesInQuotes(command);
+        const parts = command.trim().split(' ');
+    
+        // Extract the module name (first part)
+
+        const moduleName = (module) ? module : parts.shift();
+    
+        // Extract the operation (next part)
+        const op = parts.shift();
+    
+        // Extract the parameters
+        const params:any = {};
+        let currentParam:any = null;
+        let valueInProgress:any = null;
+        parts.forEach(part => {
+            if (valueInProgress) {
+                // If a value is in progress, continue appending parts until the closing quote
+                valueInProgress += ` ${part}`;
+                if (part.endsWith(valueInProgress[0])) {
+                    // If the part ends with the same quote character as the starting one, we've reached the end of the value
+                    const value = valueInProgress.slice(1, -1); // Remove quotes
+                    params[currentParam] = value.replace(/_%20_/g, ' ');
+                    valueInProgress = null;
+                }
+            } else if (part.startsWith('"') || part.startsWith("'")) {
+                // If the part starts with a quote, it's the beginning of a parameter value
+                const quoteChar = part[0];
+                valueInProgress = part;
+                if (part.endsWith(quoteChar)) {
+                    // If the part ends with the same quote character, it's a single-word value
+                    const value = part.slice(1, -1); // Remove quotes
+                    params[currentParam] = value.replace(/_%20_/g, ' ');
+                    valueInProgress = null;
+                }
+            } else if (part.includes(':')) {
+                // If the part contains ':', it's a param:value pair
+                const [param, ...valueParts] = part.split(':');
+                const value = valueParts.join(':'); // Reconstruct value with ':' if it exists
+                params[param] = value.replace(/_%20_/g, ' ');
+                if (value.includes(' ')) {
+                    throw new Error(`Parameter value '${value}' with spaces must be enclosed in double or single quotes.`);
+                }
+            } else {
+                // If it doesn't contain ':', it's part of the previous parameter value with space
+                if (currentParam) {
+                    params[currentParam] += ` ${part}`;
+                }
+            }
+    
+            if (!valueInProgress && !currentParam && !part.includes(':')) {
+                // If we're not currently processing a value, and there's no current parameter, and the part doesn't contain ':',
+                // then the part must be a new parameter name
+                currentParam = part.replace(/_%20_/g, ' ');;
+            }
+        });
+    
+        return {
+            _module: moduleName,
+            _op: op,
+            _params: params
+        };
+    }
+
+
     /**
      * Convert raw Xpell command (JSON) to XCommand
      * @param rawXpell JSON of Xpell command
      * @returns {XCommand}
+     * @deprecated
      */
-    static parseXpell(rawXpell:string):XCommand {
-        let code = rawXpell.trim();
+    // static parseXpell(rawXpell:string):XCommand {
+    //     let code = rawXpell.trim();
 
-        let args:Array<string> = XParser.parseArguments(code);
+    //     let args:Array<string> = XParser.parseArguments(code);
 
-        let cmd = new XCommand();
-        cmd._module = args[0];
-        cmd._op = args[1];
-        cmd._params = {};
-
-
-        // start params from index 2
-        for (let i = 2; i < args.length; i++) {
-            let paramStr:string = args[i];
-            let delimiterIdx = paramStr.indexOf(':');
-            let quotesIdx = paramStr.indexOf('"');
-            let finalDelimiter = (quotesIdx < delimiterIdx) ? -1 : delimiterIdx;
-
-            let paramName = (finalDelimiter === -1) ? i.toString() : paramStr.substring(0, delimiterIdx);
-            let paramValue = XParser.fixArgumentValue(paramStr.substring(finalDelimiter + 1));
-
-            cmd._params[paramName] = paramValue
-        }
+    //     let cmd = new XCommand();
+    //     cmd._module = args[0];
+    //     cmd._op = args[1];
+    //     cmd._params = {};
 
 
-        return cmd;
-    }
+    //     // start params from index 2
+    //     for (let i = 2; i < args.length; i++) {
+    //         let paramStr:string = args[i];
+    //         let delimiterIdx = paramStr.indexOf(':');
+    //         let quotesIdx = paramStr.indexOf('"');
+    //         let finalDelimiter = (quotesIdx < delimiterIdx) ? -1 : delimiterIdx;
+
+    //         let paramName = (finalDelimiter === -1) ? i.toString() : paramStr.substring(0, delimiterIdx);
+    //         let paramValue = XParser.fixArgumentValue(paramStr.substring(finalDelimiter + 1));
+
+    //         cmd._params[paramName] = paramValue
+    //     }
+
+
+    //     return cmd;
+    // }
 
 
     /**
      * Parse CLI arguments
      * @param code arguments
      * @returns Array<string> 
+     * @deprecated
      */
-    static parseArguments(code:string):Array<string>  {
-        let args:Array<string> = [];
+    // static parseArguments(code:string):Array<string>  {
+    //     let args:Array<string> = [];
 
-        while (code.length) {
-            let argIndex = XParser.getNextArgumentIndex(code);
-            if (argIndex == -1) {
-                // error
-                console.error('error: ' + code);
-                break;
-            }
-            else {
-                args.push(code.substring(0, argIndex));
+    //     while (code.length) {
+    //         let argIndex = XParser.getNextArgumentIndex(code);
+    //         if (argIndex == -1) {
+    //             // error
+    //             console.error('error: ' + code);
+    //             break;
+    //         }
+    //         else {
+    //             args.push(code.substring(0, argIndex));
 
-                let oldCode = code; // this variable is used to check if loop in endless
-                code = code.substring(argIndex).trim();
+    //             let oldCode = code; // this variable is used to check if loop in endless
+    //             code = code.substring(argIndex).trim();
 
-                if (code.length == oldCode.length) {
-                    // error - while loop is in endless
-                    console.error('error: while loop is in endless - leftovers: ' + code);
-                    break;
-                }
+    //             if (code.length == oldCode.length) {
+    //                 // error - while loop is in endless
+    //                 console.error('error: while loop is in endless - leftovers: ' + code);
+    //                 break;
+    //             }
 
-            }
-        }
-        return args;
-    }
+    //         }
+    //     }
+    //     return args;
+    // }
 
     /**
      * Covent Xpell2 (XP2) Json to Xpell JSON
      * @param XP2Json Xpell 2 JSON
      * @returns 
+     * @deprecated
      */
     static xpellify(XP2Json:{[k:string]:any}):any  {
         const tkeys = Object.keys(XP2Json)
@@ -227,26 +305,27 @@ export class XParser {
 
     }
 
-    static fixArgumentValue(arg:any) {
-        let finalArg = "";
-        let prevChar = "";
-        for (var i = 0; i < arg.length; i++) {
-            let char = arg.charAt(i);
-            let addToFinal = true;
+    
+    // static fixArgumentValue(arg:any) {
+    //     let finalArg = "";
+    //     let prevChar = "";
+    //     for (var i = 0; i < arg.length; i++) {
+    //         let char = arg.charAt(i);
+    //         let addToFinal = true;
 
-            if (char === '"' && prevChar !== "\\")
-                addToFinal = false;
+    //         if (char === '"' && prevChar !== "\\")
+    //             addToFinal = false;
 
-            if (addToFinal)
-                finalArg += char;
-            prevChar = char;
-        }
+    //         if (addToFinal)
+    //             finalArg += char;
+    //         prevChar = char;
+    //     }
 
 
-        finalArg = finalArg.replace(/\\\"/g, '"');
+    //     finalArg = finalArg.replace(/\\\"/g, '"');
 
-        return finalArg;
-    }
+    //     return finalArg;
+    // }
 
 
     /**
@@ -254,51 +333,51 @@ export class XParser {
      * @param {String} str
      * @return {number} indexOf the end of the argument
      */
-    static getNextArgumentIndex(str:string) {
-        let idx = -1;
-        let count = str.length;
-        let zeroCount = count - 1;
-        let inQuotes = false;
-        let prevChar = "";
-        for (let i = 0; i < count; i++) {
-            let char = str.charAt(i);
+    // static getNextArgumentIndex(str:string) {
+    //     let idx = -1;
+    //     let count = str.length;
+    //     let zeroCount = count - 1;
+    //     let inQuotes = false;
+    //     let prevChar = "";
+    //     for (let i = 0; i < count; i++) {
+    //         let char = str.charAt(i);
 
 
-            if (char === '"') {
-                if (inQuotes) {
-                    if (prevChar === '\\') {
-                        // ignore
-                    }
-                    else {
-                        // end of arguments
-                        inQuotes = false;
-                    }
+    //         if (char === '"') {
+    //             if (inQuotes) {
+    //                 if (prevChar === '\\') {
+    //                     // ignore
+    //                 }
+    //                 else {
+    //                     // end of arguments
+    //                     inQuotes = false;
+    //                 }
 
-                }
-                else {
-                    inQuotes = true;
-                }
-            }
-            else if (char === ' ') {
-                if (!inQuotes) {
-                    // end of arguments
-                    idx = i;
-                    break;
-                }
-            }
+    //             }
+    //             else {
+    //                 inQuotes = true;
+    //             }
+    //         }
+    //         else if (char === ' ') {
+    //             if (!inQuotes) {
+    //                 // end of arguments
+    //                 idx = i;
+    //                 break;
+    //             }
+    //         }
 
-            if (i === zeroCount) {
-                idx = count;
-                break;
-            }
+    //         if (i === zeroCount) {
+    //             idx = count;
+    //             break;
+    //         }
 
 
-            prevChar = char;
-            // argument is still processing
-        }
+    //         prevChar = char;
+    //         // argument is still processing
+    //     }
 
-        return idx;
-    }
+    //     return idx;
+    // }
 }
 
 export default XParser

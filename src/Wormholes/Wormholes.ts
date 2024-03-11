@@ -70,7 +70,7 @@ export class WormholeInstance {
     /**
      * Set the log rules for the wormhole
      */
-    verbose(val: boolean) {
+    set verbose(val: boolean) {
             
         this._log_rules ={
             _open: val,
@@ -112,7 +112,7 @@ export class WormholeInstance {
         // })
         if(this._log_rules._open) _xlog.log("Wormhole is opening...");
 
-        _xem.on(WormholeEvents.ResponseDataArrived, (e) => {
+        _xem.on(WormholeEvents.ResponseDataArrived, (e:any) => {
             const edata = e.sed
             sthis._data_waiters[edata["waiterID"]]?.(edata.data)
         })
@@ -124,7 +124,7 @@ export class WormholeInstance {
                 _xd._o[WormholeEvents.WormholeOpen] = true
                 // let event = new CustomEvent("wormhole-open")
                 // document.dispatchEvent(event)
-                _xem.fire(WormholeEvents.WormholeOpen, {}, true)
+                _xem.fire(WormholeEvents.WormholeOpen, {})
                 if (this._on_open)
                 {
                     try {
@@ -148,7 +148,7 @@ export class WormholeInstance {
                         "waiterID": ddata["eid"],
                         data: ddata
                     }
-                    _xem.fire(WormholeEvents.ResponseDataArrived, { sed: sed },true)
+                    _xem.fire(WormholeEvents.ResponseDataArrived, { sed: sed })
                     if(this._log_rules._receive) _xlog.log("Wormhole received message", ddata)
 
                 } catch (e) {

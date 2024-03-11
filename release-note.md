@@ -1,6 +1,23 @@
 Xpell Release Notes
 
 
+7 Mar 2024
+-------------
+- XParser new method: parseXpell supports spaces in params with quotes
+- XObject parseEvents is being called automatically onMount (bug fix)
+- Xpell.loadModule is not required for XUI, X3D, XAI
+- XUI createPlayer method to create a player object
+- 
+- XUIObject:
+  - new methods:
+    - addClass(className) - add class to the element
+    - removeClass(className) - remove class from the element
+    - toggleClass(className) - toggle class from the element
+    - replaceClass(oldClassName,newClassName) - replace class from the element with another
+    - click() - click the element
+  -  new nano-commands:
+     - ```set-text-from-data empty:false pattern:"text: $data"``` - set the text from the data source, if empty is true the data source is will be emptied after the text is set
+
 11 Feb 2024
 -------------
 - Wormholes events fire error fix

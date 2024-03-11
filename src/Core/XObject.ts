@@ -87,7 +87,7 @@ export type XObjectData = {
  * @class XObject
  */
 export class XObject {
-    [k: string]: string | null | [] | undefined | Function | boolean | number | {}
+    [k: string]: string | null | [] | undefined | Function | boolean | number | {} | null
     _id: string;
     _type: string;
     _children: Array<XObject | XObjectData> = []
@@ -117,7 +117,7 @@ export class XObject {
     protected _cache_jcmd?: any;
     protected _event_listeners_ids: { [eventName: string]: string } = {}
     protected _xporter: XDataXporter = {
-        _ignore_fields: ["_to_xdata_ignore_fields", "_xporter", "_children", "_on", "_once", "_on_create", "_on_mount", "_on_frame", "_on_data", "_process_frame", "_process_data","_parent"],
+        _ignore_fields: ["_to_xdata_ignore_fields", "_xporter", "_children", "_on", "_once", "_on_create", "_on_mount", "_on_frame", "_on_data", "_process_frame", "_process_data", "_parent"],
         _instance_xporters: {}
     }
 
@@ -151,57 +151,59 @@ export class XObject {
             _support_html: true
         }
         this.init(data, skipParse)
-        
+
 
     }
 
     init(data?: any, skipParse?: boolean) {
+
         if (!skipParse && data) {
-            // if() {
             delete data._id // delete the _id field to remove duplication by the parse function
             this.parse(data, reservedWords);
-            this.parseEvents(this._xem_options)
-
+            // this.parseEvents(this._xem_options)
         }
     }
 
     parseEvents(options?: XEventListenerOptions) {
-        if(!options) options = this._xem_options
-        Object.keys(this._on).forEach(eventName => {
-            if (typeof this._on[eventName] === "function") {
-                this.addEventListener(eventName, this._on[eventName], options)
-            }
-            // else if(typeof this._on[eventName] === "string") {
-            //     console.error("string event handler not supported yet")
-            // }
-            else {
-                throw new Error("event handler must be a function " + eventName)
-            }
-        })
+        if (!this._event_parsed) {
+            if (!options) options = this._xem_options
+            Object.keys(this._on).forEach(eventName => {
+                if (typeof this._on[eventName] === "function") {
+                    this.addEventListener(eventName, this._on[eventName], options)
+                }
+                // else if(typeof this._on[eventName] === "string") {
+                //     console.error("string event handler not supported yet")
+                // }
+                else {
+                    throw new Error("event handler must be a function " + eventName)
+                }
+            })
 
-        const onceOptions: XEventListenerOptions = {}
-        Object.assign(onceOptions, options)
-        onceOptions._once = true
+            const onceOptions: XEventListenerOptions = {}
+            Object.assign(onceOptions, options)
+            onceOptions._once = true
 
-        Object.keys(this._once).forEach(eventName => {
-            if (typeof this._once[eventName] === "function") {
-                this.addEventListener(eventName, this._once[eventName], onceOptions)
-            }
-            // else if(typeof this._on[eventName] === "string") {
-            //     console.error("string event handler not supported yet")
-            // }
-            else {
-                throw new Error("event handler must be a function")
-            }
-        })
+            Object.keys(this._once).forEach(eventName => {
+                if (typeof this._once[eventName] === "function") {
+                    this.addEventListener(eventName, this._once[eventName], onceOptions)
+                }
+                // else if(typeof this._on[eventName] === "string") {
+                //     console.error("string event handler not supported yet")
+                // }
+                else {
+                    throw new Error("event handler must be a function")
+                }
+            })
+            this._event_parsed = true
+        }
     }
 
 
     addEventListener(eventName: string, handler: XObjectOnEventHandler, options?: XEventListenerOptions) {
         if (!options) {
             options = this._xem_options
-        } 
-        const event_listener_id = _xem.on(eventName, (eventData) => { handler(this, eventData) }, options, this)
+        }
+        const event_listener_id = _xem.on(eventName, (eventData: any) => { handler(this, eventData) }, options,this)
         this._event_listeners_ids[eventName] = event_listener_id
     }
 
@@ -271,19 +273,7 @@ export class XObject {
 
 
 
-    async dispose() {
-        this._process_data = false
-        this._process_frame = false
-        this.removeAllEventListeners()
-        if (this._children) {
-            this._children.forEach(child => {
-                if (typeof child.dispose == "function") {
-                    child.dispose()
-                }
-            })
-        }
-        this._children = []
-    }
+
 
 
 
@@ -300,9 +290,9 @@ export class XObject {
                 this[field] = <any>data[field];
             }
         });
-       
-    
-        
+
+
+
     }
 
     /**
@@ -363,28 +353,31 @@ export class XObject {
      * 
     */
     async onCreate() {
+        // console.log("onCreate" + this._t);
+        
+        // if (this._on_create) {
+        //     if (typeof this._on_create == "function") {
+        //         this._on_create(this)
+        //     } else if (typeof this._on_create == "string") {
+        //         this.run(this._id + " " + this._on_create) //
+        //     }
+        // }
         if (this._on_create) {
-            if (typeof this._on_create == "function") {
-                this._on_create(this)
-            } else if (typeof this._on_create == "string") {
-                this.run(this._id + " " + this._on_create) //
-            }
+            this.checkAndRunInternalFunction(this._on_create)
+        } else if (this._on && this._on["create"]) {
+            this.checkAndRunInternalFunction(this._on["create"])
+        } else if (this._once && this._once["create"]) {
+            this.checkAndRunInternalFunction(this._once["create"])
         }
-        //propagate event to children
-        this._children.forEach((child) => {
-            child._parent = this
-            if (child.onCreate && typeof child.onCreate === 'function') {
-                child.onCreate()
-            }
-        })
 
+    
     }
 
-    protected checkAndRunInternalFunction  (func: any,...params:any)  {
+    protected async checkAndRunInternalFunction(func: any, ...params: any) {
         if (typeof func == "function") {
-            func(this,...params)
+            await func(this, ...params)
         } else if (typeof func == "string") {
-            this.run(this._id + " " + func) //
+            await this.run(this._id + " " + func) //
         }
     }
 
@@ -399,12 +392,15 @@ export class XObject {
      */
     async onMount() {
 
+        this.parseEvents(this._xem_options)
 
         //run on mount event
         if (this._on_mount) {
-            this.checkAndRunInternalFunction(this._on_mount)
+            await this.checkAndRunInternalFunction(this._on_mount)
         } else if (this._on && this._on["mount"]) {
-            this.checkAndRunInternalFunction(this._on["mount"])
+            await this.checkAndRunInternalFunction(this._on["mount"])
+        } else if (this._once && this._once["mount"]) {
+            await this.checkAndRunInternalFunction(this._once["mount"])
         }
 
         //propagate event to children
@@ -431,14 +427,11 @@ export class XObject {
     async onData(data: any) {
         if (this._process_data) {
             if (this._on_data) {
-                // if (typeof this._on_data == "function") {
-                //     this._on_data(this, data)
-                // } else if (typeof this._on_data == "string") {
-                //     this.run(this._id + " " + this._on_data) 
-                // }
-                this.checkAndRunInternalFunction(this._on_data,data)
+                this.checkAndRunInternalFunction(this._on_data, data)
             } else if (this._on && this._on["data"]) {
-                this.checkAndRunInternalFunction(this._on["data"],data)
+                this.checkAndRunInternalFunction(this._on["data"], data)
+            } else if (this._once && this._once["data"]) {
+                this.checkAndRunInternalFunction(this._once["data"], data)
             }
         }
     }
@@ -473,11 +466,13 @@ export class XObject {
         //     }
         // }
 
-        if(this._process_frame) {
+        if (this._process_frame) {
             if (this._on_frame) {
-                this.checkAndRunInternalFunction(this._on_frame,frameNumber)
+                this.checkAndRunInternalFunction(this._on_frame, frameNumber)
             } else if (this._on && this._on["frame"]) {
-                this.checkAndRunInternalFunction(this._on["frame"],frameNumber)
+                this.checkAndRunInternalFunction(this._on["frame"], frameNumber)
+            } else if (this._once && this._once["frame"]) {
+                this.checkAndRunInternalFunction(this._once["frame"], frameNumber)
             }
         }
 
@@ -507,7 +502,7 @@ export class XObject {
 
     async run(nanoCommand: string, cache = true) {
 
-        let jcmd: XCommand = (this._cache_cmd_txt && this._cache_cmd_txt == nanoCommand) ? <XCommand>this._cache_jcmd : XParser.parse(nanoCommand)
+        let jcmd: XCommand = (this._cache_cmd_txt && this._cache_cmd_txt == nanoCommand) ? <XCommand>this._cache_jcmd : <any>XParser.parseXpellCommand(nanoCommand) //XParser.parse(nanoCommand)        
         //cache command to prevent parsing in every frame
         if (cache) {
             this._cache_cmd_txt = nanoCommand
@@ -598,6 +593,35 @@ export class XObject {
      */
     toString() {
         return JSON.stringify(this.toXData())
+    }
+
+
+    clearAttributes(attributes: Array<string>) {
+        attributes.forEach(attr => {
+            if (this.hasOwnProperty(attr)) {
+                this[attr] = <any>null
+                delete this[attr]
+            }
+        })
+    }
+
+
+    /**
+     * Dispose the XObject and all its children
+     */
+    async dispose() {
+        this._process_data = false
+        this._process_frame = false
+        this.removeAllEventListeners()
+        this.clearAttributes(["_cache_cmd_txt", "_cache_jcmd", "_nano_commands", "_event_listeners_ids", "_parent", "_on", "_once", "_xem_options", "_xporter"])
+        if (this._children) {
+            this._children.forEach(child => {
+                if (typeof child.dispose == "function") {
+                    child.dispose()
+                }
+            })
+        }
+        this._children = []
     }
 
 }

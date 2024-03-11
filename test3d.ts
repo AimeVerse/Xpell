@@ -190,7 +190,6 @@
 import * as THREE from 'three'
 
 import {XUI,_xem,X3D, X3DApp,_x,_xd} from "./index"
-import { setInterval } from 'timers/promises'
 
 export const world: X3DApp = {
     "_parent_element": "x3d-player",
@@ -457,13 +456,13 @@ export const world: X3DApp = {
 
 async function main() {
     //display Xpell engine info
-    _x.verbose()
+    _x.verbose = true
 
     _x.info()
 
     //load Xpell UI (XUI) Module
-    _x.loadModule(XUI)
-    _x.loadModule(X3D)
+    // _x.loadModule(XUI)
+    // _x.loadModule(X3D)
     
     // XUI.importObject("joystick", XJoystick)
     // XUI.importObjectPack(XEditor)
