@@ -208,12 +208,6 @@ async function main() {
     const mvo = XUI.loadObject(mainView)
     console.log(mvo.toXData());
 
-    setTimeout(() => {
-        XUI.hide(mvo._id)
-        setTimeout(() => {
-            XUI.show(mvo._id)
-        }, 1000);
-    }, 1000);
     
 
     
