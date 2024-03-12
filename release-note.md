@@ -18,7 +18,6 @@ Xpell Release Notes
     - toggleClass(className) - toggle class from the element
     - replaceClass(oldClassName,newClassName) - replace class from the element with another
     - click() - click the element
-    - 
   -  new nano-commands:
      - ```set-text-from-data empty:false pattern:"text: $data"``` - set the text from the data source, if empty is true the data source is will be emptied after the text is set
 
@@ -59,14 +58,14 @@ XUI:
 
 1.0.1
 -------------
-XUI:
+- XUI:
     - XUIObject new attribute : _parent_element_id to indicate the HTML parent element to mount the object to (if this attribute is undefined the object will be mount to the ViewManager default parent element)
     - attribute _data_source is moved to XObject
     - attribute _on_frame_skip_data_source is deprecated (use _process_data instead -> if false the data_source will not be processed in every frame)
     - new methods:
       - loadObject (creates a XUIObject and mount it to the views element - similar to loadControl)
     - SVG Support tag 
-X3D:
+- X3D:
     - X3D loader sets loading percentage in XData "x3d-object" as {_model_url:"the loading model",_loaded:0:_total:1024}
     - new method loadObject(x3dObject) to 
     - X3DObject new changes
@@ -85,12 +84,12 @@ X3D:
           - hdri
       - XLoader support draco loader
       - X3DObject position/rotation/scale error fix for TransformControls
-  XEM:
+- XEM:
       - change "on" method listener and add options (XEventListener and XEventListenerOptions)
       - new "once" method to run the listener once (equiv to send options {once:true} to "on" method)
       - remove method to remove listener
       - support html events on "on", "once" and "fire" methods
-Xpell-Core:
+- Xpell-Core:
     - XData Changes:
         - "variables" and "objects" properties are deprecated (will be supported in the next versions)
         - new private (#) variables for "objects" (accessed by accessors)
@@ -115,9 +114,7 @@ Xpell-Core:
     - XModule Changes:
         - new methods
             * getObject(objectId) -> gets an object from the module object manager
-
-
-XDB:  
+- XDB:  
     - XDB package created
     - data types : Objects + strings
     - encoding - base64 / plain text
