@@ -7,7 +7,10 @@ Xpell Release Notes
 - XObject parseEvents is being called automatically onMount (bug fix)
 - Xpell.loadModule is not required for XUI, X3D, XAI
 - XUI createPlayer method to create a player object
-- 
+  - new methods:
+    - show(objectID) - show XUIObject that was loaded into the XUI object manager
+    - hide(objectID) - hide XUIObject that was loaded into the XUI object manager
+
 - XUIObject:
   - new methods:
     - addClass(className) - add class to the element
@@ -15,8 +18,6 @@ Xpell Release Notes
     - toggleClass(className) - toggle class from the element
     - replaceClass(oldClassName,newClassName) - replace class from the element with another
     - click() - click the element
-    - show - show XUIObject that was loaded into the XUI object manager
-    - hide - hide XUIObject that was loaded into the XUI object manager
     - 
   -  new nano-commands:
      - ```set-text-from-data empty:false pattern:"text: $data"``` - set the text from the data source, if empty is true the data source is will be emptied after the text is set
