@@ -115,7 +115,6 @@ export class X3DModule extends XModule {
         this.x3dObjects = {}
         _xem.fire("x3d-init")
         
-        _x.loadModule(this)
         
     }
 

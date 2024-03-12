@@ -5,7 +5,6 @@ Xpell Release Notes
 -------------
 - XParser new method: parseXpell supports spaces in params with quotes
 - XObject parseEvents is being called automatically onMount (bug fix)
-- Xpell.loadModule is not required for XUI, X3D, XAI
 - XUI createPlayer method to create a player object
   - new methods:
     - show(objectID) - show XUIObject that was loaded into the XUI object manager

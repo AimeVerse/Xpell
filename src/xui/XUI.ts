@@ -234,7 +234,7 @@ export class XUIModule extends XModule {
 }
 
 export const XUI = new XUIModule({ _name: "xui" })
-_x.loadModule(XUI)
+// _x.loadModule(XUI)
 
 export default XUI
 export {
