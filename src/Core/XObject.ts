@@ -117,7 +117,9 @@ export class XObject {
     protected _cache_jcmd?: any;
     protected _event_listeners_ids: { [eventName: string]: string } = {}
     protected _xporter: XDataXporter = {
-        _ignore_fields: ["_to_xdata_ignore_fields", "_xporter", "_children", "_on", "_once", "_on_create", "_on_mount", "_on_frame", "_on_data", "_process_frame", "_process_data", "_parent"],
+        _ignore_fields: ["_to_xdata_ignore_fields", "_xporter", "_children", "_on", "_once", 
+        "_on_create", "_on_mount", "_on_frame", "_on_data", "_process_frame", "_process_data", 
+        "_parent","_event_listeners_ids","_event_parsed"],
         _instance_xporters: {}
     }
 

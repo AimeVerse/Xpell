@@ -119,6 +119,11 @@ export class XModule {
         const obj:XObject = this.#_object_manger.getObject(objectId)
         if (obj) {
             this.#_object_manger.removeObject(objectId)
+
+            obj._children.forEach((child:any) => {
+                this.#_object_manger.removeObject(child._id)
+            })
+
             if(obj["dispose"] && typeof obj.dispose === "function") {
                 (<XObject>obj).dispose()
             }

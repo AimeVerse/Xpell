@@ -180,6 +180,12 @@ async function main() {
                                 _type: "button",
                                 class: "event-button",
                                 _text: "Remove Me",
+                                _children :[
+                                    {
+                                        _type: "label",
+                                        _text: "Remove Me",
+                                    }
+                                ],
                                 _on_click: (xobj, event) => {
                                     XUI.remove(xobj._id)
                                 }
@@ -189,7 +195,7 @@ async function main() {
                                 class: "",
                                 _text: "xui-om-objects",
                                 _data_source: "xui-om-objects",
-                                _on_data: "set-text-from-data empty:false pattern:'XUI Ojbects: $data'"
+                                _on_data: "set-text-from-data empty:false pattern:'XUI Objects: $data'"
                             },
                         ]
                     }
@@ -199,7 +205,18 @@ async function main() {
         ]
     }
     XUI.createPlayer() //create the player and add it to the body element
-    XUI.loadObject(mainView)
+    const mvo = XUI.loadObject(mainView)
+    console.log(mvo.toXData());
+
+    setTimeout(() => {
+        XUI.hide(mvo._id)
+        setTimeout(() => {
+            XUI.show(mvo._id)
+        }, 1000);
+    }, 1000);
+    
+
+    
     
 
 }

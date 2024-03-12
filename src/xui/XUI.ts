@@ -207,6 +207,30 @@ export class XUIModule extends XModule {
         if(dobj) dobj.appendChild(div)
         return div
     }
+
+    /**
+     * Show's XUIObject that was loaded into the XUI Object Manager
+     * @param objectId - the XUIObject id to show
+     */
+    show(objectId:string) {
+        const obj = this.getObject(objectId)
+        if(obj) {
+            (<XUIObject>obj)?.show()
+        }
+    }
+
+    /**
+     * Hide's XUIObject that was loaded into the XUI Object Manager
+     * @param objectId - the XUIObject id to hide
+     */
+    hide(objectId:string) {
+        const obj = this.getObject(objectId)
+        if(obj) {
+            (<XUIObject>obj)?.hide()
+        }
+    }
+
+
 }
 
 export const XUI = new XUIModule({ _name: "xui" })
