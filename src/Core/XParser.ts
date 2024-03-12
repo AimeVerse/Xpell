@@ -119,7 +119,12 @@ export class XParser {
                 }
             } else if (part.includes(':')) {
                 // If the part contains ':', it's a param:value pair
-                const [param, ...valueParts] = part.split(':');
+                // const [param, ...valueParts]: any = part.split(':'); //->gives TS ERROR
+                const parts: string[] = part.split(':');
+
+                // Extract the first part as 'param' and the rest as 'valueParts'
+                const param: string = parts[0];
+                const valueParts: string[] = parts.slice(1);
                 const value = valueParts.join(':'); // Reconstruct value with ':' if it exists
                 params[param] = value.replace(/_%20_/g, ' ');
                 if (value.includes(' ')) {
