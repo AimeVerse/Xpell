@@ -1,7 +1,7 @@
 Xpell Release Notes
 
 
-7 Mar 2024
+12 Mar 2024
 -------------
 - XParser new method: parseXpell supports spaces in params with quotes
 - XObject parseEvents is being called automatically onMount (bug fix)
