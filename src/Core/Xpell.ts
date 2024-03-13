@@ -76,6 +76,8 @@ export class XpellEngine {
     set verbose(val : boolean){
         _xlog.enabled=true
     }
+
+    
    
 
     /**

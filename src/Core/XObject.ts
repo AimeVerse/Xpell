@@ -292,9 +292,6 @@ export class XObject {
                 this[field] = <any>data[field];
             }
         });
-
-
-
     }
 
     /**
@@ -394,7 +391,10 @@ export class XObject {
      */
     async onMount() {
 
+        //parse events after dom creation
         this.parseEvents(this._xem_options)
+        
+
 
         //run on mount event
         if (this._on_mount) {

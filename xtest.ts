@@ -6,11 +6,11 @@ import "./public/xtest.css"
 async function main() {
     _x.verbose = true //display Xpell engine info
     _x.start() // start Xpell frame engine
-    _xem._log_rules = {
-        register: true,
-        remove: true,
-        fire: true,
-    }
+    // _xem._log_rules = {
+    //     register: true,
+    //     remove: true,
+    //     fire: true,
+    // }
 
     const mainView = {
         _type: "view",
@@ -191,8 +191,10 @@ async function main() {
                                 }
                             },
                             {
+                                _id:"xui-om-objects",
                                 _type: "label",
                                 class: "",
+                                style:"margin-top: 20px;display: flex",
                                 _text: "xui-om-objects",
                                 _data_source: "xui-om-objects",
                                 _on_data: "set-text-from-data empty:false pattern:'XUI Objects: $data'"

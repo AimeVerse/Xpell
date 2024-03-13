@@ -331,6 +331,12 @@ export class XUIObject extends XObject {
         //check for _on_click event definition
         // const sthis = this
         
+        try {
+            this._base_display = getComputedStyle(this._dom_object).display
+        } catch (error) {
+            this._base_display = "block"
+        }
+        
         await super.onMount()
         
         
