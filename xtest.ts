@@ -194,11 +194,20 @@ async function main() {
                                 _id:"xui-om-objects",
                                 _type: "label",
                                 class: "",
-                                style:"margin-top: 20px;display: flex",
+                                style:"margin-top: 20px;display: none",
                                 _text: "xui-om-objects",
                                 _data_source: "xui-om-objects",
                                 _on_data: "set-text-from-data empty:false pattern:'XUI Objects: $data'"
                             },
+                            {
+                                _type: "button",
+                                class: "event-button",
+                                _text: "hide/show",
+                                _on_click: (xobj, event) => {
+                                    XUI.toggle("xui-om-objects")
+                                    
+                                }
+                            }
                         ]
                     }
                 ]

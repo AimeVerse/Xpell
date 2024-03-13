@@ -295,12 +295,14 @@ export class XUIObject extends XObject {
     hide() {
         
         if(this._dom_object instanceof HTMLElement) {
-            const cs = getComputedStyle(this._dom_object)
-            if(cs) this._base_display = cs.getPropertyValue("display")
-            else this._base_display = "block"
+            if(!this._base_display) {
+                const cs = getComputedStyle(this._dom_object).getPropertyValue("display")
+                if(!cs || cs == "none") this._base_display = "block"
+                else this._base_display = cs
+            }
             this._visible=false
-            this.onHide()
             this._dom_object.style.display = "none"
+            this.onHide()
         }
     }
 
@@ -332,7 +334,13 @@ export class XUIObject extends XObject {
         // const sthis = this
         
         try {
-            this._base_display = getComputedStyle(this._dom_object).display
+            // _base_display uses to show the element if it was hidden
+            
+            if(!this._base_display) {
+                const cs = getComputedStyle(this._dom_object).getPropertyValue("display")
+                if(!cs || cs == "none") this._base_display = "block"
+                else this._base_display = cs
+            }
         } catch (error) {
             this._base_display = "block"
         }

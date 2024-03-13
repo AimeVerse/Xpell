@@ -230,6 +230,17 @@ export class XUIModule extends XModule {
         }
     }
 
+    /**
+     * Toggle's XUIObject that was loaded into the XUI Object Manager
+     * @param objectId - the XUIObject id to toggle
+     */
+    toggle(objectId:string) {
+        const obj = this.getObject(objectId)
+        if(obj) {
+            (<XUIObject>obj)?.toggle()
+        }
+    }
+
 
 }
 
