@@ -1,5 +1,7 @@
 //import { performance } from "perf_hooks";
 
+import XCommand from "./XCommand";
+
 
 // declare class performance{ 
 //     declare function now()
@@ -87,16 +89,28 @@ export class XUtils {
     }
     
     /**
-         * Returns a random integer between min (inclusive) and max (inclusive).
-         * The value is no lower than min (or the next integer greater than min
-         * if min isn't an integer) and no greater than max (or the next integer
-         * lower than max if max isn't an integer).
-         * Using Math.round() will give you a non-uniform distribution!
-         */
+     * Returns a random integer between min (inclusive) and max (inclusive).
+     * The value is no lower than min (or the next integer greater than min
+     * if min isn't an integer) and no greater than max (or the next integer
+     * lower than max if max isn't an integer).
+     * Using Math.round() will give you a non-uniform distribution!
+     */
     static getRandomInt(min:number, max:number) {
         min = Math.ceil(min);
         max = Math.floor(max);
         return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+
+    
+    /**
+     * Extracts parameter from XCommand
+     * @param xcmd - XCommand object 
+     * @param paramName - The name of the parameter to extract
+     * @param defaultValue - Default value if parameter is not found
+     * @returns 
+     */
+    static  getParam (xcmd:XCommand, paramName:string,defaultValue:any = 0) {
+        return (xcmd._params && xcmd._params[paramName]) ? xcmd._params[paramName] : defaultValue
     }
 
 }

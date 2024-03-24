@@ -198,7 +198,7 @@ export {XLogger,XLogger as _xlog,_XLogger} from "./XLogger"
 export {
     XModule,
     type XModuleData,
-    GenericModule
+    // GenericModule
 } from "./XModule"
 export {
     XObject,

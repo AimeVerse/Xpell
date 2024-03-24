@@ -2,6 +2,7 @@
 import { _x, _xd, _xem, _xu } from "./src/Core/Xpell"
 import { XUI } from "./src/XUI/XUI"
 import "./public/xtest.css"
+import { DirectionalLightShadow } from "three"
 
 async function main() {
     _x.verbose = true //display Xpell engine info
@@ -85,6 +86,33 @@ async function main() {
                                     "mount": (xobj, event) => {
                                         xobj.replaceClass("event-control-failure", "event-control-success")
                                     }
+                                }
+                            },
+                            {
+                                _type: "label",
+                                class: "event-control-failure",
+                                _id: "on_mount_check",
+                                _text: "on_mount_check",
+                                _on_mount:  (xobj, event) => {
+                                    console.log("on_mount_check");
+                                    xobj.append({
+                                        _type: "label",
+                                        class: "event-control-success",
+                                        _text: "click me",
+                                        _parent_element: "on_mount_check",
+                                        _on_click: (xobj, event) => {
+                                            console.log("on_click");
+                                            
+                                        },
+                                        _on_mount: (xobj, event) => {
+                                            console.log("on_mount internal");
+                                            
+                                        }
+                                    })
+                                },
+                                _on_click: (xobj, event) => {
+                                    console.log("on_click external");
+                                    
                                 }
                             },
                             {
@@ -217,7 +245,7 @@ async function main() {
     }
     XUI.createPlayer() //create the player and add it to the body element
     const mvo = XUI.loadObject(mainView)
-    console.log(mvo.toXData());
+    // console.log(mvo.toXData());
 
     
 

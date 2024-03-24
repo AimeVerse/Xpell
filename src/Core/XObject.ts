@@ -352,15 +352,6 @@ export class XObject {
      * 
     */
     async onCreate() {
-        // console.log("onCreate" + this._t);
-        
-        // if (this._on_create) {
-        //     if (typeof this._on_create == "function") {
-        //         this._on_create(this)
-        //     } else if (typeof this._on_create == "string") {
-        //         this.run(this._id + " " + this._on_create) //
-        //     }
-        // }
         if (this._on_create) {
             this.checkAndRunInternalFunction(this._on_create)
         } else if (this._on && this._on["create"]) {
@@ -391,6 +382,7 @@ export class XObject {
      */
     async onMount() {
 
+        if(this._mounted) return
         //parse events after dom creation
         this.parseEvents(this._xem_options)
         
@@ -404,7 +396,7 @@ export class XObject {
         } else if (this._once && this._once["mount"]) {
             await this.checkAndRunInternalFunction(this._once["mount"])
         }
-
+        this._mounted = true
         //propagate event to children
         this._children.forEach((child) => {
             if (child.onMount && typeof child.onMount === 'function') {

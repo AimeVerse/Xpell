@@ -2,5 +2,7 @@
     "entryPoints": ["./src/*.ts","./src/XUI/*.ts"],
     "exclude": [],
     "out": "./docs",
-    "categorizeByGroup": false
+    "categorizeByGroup": false,
+    "plugin": ["typedoc-material-theme"],
+    "themeColor": "#333333"
 }
