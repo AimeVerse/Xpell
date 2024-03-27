@@ -231,6 +231,15 @@ export class XModule {
     }
 
     /**
+     * Returns the XObject instance from the module Object Manager
+     * Usage:
+     * xmodule._o["object-id"] is equivalent to xmodule.getObject("object-id")
+     */
+    get _o()  {
+        return this.#_object_manger._objects
+    }
+
+    /**
      * Imports external object pack to the engine
      * The object class should be like XObjects with static implementation of getObjects() method
      * @param {XObjects} xObjectPack 

@@ -1,0 +1,10 @@
+/** Xpell UI Style **/
+
+
+
+/** Xpell flex box **/
+.xflex {
+    display: flex;
+    gap: 10px;
+}
+

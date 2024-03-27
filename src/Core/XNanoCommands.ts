@@ -11,7 +11,7 @@ import XObject from "./XObject"
  * Single x-nano-command interface
  */
 export interface XNanoCommand  {
-    (xCommand: XCommand | XCommandData, xObject?: XObject): any
+    (xCommand: XCommand | XCommandData, xObject: XObject): any
 }
 
 /**

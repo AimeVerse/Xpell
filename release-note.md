@@ -1,6 +1,19 @@
 Xpell Release Notes
 
 
+27 Mar 2024
+-------------
+- XUI
+    - new method:
+      - add (xObjectData) - creates a XUIObject and mount it to the parent element
+      - append (xObjectData| XUIObject,parentXObjectId) - creates a XUIObject and append it to the parent XUI object id 
+      - wrap (xObjects: (XObjectData)[], wrapper?:XObjectData) - Wraps an array of XObjectData objects with a wrapper object and returns the wrapper 
+      - _o["object-id"] - get XUIObject by id (equivalent to XUI.getObject("object-id"))
+- XUIObject
+    - _text attributes is getter/setter (instead of setText) example: xuiObject._text = "txt"
+    - setStyleAttribute (attributeName, value) - set style attribute to the element
+
+
 12 Mar 2024
 -------------
 - XParser new method: parseXpell supports spaces in params with quotes
@@ -9,6 +22,7 @@ Xpell Release Notes
   - new methods:
     - show(objectID) - show XUIObject that was loaded into the XUI object manager
     - hide(objectID) - hide XUIObject that was loaded into the XUI object manager
+    - toggle(objectID) - toggle XUIObject that was loaded into the XUI object manager
 
 - XUIObject:
   - new methods:

@@ -20,12 +20,13 @@ export class XUIObject extends XObject {
     // [k:string]: string | null | [] | undefined | Function | boolean | {}
     _html_tag: string
     _html_ns?: string | null
-    private _dom_object: any
+    protected _dom_object: any
     _type: string  //[_SC.NODES.type]
     _html?: string | undefined
     _base_display?: string | undefined | null
     // text: string //depracted
-    _text?: string
+    // _text?: string
+    #_text: string = ""
     _children: XUIObject[];
     _visible: boolean
     _parent_element?: string //used for mount parent HTML element id
@@ -46,10 +47,10 @@ export class XUIObject extends XObject {
         this._children = [];
         this._visible = true
         this._xem_options = <XEventListenerOptions>{ _once: false, _support_html: true }
-        this.addXporterDataIgnoreFields(["_dom_object", "_html", "_xem_options", "_on_click"])
+        this.addXporterDataIgnoreFields(["_dom_object", "_html", "_xem_options", "_on_click","#_text"])
         // this._base_display = "block"
         this.addNanoCommandPack(_xuiobject_basic_nano_commands)
-        this.init(data, skipParse)
+        if(!skipParse && data) this.parse(data, reservedWords); 
     }
 
 
@@ -63,7 +64,7 @@ export class XUIObject extends XObject {
         this._dom_object = undefined
         this._html = undefined
         this._base_display = undefined
-        this._text = undefined
+        this.#_text = ""
         this._on_click = undefined
         this._on_show = undefined
         this._on_hide = undefined
@@ -112,6 +113,7 @@ export class XUIObject extends XObject {
 
 
             if (this["_text"] && (<string>this["_text"]).length > 0) {
+                this.#_text = <string>this["_text"]
                 dom_object.textContent = <string>this["_text"];
             }
 
@@ -147,7 +149,16 @@ export class XUIObject extends XObject {
     }
 
 
+    set _text(text: string) {
+        this.#_text = text
+        if(this._dom_object instanceof HTMLElement) {
+            this._dom_object.textContent = text
+        }
+    }
 
+    get _text() {
+        return this.#_text
+    }
 
     /**
      * Gets the HTML representation of the object
@@ -183,7 +194,11 @@ export class XUIObject extends XObject {
     }
 
 
-    //check if XUI or IXData 
+    /**
+     * Append a child object to the XUIObject, if the object is not XUIObject it will be created
+     * @param xObject - the child object to append can be XUIObject or XObjectData
+     * @returns 
+     */
     append(xObject: XUIObject | XObjectData | any) {
         if (!(xObject instanceof XUIObject)) {
             xObject = XUI.create(xObject)
@@ -207,10 +222,13 @@ export class XUIObject extends XObject {
 
 
 
-    /** */
+    /**
+     * Sets the object text content
+     * @param text - the text content
+     * @deprecated use _text property instead (e.g. xuiObj._text = "Xpell rulz!")
+     */
     setText(text: string) {
         this._text = text
-        this.getDOMObject().textContent = text
     }
 
     /**
@@ -220,7 +238,7 @@ export class XUIObject extends XObject {
      * @example
      * xuiObj.setStyle("background-color","red")
      */
-    setStyle(attr: string, val: string) {
+    setStyleAttribute(attr: string, val: string) {
         if (this._dom_object instanceof HTMLElement) {
             this._dom_object.style.setProperty(attr, val)
         }

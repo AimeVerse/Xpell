@@ -68,7 +68,7 @@ export interface XObjectOnEventIndex {
 export type XObjectData = {
     [k: string]: string | null | [] | undefined | Function | boolean | number | {}
     _id?: string;
-    _type: string;
+    _type?: string;
     _children?: Array<XObject | XObjectData>
     _name?: string
     _data_source?: string
@@ -152,17 +152,21 @@ export class XObject {
             // _object: this
             _support_html: true
         }
-        this.init(data, skipParse)
+        if(!skipParse && data) this.parse(data, reservedWords); 
+        // this.init(data, skipParse)
 
 
     }
 
+    /**
+     * Initialize the XObject
+     * @param data - data to parse (XObjectData)
+     * @param skipParse - skip data parsing
+     * @deprecated - use parse method instead
+     */
     init(data?: any, skipParse?: boolean) {
-
         if (!skipParse && data) {
-            delete data._id // delete the _id field to remove duplication by the parse function
             this.parse(data, reservedWords);
-            // this.parseEvents(this._xem_options)
         }
     }
 

@@ -123,7 +123,7 @@ export class XUtils {
  */
 export class FPSCalc  {
     #accumulatedFPS:number = 0  //accumulated FPS
-    #historyMovingAvg:number = 0//history moving average
+    #historyMovingAvg:number =0//history moving average
     #lastTimestamp:number  = 0//timestamp
 
 
@@ -137,11 +137,12 @@ export class FPSCalc  {
         const now:number = performance.now();
         const diff:number = now-this.#lastTimestamp
         this.#lastTimestamp = now
-        
         this.#historyMovingAvg = .95 * this.#historyMovingAvg + .05 * diff //#stable FPS with moving avarage
         this.#accumulatedFPS = Math.floor((1 / this.#historyMovingAvg)*1000)
         return this.#accumulatedFPS
     }
+
+   
 
 
     

@@ -52,6 +52,8 @@ export class XpellEngine {
     _version : string
     _engine_id: string
     _frame_number: number
+    _log_rules = {
+    }
     #fps_calc: FPSCalc
 
     #_modules:{[name:string]:any} = {}
@@ -146,6 +148,7 @@ export class XpellEngine {
      onFrame():void {     
         this._frame_number++
         Object.keys(this.#_modules).forEach(mod => {
+            
             if(this.#_modules[mod].onFrame && typeof this.#_modules[mod].onFrame === 'function') {
                 this.#_modules[mod].onFrame(this._frame_number)
             }

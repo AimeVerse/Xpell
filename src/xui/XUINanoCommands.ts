@@ -18,6 +18,23 @@ export const _xuiobject_basic_nano_commands: XNanoCommandPack = {
     "show": (xCommand, xObject?: XObject) => {
         (<XUIObject>xObject).show()
     },
+    "set": (xCommand, xObject?: XObject) => {
+        if (xCommand._params) {
+            if (xCommand._params.text) {
+                (<XUIObject>xObject)._text = <string>xCommand._params.text
+            }
+        }
+    },
+    "set-text-from-frame": (xCommand, xObject: XObject) => {
+        let text = _xd._o["frame-number"]
+        if (xCommand._params) {
+            if (xCommand._params.pattern) {
+                const pattern = xCommand._params.pattern
+                text = (<any>pattern).replace("$data", text)
+            }
+        }
+        (<XUIObject>xObject)._text = text
+    },
     "set-text-from-data": (xCommand, xObject?: XObject) => {
         if (xObject && xObject._data_source) {
             if (_xd._o[xObject._data_source]) {
@@ -33,13 +50,9 @@ export const _xuiobject_basic_nano_commands: XNanoCommandPack = {
                         xObject.emptyDataSource()
                     }
                 }
-                (<XUIObject>xObject).setText(text)
-
+                (<XUIObject>xObject)._text = text
             }
         }
-        // console.log("set-text",xCommand);
-
-        // (<XUIObject>xObject).setText(xCommand.data)
     }
 }
 

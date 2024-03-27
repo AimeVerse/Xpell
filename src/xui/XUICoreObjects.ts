@@ -1,12 +1,12 @@
 // import { _xem } from "../XEM/XEventManager";
 import XUIObject from "./XUIObject";
 // import {Xpell as _x} from "../Xpell"
-import {_x, IXObjectData,XEventListenerOptions,XObjectData,XObjectPack ,_xem} from "../Core/Xpell"
+import {_x,XEventListenerOptions,XObjectData,XObjectPack ,_xem} from "../Core/Xpell"
 
 
 
 export class XView extends XUIObject {
-    constructor(data:IXObjectData) {
+    constructor(data:XObjectData) {
         const defaults =  {
             _type: "view",
             "class":"xview"
@@ -17,7 +17,7 @@ export class XView extends XUIObject {
 
 
 export class XHeader extends XUIObject {
-    constructor(data:IXObjectData) {
+    constructor(data:XObjectData) {
         const tag = "header"
         const defaults = {
             _type: tag,
@@ -29,7 +29,7 @@ export class XHeader extends XUIObject {
 }
 
 export class XNavBar extends XUIObject {
-    constructor(data:IXObjectData) {
+    constructor(data:XObjectData) {
         const tag = "navbar"
         const defaults = {
             _type: tag,
@@ -41,7 +41,7 @@ export class XNavBar extends XUIObject {
 }
 
 export class XForm extends XUIObject {
-    constructor(data:IXObjectData) {
+    constructor(data:XObjectData) {
         const tag = "form"
         const defaults = {
             _type: tag,
@@ -57,7 +57,7 @@ export class XImage extends XUIObject {
    
     static xtype = "image"
 
-    constructor(data:IXObjectData) {
+    constructor(data:XObjectData) {
         const defaults = {
             _type: XImage.xtype,
             class:"x" + XImage.xtype,
@@ -68,7 +68,7 @@ export class XImage extends XUIObject {
 }
 
 export class XVideo extends XUIObject {
-    constructor(data:IXObjectData) {
+    constructor(data:XObjectData) {
         const tag = "video"
         const defaults = {
             _type: tag,
@@ -85,7 +85,7 @@ export class XWebcam extends XUIObject {
     muted: boolean;
     _video_constraints: { video: boolean; width: number; height: number; };
     
-    constructor(data:IXObjectData) {
+    constructor(data:XObjectData) {
         const tag = "webcam"
         const defaults = {
             _type: tag,
@@ -94,7 +94,6 @@ export class XWebcam extends XUIObject {
         }
         super(data,defaults,true)
         this.parse(data)
-        // this.parseEvents(this._xem_options)
 
         this.autoplay = true
         this.muted = true
@@ -145,7 +144,7 @@ export class XWebcam extends XUIObject {
 
 
 export class XTextField extends XUIObject {
-    constructor(data:IXObjectData) {
+    constructor(data:XObjectData) {
         const tag = "text"
         const defaults = {
             _type : tag,
@@ -155,26 +154,22 @@ export class XTextField extends XUIObject {
         super(data,defaults,true);
         if(data._text) {
             this.value = data._text
-            data._text = undefined
         }
-
-        //incase of self parsing do parse & parseEvents
         this.parse(data)
-        // this.parseEvents(this._xem_options)
         
         
     }
 
-    setText(text:string) {
-        if(this.dom) {
-            this._text = text;
+    set _text(text:string) {
+        super._text = text     
+        if(this._dom_object) {
             (<HTMLInputElement>(this.dom)).value = text
         }
     }
 }
 
 export class XPassword extends XUIObject {
-    constructor(data:IXObjectData) {
+    constructor(data:XObjectData) {
         const tag = "text"
         const defaults = {
             _type : tag,
@@ -182,43 +177,77 @@ export class XPassword extends XUIObject {
             class:"x" + tag,
             _html_tag:"input"
         }
-        super(data,defaults);
+        super(data,defaults,true);
+        if(data._text) {
+            this.value = data._text
+        }
+        this.parse(data)
+        
+        
+    }
+
+    set _text(text:string) {
+        super._text = text     
+        if(this._dom_object) {
+            (<HTMLInputElement>(this.dom)).value = text
+        }
     }
 }
 
 
 export class XInput extends XUIObject {
-    constructor(data:IXObjectData) {
+    constructor(data:XObjectData) {
         const tag = "input"
         const defaults = {
             _type : tag,
             class:"x" + tag,
             _html_tag:"input"
         }
-        super(data,defaults);
+        super(data,defaults,true);
+        if(data._text) {
+            this.value = data._text
+        }
+        this.parse(data)
+        
+        
+    }
+
+    set _text(text:string) {
+        super._text = text     
+        if(this._dom_object) {
+            (<HTMLInputElement>(this.dom)).value = text
+        }
     }
 }
 
 export class XTextArea extends XUIObject {
-    constructor(data:IXObjectData) {
-        const defs = {
+    constructor(data:XObjectData) {
+        const defaults = {
             _type:"textarea",
             "class":"form-control",
             "_html_tag":"textarea"
         }
-        super(data,defs);
+        super(data,defaults,true);
+        if(data._text) {
+            this.value = data._text
+        }
+        this.parse(data)
+        
+        
     }
 
-    
-
-    getText() {
-        return this.text
+    set _text(text:string) {
+        super._text = text     
+        if(this._dom_object) {
+            (<HTMLInputElement>(this.dom)).value = text
+        }
     }
+
 }
 
 export class XLink extends XUIObject {
     
-    constructor(data:IXObjectData) {
+    constructor(data:XObjectData) {
         const tag = "link"
         const defaults = {
             _type : tag,
@@ -230,7 +259,7 @@ export class XLink extends XUIObject {
 }
 
 export class XLabel extends XUIObject {    
-    constructor(data:IXObjectData) {
+    constructor(data:XObjectData) {
         const defaults = {
             _type:"label",
             _html_tag:"label",
@@ -241,7 +270,7 @@ export class XLabel extends XUIObject {
 }
 
 export class XHTML extends XUIObject {    
-    constructor(data:IXObjectData) {
+    constructor(data:XObjectData) {
         const defaults = {
             _type:"xhtml",
             _html_tag: (data["_html_tag"]) ?data["_html_tag"] : "div"
@@ -393,7 +422,7 @@ export class XButton extends XUIObject {
 
 export class XList extends XUIObject {
     _items: any;
-    constructor(data:IXObjectData) {
+    constructor(data:XObjectData) {
     
         const defaults = {
             _type:"list",

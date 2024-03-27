@@ -2,16 +2,15 @@
 import { _x, _xd, _xem, _xu } from "./src/Core/Xpell"
 import { XUI } from "./src/XUI/XUI"
 import "./public/xtest.css"
-import { DirectionalLightShadow } from "three"
+
 
 async function main() {
     _x.verbose = true //display Xpell engine info
     _x.start() // start Xpell frame engine
-    // _xem._log_rules = {
-    //     register: true,
-    //     remove: true,
-    //     fire: true,
-    // }
+    _x.loadModule(XUI) //load XUI module
+    XUI.createPlayer() //create the player and add it to the body element
+
+
 
     const mainView = {
         _type: "view",
@@ -30,10 +29,26 @@ async function main() {
                         _text: "Xpell"
                     },
                     {
-                        _type: "label",
-                        _id: "XUI-menu",
-                        class: "menu",
-                        _text: "XUI",
+                        _type: "view",
+                        _id: "frame-control",
+                        class: "frame-control",
+                        _children: [
+                            {
+                                _type: "label",
+                                _id: "frame-label",
+                                class: "header-label",
+                                _text: "Frame: 0",
+                                _on_frame: "set-text-from-frame pattern:'Frame: $data'"  
+                            },
+                            {
+                                _type: "label",
+                                _id: "fps-label",
+                                class: "header-label",
+                                _text: "FPS: 0",
+                                _data_source: "fps",
+                                _on_data: "set-text-from-data pattern:'FPS: $data' empty:false"
+                            }
+                        ]
                     }
                 ]
             },
@@ -44,39 +59,21 @@ async function main() {
                 _children: [
                     {
                         _type: "view",
-                        _id: "frame-control",
-                        class: "frame-control",
-                        _children: [
-                            {
-                                _type: "label",
-                                _id: "frame-label",
-                                class: "header-label",
-                                _text: "Frame: 0",
-                                _on_frame: (xobj, frameNumber) => {
-                                    xobj.setText("Frame: " + frameNumber)
-                                }
-                            },
-                            {
-                                _type: "label",
-                                _id: "fps-label",
-                                class: "header-label",
-                                _text: "FPS: 0",
-                                _data_source: "fps",
-                                _on_data: "set-text-from-data empty:false pattern:'fps: $data'"
-                                // (xobj,data) => {
-                                //     xobj.setText( "FPS: " + data)
-                                // }
-                            }
-                        ]
-                    },
-                    {
-                        _type: "view",
                         _id: "event-control",
                         class: "event-control",
                         _children: [
                             {
                                 _type: "label",
-                                _text: "XEM",
+                                _text: "XUI",
+                            },
+                            {
+                                _id: "xui-om-objects",
+                                _type: "label",
+                                class: "",
+                                style: "",
+                                _text: "xui-om-objects",
+                                _data_source: "xui-om-objects",
+                                _on_data: "set-text-from-data empty:false pattern:'XUI OM Objects: $data'"
                             },
                             {
                                 _type: "label",
@@ -89,31 +86,29 @@ async function main() {
                                 }
                             },
                             {
-                                _type: "label",
-                                class: "event-control-failure",
-                                _id: "on_mount_check",
-                                _text: "on_mount_check",
-                                _on_mount:  (xobj, event) => {
-                                    console.log("on_mount_check");
-                                    xobj.append({
+                                _type: "view",
+                                class: "xflex",
+                                _id: "on_mount_check_box",
+                                _children: [
+                                    {
                                         _type: "label",
-                                        class: "event-control-success",
-                                        _text: "click me",
-                                        _parent_element: "on_mount_check",
-                                        _on_click: (xobj, event) => {
-                                            console.log("on_click");
-                                            
-                                        },
+                                        class: "event-control-failure",
+                                        _id: "on_mount_check",
+                                        _text: "on_mount_check",
                                         _on_mount: (xobj, event) => {
-                                            console.log("on_mount internal");
-                                            
-                                        }
-                                    })
-                                },
-                                _on_click: (xobj, event) => {
-                                    console.log("on_click external");
-                                    
-                                }
+                                            xobj.replaceClass("event-control-failure", "event-control-success")
+                                            XUI.append({
+                                                _type: "label",
+                                                class: "event-control-failure",
+                                                _text: "mounted by on_mount_check_box",
+                                                _on_mount: (xobj, event) => {
+                                                    xobj.replaceClass("event-control-failure", "event-control-success")
+
+                                                }
+                                            }, "on_mount_check_box")
+                                        },
+                                    }
+                                ]
                             },
                             {
                                 _type: "label",
@@ -166,7 +161,7 @@ async function main() {
                             {
                                 _type: "label",
                                 class: "event-control-failure",
-                                _text: "_once: mount + click * ",
+                                _text: "_once: mount + click (triggered automatically)",
                                 title: "mount event trigger click event",
                                 _once: {
                                     "mount": (xobj, event) => {
@@ -183,59 +178,88 @@ async function main() {
                                 _text: "Click me",
                                 _on: {
                                     "click": (xobj, event) => {
-                                        xobj.setText("Button clicked")
+                                        xobj._text = "Button clicked"
                                     }
                                 }
                             },
-                            {
-                                _type: "label",
-                                class: "",
-                                _text: "on data [xdata] with function",
-                                _data_source: "xdata",
-                                _on_data: (xobj, data) => {
-                                    xobj.setText("-f->Data: " + data)
-                                }
-                            },
-                            {
-                                _type: "button",
-                                class: "event-button",
-                                _text: "Fire data",
-                                _on_click: (xobj, event) => {
-                                    _xd._o["xdata"] = Date.now()
-                                }
-                            },
-                            {
-                                _type: "button",
-                                class: "event-button",
-                                _text: "Remove Me",
-                                _children :[
-                                    {
-                                        _type: "label",
-                                        _text: "Remove Me",
+                            XUI.wrap([
+                                {
+                                    _type: "button",
+                                    class: "event-button",
+                                    _text: "Fire data",
+                                    _on_click: (xobj, event) => {
+                                        _xd._o["xdata"] = Date.now()
                                     }
-                                ],
-                                _on_click: (xobj, event) => {
-                                    XUI.remove(xobj._id)
+                                },
+                                {
+                                    _type: "label",
+                                    class: "",
+                                    _text: "on data [xdata] with function",
+                                    _data_source: "xdata",
+                                    _on_data: (xobj, data) => {
+                                        xobj._text = "[Data]: " + data
+                                    }
                                 }
-                            },
-                            {
-                                _id:"xui-om-objects",
-                                _type: "label",
-                                class: "",
-                                style:"margin-top: 20px;display: none",
-                                _text: "xui-om-objects",
-                                _data_source: "xui-om-objects",
-                                _on_data: "set-text-from-data empty:false pattern:'XUI Objects: $data'"
-                            },
-                            {
-                                _type: "button",
-                                class: "event-button",
-                                _text: "hide/show",
-                                _on_click: (xobj, event) => {
-                                    XUI.toggle("xui-om-objects")
-                                    
+                            ]),
+                            XUI.wrap([
+                                {
+                                    _type: "button",
+                                    class: "event-button",
+                                    _text: "Remove label",
+                                    _on_click: (xobj, event) => {
+                                        XUI.remove("remove-me")
+                                    }
+                                },
+                                {
+                                    _id: "remove-me",
+                                    _type: "label",
+                                    _text: "will be removed",
+                                },
+                                {
+                                    _type: "button",
+                                    class: "event-button",
+                                    _text: "Add label",
+                                    _on_click: (xobj, event) => {
+                                        // const label = XUI.create()
+                                        XUI.append({
+                                            _id: "remove-me",
+                                            _type: "label",
+                                            _text: "will be removed",
+                                        }, "remove-box")
+
+                                    }
+                                },
+
+                            ], { _id: "remove-box" }),
+                            XUI.wrap([
+                                {
+                                    _type: "button",
+                                    class: "event-button",
+                                    _text: "Toggle",
+                                    _on_click: (xobj, event) => {
+                                        XUI.toggle("xui-om-objects")
+
+                                    }
+                                },
+                                {
+                                    _id: "xui-om-objects",
+                                    _text: "Hide/Show me",
+                                }]),
+                            XUI.wrap([
+                                {
+                                    _type: "text",
+                                    _text: "Text",
+                                    _id: "text-to-test"
+
+                                },
+                                {
+                                    _type: "button",
+                                    _text: "Click me",
+                                    _on_click: (xobj, event) => {
+                                        XUI._o["text-to-test"]._text = "Button clicked"
+                                    }
                                 }
-                            }
+                            ]),
                         ]
                     }
                 ]
@@ -243,14 +267,16 @@ async function main() {
             }
         ]
     }
-    XUI.createPlayer() //create the player and add it to the body element
-    const mvo = XUI.loadObject(mainView)
-    // console.log(mvo.toXData());
+    XUI.add(<any>mainView)
+
+
 
     
 
-    
-    
+
+
+
+
 
 }
 
