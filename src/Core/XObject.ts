@@ -608,6 +608,11 @@ export class XObject {
      * Dispose the XObject and all its children
      */
     async dispose() {
+        if(this._parent) {
+            //remove the instance from the parent children array
+            const index = this._parent._children.indexOf(this)
+            if (index > -1) this._parent._children.splice(index, 1)
+        }
         this._process_data = false
         this._process_frame = false
         this.removeAllEventListeners()

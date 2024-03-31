@@ -11,6 +11,33 @@ async function main() {
     XUI.createPlayer() //create the player and add it to the body element
 
 
+    
+    //XUI.add - add a new XUIObject to the xplayer 
+    //(replace loadObject and loadControl)
+
+ 
+
+    // XUI.wrap - wraps xobject array with wrapper view
+
+    // const view = {
+    //     _text:"view 1",
+    //     style:"background-color:blue"
+    // }
+    // const view2 = {
+    //     _text:"view 2",
+    //     style:"background-color:green"
+    // }
+    // const wrapper = XUI.wrap(
+    //     [view,view2],{
+    //         _id:"wrapper",
+    //         style:"background-color:red;font-size:40px;"
+    //     }
+    // )
+    
+    // XUI.add(wrapper)
+
+
+
 
     const mainView = {
         _type: "view",
@@ -103,7 +130,7 @@ async function main() {
                                                 _text: "mounted by on_mount_check_box",
                                                 _on_mount: (xobj, event) => {
                                                     xobj.replaceClass("event-control-failure", "event-control-success")
-
+    
                                                 }
                                             }, "on_mount_check_box")
                                         },
@@ -226,10 +253,10 @@ async function main() {
                                             _type: "label",
                                             _text: "will be removed",
                                         }, "remove-box")
-
+    
                                     }
                                 },
-
+    
                             ], { _id: "remove-box" }),
                             XUI.wrap([
                                 {
@@ -238,7 +265,7 @@ async function main() {
                                     _text: "Toggle",
                                     _on_click: (xobj, event) => {
                                         XUI.toggle("xui-om-objects")
-
+    
                                     }
                                 },
                                 {
@@ -250,7 +277,7 @@ async function main() {
                                     _type: "text",
                                     _text: "Text",
                                     _id: "text-to-test"
-
+    
                                 },
                                 {
                                     _type: "button",
@@ -263,15 +290,16 @@ async function main() {
                         ]
                     }
                 ]
-
+    
             }
         ]
     }
-    XUI.add(<any>mainView)
+    XUI.add(<any>mainView)    
 
 
 
-    
+
+
 
 
 

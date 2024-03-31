@@ -1,6 +1,8 @@
 /**
- * XEventManager (_xem) is Xpell event system manager.
- * This engine enables event dispatching and listening
+ * @file XEventManager.ts
+ * @overview XEventManager (_xem) is Xpell event system manager.
+ * @description This engine enables event dispatching and listening
+ * 
  * Usage: 
  * 
  * 1.Event Listen

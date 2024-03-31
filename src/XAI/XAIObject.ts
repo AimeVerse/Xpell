@@ -1,5 +1,5 @@
 
-import {_xlog,IXObjectData,XObject,_xu,_xem } from "../Core/Xpell"
+import {_xlog,XObjectData,XObject,_xu,_xem } from "../Core/Xpell"
 // import { _xem } from "../XEM/XEventManager"
 // import XObject, { IXObjectData } from "../XObject"
 // import * as _XC from "../XConst"
@@ -15,7 +15,7 @@ export class XAIObject extends XObject {
     
 
 
-    constructor(data:IXObjectData, defaults:any) {
+    constructor(data:XObjectData, defaults:any) {
         super(data,defaults,true)
         this._ignore = reservedWords;
         

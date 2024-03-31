@@ -1,8 +1,15 @@
 {
-    "entryPoints": ["./src/*.ts","./src/XUI/*.ts"],
+    "entryPoints": ["./src/*.ts",
+    "./src/Core/*.ts",
+    "./src/X3D/*.ts",
+    "./src/XUI/*.ts",
+    "./src/XDB/*.ts",
+    "./src/XAI/*.ts",
+    "./src/Wormholes/*.ts"],
     "exclude": [],
     "out": "./docs",
     "categorizeByGroup": false,
-    "plugin": ["typedoc-material-theme"],
-    "themeColor": "#333333"
+    // "plugin": ["typedoc-material-theme"],
+    "plugin": ["typedoc-plugin-markdown"],
+    // "themeColor": "#333333"
 }

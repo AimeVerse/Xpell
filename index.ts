@@ -49,7 +49,6 @@ export {XUIObjects,XView,XButton,XForm,XHeader,XImage,XLabel,XLink,XList,XNavBar
     XSVGEllipse,XSVGLine,XSVGPolygon,XSVGRect,XSVGPolyline,XSVGPath
 } from "./src/XUI/XUICoreObjects"
 
-export {TopBar} from "./src/XUI/XDashboard"
 // export {XJoystick} from "./src/XUI/XJoystick"
 export {XViewManager,type XViewsPack} from "./src/XUI/XViewManager"
 export {X3D,type X3DApp,type X3DSceneControl,type X3DPhysicsEngines,type X3DHelpers,

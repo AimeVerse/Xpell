@@ -7,15 +7,15 @@ Xpell is a real-time user interface (UI) framework for frontend application deve
 
 This package is an implementation of Xpell engine for web applications (/Typescript/Javascript/HTML), the engine supports native HTML DOM manipulation engine (XUI) and real-time 3D (X3D) engine for browsers based on THREE.JS and WebGL.
 
-More about the Xpell engine please refer to the [xpell-core](xpell-core.md) file
+
 
 # Xpell.js Base Module
 
-- [XUI](xui.md) - User Interface (HTML & CSS) module
-- [X3D](x3d.md) - 3D engine manager (Three.js)
-- [XAI](xai.md) - AI Module Manager
-- [XDB](xdb.md) - Database Module Manager
-- [Wormholes](wormholes.md) - Communication between modules
+- XUI - User Interface (HTML & CSS) module
+- X3D - 3D engine manager (Three.js)
+- XAI - AI Module Manager
+- XDB - Database Module Manager
+- Wormholes - Xpell Communication Module
 
 # Getting Started
 To begin using Xpell, install the framework and import it into your frontend application. From there, you can utilize its various modules to create a high-performance, real-time UI.

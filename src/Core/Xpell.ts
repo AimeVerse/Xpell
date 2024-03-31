@@ -2,13 +2,17 @@
  * Xpell - Real-Time User Interface Platform
  * Typescript Edition   
  *      
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version
- * 3 of the License, or (at your option) any later version.
- *
+ * @file Xpell.ts
+ * @overview Xpell Engine main file
+ * @description Xpell Engine is a real-time user interface platform 
+ * for Javascript supporting devices & browsers.
+ * @since  22/07/2022
+ * @author Fridman Tamir
+ * @license GNU GPL v3
  *
  */
+
+
 
 
 
@@ -77,6 +81,27 @@ export class XpellEngine {
      */
     set verbose(val : boolean){
         _xlog.enabled=true
+    }
+
+
+    /**
+     * Logs message to console using Xpell logger
+     * make sure to enable verbose mode to see the logs
+     * this method is a wrapper for XLogger.log
+     * @param msg 
+     * @param optionalParams
+     */
+    log(message?: any, ...optionalParams: any[])  {
+        _xlog.log(message,...optionalParams)
+    }
+
+    /**
+     * Delay the execution of the next command
+     * @param ms - delay in milliseconds
+     * @returns 
+     */
+    async delay(ms:number) {
+        return new Promise(resolve => setTimeout(resolve, ms));
     }
 
     

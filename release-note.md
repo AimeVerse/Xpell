@@ -3,12 +3,22 @@ Xpell Release Notes
 
 27 Mar 2024
 -------------
+
+- Xpell
+  - new method:
+    - delay (ms) - delay the execution of the next command
+    - log (message) - log a message to the console using xlog (shortcuts for xlog)
+
+- XObject 
+  - remove from _parent when disposing
+
 - XUI
     - new method:
       - add (xObjectData) - creates a XUIObject and mount it to the parent element
       - append (xObjectData| XUIObject,parentXObjectId) - creates a XUIObject and append it to the parent XUI object id 
       - wrap (xObjects: (XObjectData)[], wrapper?:XObjectData) - Wraps an array of XObjectData objects with a wrapper object and returns the wrapper 
       - _o["object-id"] - get XUIObject by id (equivalent to XUI.getObject("object-id"))
+
 - XUIObject
     - _text attributes is getter/setter (instead of setText) example: xuiObject._text = "txt"
     - setStyleAttribute (attributeName, value) - set style attribute to the element

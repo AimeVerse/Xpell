@@ -127,6 +127,9 @@ export class XUIModule extends XModule {
         return super.create(data)
     }
 
+
+    
+
     /**
      * Wraps an array of XObjectData objects with a wrapper object and returns the wrapper 
      * with the wrapped objects as children
@@ -181,7 +184,7 @@ export class XUIModule extends XModule {
 
 
     /**
-     * Removes the 
+     * Removes the XUIObject from the DOM by ID and from the Object Manager
      * @param objectId the XUIObject id to remove
      * @override
      */
