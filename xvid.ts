@@ -1,7 +1,7 @@
 
 import { _x, _xd, _xem, _xlog, _xu } from "./src/Core/Xpell"
 import { XUI as _xui } from "./src/XUI/XUI"
-import "./public/xtest.css"
+// import "./public/xtest.css"
 
 
 async function main() {

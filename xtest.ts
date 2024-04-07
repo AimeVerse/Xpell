@@ -48,6 +48,7 @@ async function main() {
                 _type: "view",
                 _id: "header",
                 class: "header",
+
                 _children: [
                     {
                         _type: "label",
@@ -118,19 +119,21 @@ async function main() {
                                 _id: "on_mount_check_box",
                                 _children: [
                                     {
-                                        _type: "label",
+                                        _type: "view",
                                         class: "event-control-failure",
                                         _id: "on_mount_check",
                                         _text: "on_mount_check",
-                                        _on_mount: (xobj, event) => {
+                                        _on_mount: async (xobj, event) => {
                                             xobj.replaceClass("event-control-failure", "event-control-success")
                                             XUI.append({
                                                 _type: "label",
                                                 class: "event-control-failure",
                                                 _text: "mounted by on_mount_check_box",
-                                                _on_mount: (xobj, event) => {
+                                                _on_mount: async (xobj, event) => {
                                                     xobj.replaceClass("event-control-failure", "event-control-success")
-    
+                                                    console.log("mounted by on_mount_check_box");
+                                                    await _x.delay(1000)
+                                                    
                                                 }
                                             }, "on_mount_check_box")
                                         },
@@ -271,6 +274,7 @@ async function main() {
                                 {
                                     _id: "xui-om-objects",
                                     _text: "Hide/Show me",
+                           
                                 }]),
                             XUI.wrap([
                                 {
