@@ -15,7 +15,7 @@ export interface XNanoCommand  {
 }
 
 /**
- * x-nano-command pack
+ * x-nano-command pack 
  */
 export type XNanoCommandPack = {
     [k:string] :XNanoCommand

@@ -1,5 +1,16 @@
 Xpell Release Notes
 
+03 June 2024
+-------------
+- XUI Object 
+  - new properties
+    - _on_show_animation
+    - _on_hide_animation
+    - _nano_commands - array of nano commands to execute on xobject 
+  - new methods
+    - animate (animationName) - play animation from the XUIObject
+    - stopAnimation (animationName) - stop animation from the XUIObject
+
 
 27 Mar 2024
 -------------

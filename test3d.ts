@@ -208,41 +208,41 @@ export const world: X3DApp = {
             }
         },
         _lights: {
-            // "main": {
-            //     _id: "ambient-light",
-            //     _type: "light",
-            //     _light: "ambient",
-            //     color: 0x888888
-            // },
-            // "p1": {
-            //     _id: "directional-light",
-            //     _type: "light",
-            //     _light: "directional",
-            //     color: "hsl(0, 100%, 100%)",
-            //     intensity: 1,
-            //     _position: { x: 0, y: 3, z: 2 },
-            // },
-            "p2": {
-                _id: "spotlight-light",
+            "main": {
+                _id: "ambient-light",
                 _type: "light",
-                _light: "spotlight",
-                _color: "#ff0000",//red 
-                _intensity: 1,
-                _position: { x: 0, y: 3, z: 2},
-               
-                _on_mount: (obj) => {
-                    // console.log(obj)
-                    // console.log(obj._three_obj.color.toHexString())
-                },
-                _on_frame: (obj, f) => 
-                {
-                    // const red = Math.floor(Math.random() * 256);
-                    // const green = Math.floor(Math.random() * 256);
-                    // const blue = Math.floor(Math.random() * 256);
-                    // obj._three_obj.color = {isColor: true, r: red, g: green, b: blue};
-                    // console.log(obj._three_obj.color)
-                }
+                _light: "ambient",
+                color: 0x888888
             },
+            "p1": {
+                _id: "directional-light",
+                _type: "light",
+                _light: "directional",
+                color: "hsl(0, 50%, 100%)",
+                intensity: 1,
+                _position: { x: 0, y: 3, z: 2 },
+            },
+            // "p2": {
+            //     _id: "spotlight-light",
+            //     _type: "light",
+            //     _light: "spotlight",
+            //     _color: "#ff0000",//red 
+            //     _intensity: 1,
+            //     _position: { x: 0, y: 3, z: 2},
+               
+            //     _on_mount: (obj) => {
+            //         // console.log(obj)
+            //         // console.log(obj._three_obj.color.toHexString())
+            //     },
+            //     _on_frame: (obj, f) => 
+            //     {
+            //         // const red = Math.floor(Math.random() * 256);
+            //         // const green = Math.floor(Math.random() * 256);
+            //         // const blue = Math.floor(Math.random() * 256);
+            //         // obj._three_obj.color = {isColor: true, r: red, g: green, b: blue};
+            //         // console.log(obj._three_obj.color)
+            //     }
+            // },
 
             
         },
@@ -293,7 +293,7 @@ export const world: X3DApp = {
                 _geometry: {
                     // _type: "plane-geometry",
                     radius: 5,
-                    segments: 24,
+                    segments: 64,
                     // width: 10,
                     // height: 10,
                     // widthSegments: 50,
@@ -301,18 +301,27 @@ export const world: X3DApp = {
 
                 },
                 _material: {
-                    _type: "standard-material",
+                    _type: "phong-material",
                     color: "#00ffff",
-                    side: 1,
-                    transparent: true,
-                    opacity: 1,
+                    side: 2,
+                    // transparent: true,
+                    // opacity: 1,
                     wireframe: true
                 },
                 _position: { x: 0, y: 1, z: 0 },
                 _rotation: { x: Math.PI / 2, y: 0, z: 0 },
                 // _enable_physics: true,
                 // _mass: 0,
-                // _on_frame:"rotation x:0.01 y:++0.01 z:--0.01",
+                _on_frame:"spin x:0.01"
+                //"rotation  z:--0.01"
+                
+                // (obj,f) => {
+                //     //rotate the object on the y axis
+                //     obj._rotation.z += 0.001
+                // }
+                
+                
+                // "rotation x:0.01 y:++0.01 z:--0.01",
                 
             },
             // "robot": {
@@ -367,7 +376,7 @@ export const world: X3DApp = {
        
                 _position: {x: 3, y: 4, z: 0},
                 _rotation: {x: 0, y: 0, z: 0},
-                _on_frame:  "orbit speed:0.2 radius:2",
+                _on_frame:  "orbit speed:0.02 radius:2",
 
                 "square": {
                     _id:"my-square",
@@ -462,7 +471,7 @@ async function main() {
 
     //load Xpell UI (XUI) Module
     // _x.loadModule(XUI)
-    // _x.loadModule(X3D)
+    _x.loadModule(X3D)
     
     // XUI.importObject("joystick", XJoystick)
     // XUI.importObjectPack(XEditor)

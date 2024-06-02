@@ -1,7 +1,11 @@
-// import { _xem } from "../XEM/XEventManager";
+/**
+ * XUI Core Objects 
+ * @description XUI Core Objects are the basic building blocks of the XUI Framework
+ * @since  22/07/2022
+ * @copyright Aime Technologies 2022, all right reserved
+ */
 import XUIObject from "./XUIObject";
-// import {Xpell as _x} from "../Xpell"
-import {_x,XEventListenerOptions,XObjectData,XObjectPack ,_xem} from "../Core/Xpell"
+import {_x,XObjectData,XObjectPack ,_xem} from "../Core/Xpell"
 
 
 
@@ -228,20 +232,17 @@ export class XTextArea extends XUIObject {
             "_html_tag":"textarea"
         }
         super(data,defaults,true);
-        if(data._text) {
-            this.value = data._text
-        }
         this.parse(data)
         
         
     }
 
-    set _text(text:string) {
-        super._text = text     
-        if(this._dom_object) {
-            (<HTMLInputElement>(this.dom)).value = text
-        }
-    }
+    // set _text(text:string) {
+    //     super._text = text     
+    //     if(this._dom_object) {
+    //         (<HTMLInputElement>(this.dom)).value = text
+    //     }
+    // }
 
 }
 

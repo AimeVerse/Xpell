@@ -3,12 +3,12 @@
  * XUI Module - Xpell User Interface Module for HTML and CSS
  * @description Universal User Interface (UI) HTML Engine  for Javascript supporting devices & browsers
  * @author Tamir Fridman <fridman.tamir@gmail.com>
- *
+ * 
  */
 
 import XUIObject from "./XUIObject"
 import {XViewManager,XViewsPack} from "./XViewManager"
-import { _xlog,XParser,_xem,XModule,XModuleData, IXObjectData, XObjectData, _x, _xu } from "../Core/Xpell"
+import { _xlog,XParser,_xem,XModule,XModuleData, XObjectData, _x, _xu } from "../Core/Xpell"
 
 import XUICoreObjects from "./XUICoreObjects"
 import "./Style/xui.css"
@@ -117,7 +117,7 @@ export class XUIModule extends XModule {
      * @param data - XOjectData representing the XUIObject
      * @returns XUIObject
      */
-    create(data: XObjectData) {
+    create(data?: XObjectData) {
         if(!data) {
             data = { _type: "view",_children:[]}
         }
@@ -295,8 +295,13 @@ export class XUIModule extends XModule {
         div.className = (cssClass) ? cssClass : "xplayer"
         div.style.width = "100%"
         div.style.height = "100%"
+        
         this._player_element = div
-        if(dobj) dobj.appendChild(div)
+        if(dobj) {
+            dobj.style.margin = "0"
+            dobj.style.padding = "0"
+            dobj.appendChild(div)
+        }
         return div
     }
 

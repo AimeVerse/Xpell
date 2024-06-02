@@ -80,6 +80,7 @@ export type XObjectData = {
     _on_data?: string | Function | undefined
     _process_frame?: boolean
     _process_data?: boolean
+    _nano_commands?: XNanoCommandPack
 }
 
 /**
@@ -141,6 +142,11 @@ export class XObject {
         this._children = []
         this._nano_commands = {}
         this.addNanoCommandPack(_xobject_basic_nano_commands)
+        if(data._nano_commands) {
+            this.addNanoCommandPack(data._nano_commands)
+            delete data._nano_commands //important to delete the nano commands from the data
+        }
+            
 
         //add Xporter ignore field and instance handler (uses as example also)
         this.addXporterDataIgnoreFields(["_nano_commands"])
@@ -244,7 +250,7 @@ export class XObject {
      */
     addNanoCommand(commandName: string, nanoCommandFunction: XNanoCommand) {
         if (typeof nanoCommandFunction === 'function') {
-            // _xlog.log("command " + commandName + " loaded to xobject " + this._id)
+            _xlog.log("command " + commandName + " loaded to xobject " + this._id)
             this._nano_commands[commandName] = nanoCommandFunction
         }
     }

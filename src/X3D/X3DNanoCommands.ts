@@ -29,7 +29,7 @@ import X3DObject from "./X3DObject"
  * - dir -> change direction (up/down)
  * - step -> step to move
  */
-const change_axis = (root:any, xCommand:XCommand) => {
+const changeAxis = (root:any, xCommand:XCommand) => {
     const axis = xCommand.getParam(0, "axis","x") 
     const direction = (<string>xCommand.getParam(1, "dir","up")).toLowerCase()
     const step = parseFloat(<string>xCommand.getParam(2, "step",0.01))
@@ -42,8 +42,7 @@ const change_axis = (root:any, xCommand:XCommand) => {
 
 
 
-const set_axis = (root:any, axis:any, param:any) => {
-
+const setAxis = (root:any, axis:any, param:any) => {
     if (param) {
         if (param.startsWith("++")) {
             param = param.substring(1)
@@ -57,7 +56,6 @@ const set_axis = (root:any, axis:any, param:any) => {
         }
 
     }
-
 }
 
 
@@ -87,32 +85,32 @@ export const _x3dobject_nano_commands:XNanoCommandPack = {
     "rotation":  (xCommand:XCommand | XCommandData,x3dObject?:XObject) => {
         const cmd = <XCommand>xCommand
         //rotation x:0.01 y:++0.01 z:--0.01
-        const x = cmd.getParam(0, "x","0")
+        const x = _xu.getParam(cmd, "x",undefined)
 
-        if (x) { set_axis(x3dObject?._rotation, "x", x) }
+        if (x) { setAxis(x3dObject?._rotation, "x", x) }
 
-        const y = cmd.getParam(1, "y",0)
-        if (y) { set_axis(x3dObject?._rotation, "y", y) }
+        const y = _xu.getParam(cmd, "y",undefined)
+        if (y) { setAxis(x3dObject?._rotation, "y", y) }
 
-        const z = cmd.getParam(2, "z",0)
-        set_axis(x3dObject?._rotation, "z", z)
+        const z = _xu.getParam(cmd, "z",undefined)
+        setAxis(x3dObject?._rotation, "z", z)
     },
     "spin": (xCommand:XCommand | XCommandData,x3dObject?:XObject) => {
         const cmd = <XCommand>xCommand
-        const x = cmd.getParam(0, "x",0)
+        const x = _xu.getParam(cmd, "x",undefined)
         const x_str = (x) ? "x:++" + x : ""
 
-        const y = cmd.getParam(0, "y",0)
+        const y = _xu.getParam(cmd, "y",undefined)
         const y_str = (y) ? "y:++" + y : ""
 
-        const z = cmd.getParam(0, "z",0)
+        const z = _xu.getParam(cmd, "z",undefined)
         const z_str = (z) ? "z:++" + z : ""
         const sstr = `rotation ${x_str} ${y_str} ${z_str}`
 
         if(x3dObject) x3dObject._on_frame = sstr
     },
-    "stop-spin": (xCommand:XCommand| XCommandData,x3dObject?:XObject)  => {
-        if(x3dObject) x3dObject.onframe = ""
+    "stop": (xCommand:XCommand| XCommandData,x3dObject?:XObject)  => {
+        if(x3dObject) x3dObject._on_frame = ""
     },
     // "rotate": (ns_cmd) => {
     //     // transfer positioning control to THREE from Spell

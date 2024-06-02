@@ -43,6 +43,7 @@
     "vite-plugin-dts": "^3.7.2"
   },
   "dependencies": {
+    "animate.css": "^4.1.1",
     "cannon-es": "^0.20.0",
     "three": "^0.143.0",
     "three-to-cannon": "^4.2.0"

@@ -1,14 +1,18 @@
+/**
+ * XUIObject - XUI Object is the base class for all XUI objects
+ * @class XUIObject
+ * @extends XObject
+ * @author Tamir Fridman
+ * @since  22/07/2022
+ * @copyright Aime Technologies 2022, all right reserved
+ */
 
-// import XUtils from "../XUtils"
-// import XData from "../XData"
-// import XObject, { IXObjectData } from "../XObject"
 import { XUtils, _xd, XObject, XObjectData, _xem, XEventListenerOptions } from "../Core/Xpell"
-// import { _xem ,XEventListenerOptions} from "../XEM/XEventManager";
 import XUI from "./XUI";
-// import * as _XC from "../XConst"
 import _xuiobject_basic_nano_commands from "./XUINanoCommands"
 const reservedWords = { _children: "child objects" }
 const xpellObjectHtmlFieldsMapping: { [k: string]: string } = { "_id": "id", "css-class": "class", "animation": "xyz", "input-type": "type" };
+import {XUIAnimate} from "./XUIAnimations"
 
 /**
  *   ADD On Event support
@@ -33,6 +37,8 @@ export class XUIObject extends XObject {
     _on_click?: Function | string
     _on_show?: Function | string
     _on_hide?: Function | string
+    _on_show_animation?: string ;
+    _on_hide_animation?: string ;
 
 
 
@@ -49,7 +55,8 @@ export class XUIObject extends XObject {
         this._xem_options = <XEventListenerOptions>{ _once: false, _support_html: true }
         this.addXporterDataIgnoreFields(["_dom_object", "_html", "_xem_options", "_on_click","#_text"])
         // this._base_display = "block"
-        this.addNanoCommandPack(_xuiobject_basic_nano_commands)
+        super.addNanoCommandPack(_xuiobject_basic_nano_commands)
+        
         if(!skipParse && data) this.parse(data, reservedWords); 
     }
 
@@ -290,11 +297,24 @@ export class XUIObject extends XObject {
     }
 
 
+    
+
+   
+ 
+   
+
+
+
     /**
      * This method is used to show the object and trigger the onShow event
      */
     show() {
         if (this._dom_object instanceof HTMLElement) {
+            if(this._on_show_animation){
+                this._dom_object.classList.add(XUIAnimate._animation_base_class , this._on_show_animation);
+                this.addEventListener("animationend", () => { this._dom_object.classList.remove( this._on_show_animation);
+                     },{_once: true});
+            } 
             const disp = (this._base_display) ? this._base_display : "block"
             this._dom_object.style.display = disp
             this._visible = true
@@ -315,10 +335,47 @@ export class XUIObject extends XObject {
                 else this._base_display = cs
             }
             this._visible = false
-            this._dom_object.style.display = "none"
-            this.onHide()
+
+            if(this._on_hide_animation){
+                this._dom_object.classList.add(XUIAnimate._animation_base_class, this._on_hide_animation);
+                this.addEventListener("animationend", () => { 
+                    this._dom_object.classList.remove( this._on_hide_animation);
+                    this._dom_object.style.display = "none"
+                    this.onHide() 
+                },{_once: true});
+            } else {
+                this._dom_object.style.display = "none"
+                this.onHide()
+            }
         }
     }
+
+
+    async animate(animation: string,infinite:boolean = false) {
+        if (this._dom_object instanceof HTMLElement) {
+            return new Promise((resolve, reject) => {
+                this._dom_object.classList.add(XUIAnimate._animation_base_class, animation);
+                if(infinite) {
+                    this._dom_object.classList.add("animate__infinite")
+                    this["_active_animation"] = animation
+                    resolve(true)
+                } else {
+                    this.addEventListener("animationend", () => { 
+                        this._dom_object.classList.remove( animation);
+                        resolve(true)
+                    },{_once: true});
+                }   
+            })
+        }
+    }
+
+    stopAnimation() {
+        if (this._dom_object instanceof HTMLElement && this["_active_animation"]) {
+            this._dom_object.classList.remove( <any>this["active-animation"],"animate__infinite");
+            delete this["_active_animation"]
+        }
+    }
+
 
     /**
      * This method is used to toggle the object visibility
@@ -336,6 +393,7 @@ export class XUIObject extends XObject {
     }
 
 
+    
 
     /**
      * this method triggered after the HTML DOM object has been mounted by the super
@@ -347,11 +405,14 @@ export class XUIObject extends XObject {
         if (!this._mounted) {
             try {
                 // _base_display uses to show the element if it was hidden
-
+                
                 if (!this._base_display) {
                     const cs = getComputedStyle(this._dom_object).getPropertyValue("display")
                     if (!cs || cs == "none") this._base_display = "block"
                     else this._base_display = cs
+                }
+                if(this._base_display != "none") {
+                    this.show();
                 }
             } catch (error) {
                 this._base_display = "block"
@@ -361,6 +422,9 @@ export class XUIObject extends XObject {
                 if (typeof this._on_click === 'function') {
                     this.addEventListener("click", (e) => { (<Function>this._on_click)(this, e) })
                     // this.dom.addEventListener("click", (e) => { (<Function>this._on_click)(this,e) })
+                } else if (typeof this._on_click === 'string') {
+                    this.addEventListener("click", (e) => { 
+                        this.checkAndRunInternalFunction(this._on_click) })
                 }
             }
 
