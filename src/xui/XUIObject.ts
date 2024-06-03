@@ -54,7 +54,6 @@ export class XUIObject extends XObject {
         this._visible = true
         this._xem_options = <XEventListenerOptions>{ _once: false, _support_html: true }
         this.addXporterDataIgnoreFields(["_dom_object", "_html", "_xem_options", "_on_click","#_text"])
-        // this._base_display = "block"
         super.addNanoCommandPack(_xuiobject_basic_nano_commands)
         
         if(!skipParse && data) this.parse(data, reservedWords); 

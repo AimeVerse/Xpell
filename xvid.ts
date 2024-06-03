@@ -13,11 +13,18 @@ async function main() {
 
     _xd._o["main-view-status"] = "Not Mounted"
 
-    _xui.add(_xui.wrap([{
+    _xui.add(
+        
+        {
+            _id:"main-view",
+            _type:"view",
+            style:"flex-direction:column; justify-content:center;align-items:center;width:100%;height:100%",
+            _children:
+        [{
         _id:"check-me",
         _type:"view",
         style:"font-size:80px;",
-        _text:"Hello World",
+        _text:"Xpell 1.5",
         _on_show_animation:XUIAnimate._animations.FADE_IN,
         _on_hide_animation:XUIAnimate._animations.FADE_OUT,
 
@@ -57,15 +64,13 @@ async function main() {
         _text:"test-nano",
         _nano_commands: {
             "logme": (xcmd, xobj?:any) => {
-                console.log(xobj._nano_commands);
-                
-            
+                xobj._text = "Logged"
             }
         },
         _on_click:"logme"
     }
 
-],{style:"flex-direction:column; justify-content:center;align-items:center;width:100%;height:100%"}))
+]})
 
     await _x.delay(1000);    
     _xd._o["main-text-ds"] = "New Data"

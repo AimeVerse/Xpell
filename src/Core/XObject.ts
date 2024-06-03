@@ -250,7 +250,7 @@ export class XObject {
      */
     addNanoCommand(commandName: string, nanoCommandFunction: XNanoCommand) {
         if (typeof nanoCommandFunction === 'function') {
-            _xlog.log("command " + commandName + " loaded to xobject " + this._id)
+            // _xlog.log("command " + commandName + " loaded to xobject " + this._id)
             this._nano_commands[commandName] = nanoCommandFunction
         }
     }
