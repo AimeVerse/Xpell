@@ -1,3 +1,11 @@
+/**
+ * XUIObject - XUI Object is the base class for all XUI objects
+ * @class XUIObject
+ * @extends XObject
+ * @author Tamir Fridman
+ * @since  22/07/2022
+ * @copyright Aime Technologies 2022, all right reserved
+ */
 import { XObject, XObjectData } from "../Core/Xpell";
 /**
  *   ADD On Event support
@@ -6,19 +14,21 @@ import { XObject, XObjectData } from "../Core/Xpell";
  *  - check for events in getDOMObject and add them to the object
 */
 export declare class XUIObject extends XObject {
+    #private;
     _html_tag: string;
     _html_ns?: string | null;
-    private _dom_object;
+    protected _dom_object: any;
     _type: string;
     _html?: string | undefined;
     _base_display?: string | undefined | null;
-    _text?: string;
     _children: XUIObject[];
     _visible: boolean;
     _parent_element?: string;
     _on_click?: Function | string;
     _on_show?: Function | string;
     _on_hide?: Function | string;
+    _on_show_animation?: string;
+    _on_hide_animation?: string;
     constructor(data: XObjectData, defaults: XObjectData, skipParse?: boolean);
     /**
      * Dispose all object memory (destructor)
@@ -38,6 +48,8 @@ export declare class XUIObject extends XObject {
      * @returns the HTML DOM object same as getDOMObject()
      */
     get dom(): HTMLElement;
+    set _text(text: string);
+    get _text(): string;
     /**
      * Gets the HTML representation of the object
      * @returns the HTML representation of the object
@@ -55,8 +67,17 @@ export declare class XUIObject extends XObject {
      *
      */
     mount(parentElementId: string): void;
+    /**
+     * Append a child object to the XUIObject, if the object is not XUIObject it will be created
+     * @param xObject - the child object to append can be XUIObject or XObjectData
+     * @returns
+     */
     append(xObject: XUIObject | XObjectData | any): any;
-    /** */
+    /**
+     * Sets the object text content
+     * @param text - the text content
+     * @deprecated use _text property instead (e.g. xuiObj._text = "Xpell rulz!")
+     */
     setText(text: string): void;
     /**
      * Sets the object CSS style
@@ -65,7 +86,7 @@ export declare class XUIObject extends XObject {
      * @example
      * xuiObj.setStyle("background-color","red")
      */
-    setStyle(attr: string, val: string): void;
+    setStyleAttribute(attr: string, val: string): void;
     /**
      * Adds a css class to the object
      * @param className - the css class name
@@ -95,6 +116,8 @@ export declare class XUIObject extends XObject {
      * This method is used to hide the object and trigger the onHide event
      */
     hide(): void;
+    animate(animation: string, infinite?: boolean): Promise<unknown>;
+    stopAnimation(): void;
     /**
      * This method is used to toggle the object visibility
      */

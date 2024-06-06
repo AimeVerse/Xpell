@@ -8,6 +8,7 @@ import XUIObject from "./XUIObject";
 import { XViewManager, XViewsPack } from "./XViewManager";
 import { XModule, XModuleData, XObjectData } from "../Core/Xpell";
 import XUICoreObjects from "./XUICoreObjects";
+import "./Style/xui.css";
 /**
  * XUIApp is the Xpell UI Application object, it can hold views and controls
  */
@@ -27,7 +28,10 @@ export declare const FIRST_USER_GESTURE = "first-user-gesture";
  */
 export declare class XUIModule extends XModule {
     vm: XViewManager;
-    _first_gesture_occured: boolean;
+    _first_gesture_occurred: boolean;
+    _events: {
+        _loaded: string;
+    };
     private _controls_element;
     private _player_element;
     /**
@@ -35,6 +39,34 @@ export declare class XUIModule extends XModule {
      * @param data module data
      */
     constructor(data: XModuleData);
+    /**
+     * Create a XUIObject and mount it to the DOM parent element.
+     * if xData._parent_element is not provided the object will be appended to the player element or to the document body if player element is not provided
+     * @param data - the XUIObject data
+     * @returns XUIObject
+     *
+     */
+    add(xData: XObjectData): any;
+    /**
+     * Append XUIObject to the parent XUI Object
+     * @param xobj - XUIObject to append
+     * @param parentXobjId - the parent XUIObject id
+     */
+    append(xobj: XUIObject | XObjectData, parentXobjId: string): void;
+    /**
+     * Create a XUIObject
+     * @param data - XOjectData representing the XUIObject
+     * @returns XUIObject
+     */
+    create(data?: XObjectData): any;
+    /**
+     * Wraps an array of XObjectData objects with a wrapper object and returns the wrapper
+     * with the wrapped objects as children
+     * @param xObjects - array of XObjectData objects to wrap
+     * @param wrapper - the wrapper object to use, if not provided a default wrapper will be created
+     * @returns - XObjectData
+     */
+    wrap(xObjects: (XObjectData)[], wrapper?: XObjectData): XObjectData;
     /**
      * Loads Xpell application object
      * @param xuiApp
@@ -47,7 +79,7 @@ export declare class XUIModule extends XModule {
      */
     openUrl(url: string, newWindow?: boolean): void;
     /**
-     * Removes the
+     * Removes the XUIObject from the DOM by ID and from the Object Manager
      * @param objectId the XUIObject id to remove
      * @override
      */
@@ -59,12 +91,14 @@ export declare class XUIModule extends XModule {
      * Create a XUIObject and mount it to the DOM parent element
      * @param data - the XUIObject data
      * @returns XUIObject
+     * @deprecated use XUI.add instead
      */
     loadControl(data: XObjectData): XUIObject;
     /**
      * Create a XUIObject and mount it to the DOM parent element
      * @param data - the XUIObject data
      * @returns XUIObject
+     * @deprecated use XUI.add instead
      */
     loadObject(data: XObjectData): XUIObject;
     createFromTemplate(xpell2json: {

@@ -1,23 +1,29 @@
+/**
+ * XUI Core Objects
+ * @description XUI Core Objects are the basic building blocks of the XUI Framework
+ * @since  22/07/2022
+ * @copyright Aime Technologies 2022, all right reserved
+ */
 import XUIObject from "./XUIObject";
-import { IXObjectData, XObjectData, XObjectPack } from "../Core/Xpell";
+import { XObjectData, XObjectPack } from "../Core/Xpell";
 export declare class XView extends XUIObject {
-    constructor(data: IXObjectData);
+    constructor(data: XObjectData);
 }
 export declare class XHeader extends XUIObject {
-    constructor(data: IXObjectData);
+    constructor(data: XObjectData);
 }
 export declare class XNavBar extends XUIObject {
-    constructor(data: IXObjectData);
+    constructor(data: XObjectData);
 }
 export declare class XForm extends XUIObject {
-    constructor(data: IXObjectData);
+    constructor(data: XObjectData);
 }
 export declare class XImage extends XUIObject {
     static xtype: string;
-    constructor(data: IXObjectData);
+    constructor(data: XObjectData);
 }
 export declare class XVideo extends XUIObject {
-    constructor(data: IXObjectData);
+    constructor(data: XObjectData);
 }
 export declare class XWebcam extends XUIObject {
     autoplay: boolean;
@@ -27,7 +33,7 @@ export declare class XWebcam extends XUIObject {
         width: number;
         height: number;
     };
-    constructor(data: IXObjectData);
+    constructor(data: XObjectData);
     /**
      * this method checks if the browser has "getMedia" support for webcam & mic
      * @returns boolean
@@ -38,27 +44,28 @@ export declare class XWebcam extends XUIObject {
     pause(): Promise<void>;
 }
 export declare class XTextField extends XUIObject {
-    constructor(data: IXObjectData);
-    setText(text: string): void;
+    constructor(data: XObjectData);
+    set _text(text: string);
 }
 export declare class XPassword extends XUIObject {
-    constructor(data: IXObjectData);
+    constructor(data: XObjectData);
+    set _text(text: string);
 }
 export declare class XInput extends XUIObject {
-    constructor(data: IXObjectData);
+    constructor(data: XObjectData);
+    set _text(text: string);
 }
 export declare class XTextArea extends XUIObject {
-    constructor(data: IXObjectData);
-    getText(): string | number | boolean | {} | Function | [];
+    constructor(data: XObjectData);
 }
 export declare class XLink extends XUIObject {
-    constructor(data: IXObjectData);
+    constructor(data: XObjectData);
 }
 export declare class XLabel extends XUIObject {
-    constructor(data: IXObjectData);
+    constructor(data: XObjectData);
 }
 export declare class XHTML extends XUIObject {
-    constructor(data: IXObjectData);
+    constructor(data: XObjectData);
 }
 export declare class XSVG extends XUIObject {
     private _svg_data;
@@ -98,7 +105,7 @@ export declare class XButton extends XUIObject {
 }
 export declare class XList extends XUIObject {
     _items: any;
-    constructor(data: IXObjectData);
+    constructor(data: XObjectData);
 }
 export declare class XUIObjects extends XObjectPack {
     static getObjects(): {

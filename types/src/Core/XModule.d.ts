@@ -71,6 +71,12 @@ export declare class XModule {
      */
     getObject(objectId: string): XObject;
     /**
+     * Returns the XObject instance from the module Object Manager
+     * Usage:
+     * xmodule._o["object-id"] is equivalent to xmodule.getObject("object-id")
+     */
+    get _o(): import("./XObjectManager").XObjectManagerIndex;
+    /**
      * Imports external object pack to the engine
      * The object class should be like XObjects with static implementation of getObjects() method
      * @param {XObjects} xObjectPack

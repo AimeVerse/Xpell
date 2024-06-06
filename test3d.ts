@@ -288,6 +288,12 @@ export const world: X3DApp = {
             floor: {
                 _id: "floor",
                 _type: "circle",
+                _on_mount: "hide-me",
+                _nano_commands: {
+                    "hide-me": (xcmd,xobj) =>{
+                        xobj.getThreeObject().visible = false
+                    }
+                },
                 // visible: false,
                 // layers: { enable: 1 },
                 _geometry: {

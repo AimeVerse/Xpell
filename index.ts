@@ -75,7 +75,7 @@ export {XDB,XDB as _xdb,_XDataBase} from "./src/XDB/XDB"
 export {XAI,XAI as _xai,XAIModule} from "./src/XAI/XAI"
 export {XAIObject} from "./src/XAI/XAIObject"
 export {XAIObjects,XTTS} from "./src/XAI/XAICoreObjects"
-export {XUIAnimate} from "./src/XUI/XUIAnimations"
+export {XUIAnimate,_AnimateCSS} from "./src/XUI/XUIAnimations"
 
 import {Xpell} from "./src/Core/Xpell"
 export default Xpell

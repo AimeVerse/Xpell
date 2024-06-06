@@ -51,7 +51,7 @@ export interface XObjectOnEventIndex {
 export type XObjectData = {
     [k: string]: string | null | [] | undefined | Function | boolean | number | {};
     _id?: string;
-    _type: string;
+    _type?: string;
     _children?: Array<XObject | XObjectData>;
     _name?: string;
     _data_source?: string;
@@ -63,6 +63,7 @@ export type XObjectData = {
     _on_data?: string | Function | undefined;
     _process_frame?: boolean;
     _process_data?: boolean;
+    _nano_commands?: XNanoCommandPack;
 };
 /**
  * XObject class
@@ -103,6 +104,12 @@ export declare class XObject {
      * if override this method make sure to call super.init(data,skipParse) and to set skipParse to true
      */
     constructor(data: XObjectData, defaults?: any, skipParse?: boolean);
+    /**
+     * Initialize the XObject
+     * @param data - data to parse (XObjectData)
+     * @param skipParse - skip data parsing
+     * @deprecated - use parse method instead
+     */
     init(data?: any, skipParse?: boolean): void;
     parseEvents(options?: XEventListenerOptions): void;
     addEventListener(eventName: string, handler: XObjectOnEventHandler, options?: XEventListenerOptions): void;

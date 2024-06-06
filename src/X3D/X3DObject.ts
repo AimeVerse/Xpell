@@ -584,12 +584,12 @@ export class X3DObject extends XObject {
      * Append X3DObject as a child object
      * @param x3dObject 
      */
-    async append(x3dObject: X3DObject | IX3DObjectData) {
+    async append(x3dObject: any | IX3DObjectData) {
         if (!(x3dObject instanceof X3DObject)) {
             x3dObject = await X3D.create(<IX3DObjectData>x3dObject)
         }
         // this._children.push(x3dObject as XObject);
-        super.append(<XObject>x3dObject)
+        super.append(<any>x3dObject)
         if (this._three_obj) {
             this._three_obj.add((<X3DObject>x3dObject).getThreeObject() as THREE.Object3D)
         }

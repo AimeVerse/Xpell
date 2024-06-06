@@ -6,7 +6,7 @@
  * @description Universal User Interface (UI) Engine for Javascript supporting devices & browsers
  * @author Fridman Fridman <fridman.tamir@gmail.com>
  * @since  22/07/2022
- * @Copyright Fridman Tamir 2022, all right reserved
+ * @Copyright Aime Technologies 2022, all right reserved
  *
  *      This program is free software; you can redistribute it and/or
  *		modify it under the terms of the GNU General Public License
@@ -22,7 +22,6 @@ export { Wormholes, Wormholes as _wh, WormholeEvents, type MessageType } from ".
 export { XUI, type XUIApp, XUIModule } from "./src/XUI/XUI";
 export { XUIObject } from "./src/XUI/XUIObject";
 export { XUIObjects, XView, XButton, XForm, XHeader, XImage, XLabel, XLink, XList, XNavBar, XTextArea, XTextField, XVideo, XWebcam, XHTML, XInput, XSVG, XPassword, XSVGCircle, XSVGEllipse, XSVGLine, XSVGPolygon, XSVGRect, XSVGPolyline, XSVGPath } from "./src/XUI/XUICoreObjects";
-export { TopBar } from "./src/XUI/XDashboard";
 export { XViewManager, type XViewsPack } from "./src/XUI/XViewManager";
 export { X3D, type X3DApp, type X3DSceneControl, type X3DPhysicsEngines, type X3DHelpers, type X3AxesHelper, type XHelperData, X3DModule } from "./src/X3D/X3D";
 export { type X3DSceneBackground, type X3DSceneBackgroundTypes, type X3DSceneBackgroundHandler, type X3DSceneBackgroundParams } from "./src/X3D/X3DWorldSceneBackground";
@@ -36,5 +35,6 @@ export { XDB, XDB as _xdb, _XDataBase } from "./src/XDB/XDB";
 export { XAI, XAI as _xai, XAIModule } from "./src/XAI/XAI";
 export { XAIObject } from "./src/XAI/XAIObject";
 export { XAIObjects, XTTS } from "./src/XAI/XAICoreObjects";
+export { XUIAnimate, _AnimateCSS } from "./src/XUI/XUIAnimations";
 import { Xpell } from "./src/Core/Xpell";
 export default Xpell;

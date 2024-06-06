@@ -402,20 +402,8 @@ export class XUIObject extends XObject {
 
     async onMount() {
         if (!this._mounted) {
-            try {
-                // _base_display uses to show the element if it was hidden
-                
-                if (!this._base_display) {
-                    const cs = getComputedStyle(this._dom_object).getPropertyValue("display")
-                    if (!cs || cs == "none") this._base_display = "block"
-                    else this._base_display = cs
-                }
-                if(this._base_display != "none") {
-                    this.show();
-                }
-            } catch (error) {
-                this._base_display = "block"
-            }
+            let needShow = false
+            
             if (this._on_click) {
 
                 if (typeof this._on_click === 'function') {
@@ -428,6 +416,20 @@ export class XUIObject extends XObject {
             }
 
             await super.onMount()
+            try {
+                // _base_display uses to show the element if it was hidden
+                
+                const computedStyle = getComputedStyle(this._dom_object).getPropertyValue("display")
+                if (!this._base_display) {
+                    if (!computedStyle || computedStyle == "none") this._base_display = "block"
+                    else this._base_display = computedStyle
+                }
+                needShow = (computedStyle != "none")          
+            } catch (error) {
+                this._base_display = "block"
+            }
+            if (needShow) this.show()
+
             
         }
 

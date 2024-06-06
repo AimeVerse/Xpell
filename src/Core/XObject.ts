@@ -142,7 +142,7 @@ export class XObject {
         this._children = []
         this._nano_commands = {}
         this.addNanoCommandPack(_xobject_basic_nano_commands)
-        if(data._nano_commands) {
+        if(data && data.hasOwnProperty("_nano_commands") && data._nano_commands) {
             this.addNanoCommandPack(data._nano_commands)
             delete data._nano_commands //important to delete the nano commands from the data
         }

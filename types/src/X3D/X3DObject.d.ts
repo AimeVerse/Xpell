@@ -206,7 +206,7 @@ export declare class X3DObject extends XObject {
      * Append X3DObject as a child object
      * @param x3dObject
      */
-    append(x3dObject: X3DObject | IX3DObjectData): Promise<void>;
+    append(x3dObject: any | IX3DObjectData): Promise<void>;
     /**
      * Show the X3DObject (if it was hidden)
      */
