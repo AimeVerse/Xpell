@@ -294,7 +294,7 @@ export class XObject {
      * @param data data to parse
      * @param ignore - lis of words to ignore in the parse process
      */
-    parse(data: XObjectData, ignore = reservedWords) {
+    parse(data: XObjectData, ignore:any = reservedWords) {
 
         let cdata = Object.keys(data);
         cdata.forEach(field => {

@@ -12,6 +12,9 @@ interface IXData {
     [k:string]: string | null | [] | undefined | Function | boolean | number | {}
 }
 
+export const TWO_PI = 2 * Math.PI;
+
+
 export class XUtils {
     /**
      * create ignore list for parser to ignore spells words

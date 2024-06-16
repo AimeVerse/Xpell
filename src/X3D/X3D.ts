@@ -272,15 +272,14 @@ export class X3DModule extends XModule {
 
             if (ints?.object) {
                 let obj = ints.object
-                // ("obj",obj.name);
-                
                 let found = false
                 //search all child objects to find the root object
                 while (obj.parent && !found) {
                     if (obj.parent.type == "Scene") {
-
                         const x3dObject:X3DObject = <any>X3D.getObject(obj.name)
-                        x3dIntersectedObjects[x3dObject._id] = x3dObject
+                        if(x3dObject) {
+                            x3dIntersectedObjects[x3dObject._id] = x3dObject
+                        }
                         found = true
                     }
                     else {

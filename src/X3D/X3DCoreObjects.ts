@@ -30,6 +30,7 @@ export const threeGeometries:{[name:string]:any} = {
     "cylinder-geometry": THREE.CylinderBufferGeometry,
     "torus-geometry": THREE.TorusBufferGeometry,
     "cone-geometry": THREE.ConeBufferGeometry,
+    "buffer-geometry": THREE.BufferGeometry,
 
 
 }
@@ -85,13 +86,23 @@ export class XCamera extends X3DObject {
     
 
     constructor(data:XCameraData) {
-        const fieldsToParse = ["_fov","_ratio","_far","_close","_positional_audio_listener","_camera"]
+        
+        //backwards compatibility
+        const fieldsToReplace = ["fov","ratio","far","close","positional_audio_listener","camera"]
 
-        super(data) // parse parent class fields (X3dDObject & XObject)
-        this.parseFields(data,fieldsToParse,true) //parse Camera fields
+        fieldsToReplace.forEach(field => {
+            if(data[field]) {
+                data["_" + field] = data[field]
+                delete data[field]
+            }
+        })
+
+        super(data,{},true) // parse parent class fields (X3dDObject & XObject)
+        super.parse(data)
         this._three_obj = null  // reset THREE object 
         this._three_class = threeCameras[<string>data._camera] // define THREE class 
         this._threes_class_args = [this._fov, this._ratio, this._close, this._far] // define THREE class arguments 
+        
     }
 }
 
@@ -116,26 +127,58 @@ export interface XLightData extends IX3DObjectData {
 export class XLight extends X3DObject {
     static xtype = "light"
     readonly _is_light:boolean = true 
+    //private fields
+    #_color :number | string  =  0xffffff
+    #_intensity:number = 0.5
+
+
+    declare _three_obj: THREE.Light| null
     _light?:XLightTypes = "ambient"
-    _color? :THREE.Color | number =  0xffffff
-    _intensity?:number = 1.0
+    // _intensity?:number = 0.5
 
     constructor(data:XLightData) {
         
-        const fieldsToParse = ["_light","_color","_intensity"]
-        super(data) // parse parent class fields (X3dDObject & XObject)
-        this.parseFields(data,fieldsToParse,true) //parse Camera fields
+        //backwards compatibility
+        const fieldsToReplace = ["light","color","intensity"]
+        fieldsToReplace.forEach(field => {
+            if(data[field]) {
+                data["_" + field] = data[field]
+                delete data[field]
+            }
+        })
+        super(data,{},true) // parse parent class fields (X3dDObject & XObject)
+        super.parse(data)
         this._type = XLight.xtype
         this._three_class = threeLights[<string>data._light]
         this._threes_class_args = [this._color, this._intensity]
+        this.addNanoCommand("rotate-color", (xcdm,xobj) => {
+            xobj._color =  "hsl(" + xobj._frame_number + ",100%,50%)"
+        })
     }
 
-    // constructor(data:XLightData, skyColor:THREE.Color | number, groundColor:THREE.Color | number) {
-    //     super(data) // parse parent class fields (X3dDObject & XObject)
-    //     this._type = XLight.xtype
-    //     this._three_class = threeLights[<string>data._light]
-    //     this._threes_class_args = [skyColor, groundColor, this.intensity]
-    // }
+    set _color(color:number | string ) {
+        this.#_color = color
+        if(this._three_obj && this._three_obj.color) {
+            this._three_obj.color = new THREE.Color(color)
+        }
+    }
+
+    get _color() {
+        return this.#_color
+    }
+
+    set _intensity(intensity:number) {
+        this.#_intensity = intensity
+        if(this._three_obj) {
+            this._three_obj.intensity = intensity
+        }
+    }
+
+    get _intensity() {
+        return this.#_intensity
+    }
+
+
 }
 
 export class HemisphereLight extends XLight {
@@ -175,7 +218,9 @@ export class XGeometry extends X3DObject {
                 depth: 0,
             }
         }
-        super(data, defaults)
+        super(data, defaults,true)
+        this.parse(data)
+
         this._three_class = threeGeometries[<string>data._type]
         if(data._threes_class_args) {
             this._threes_class_args = data._threes_class_args
@@ -202,16 +247,34 @@ export class XGeometry extends X3DObject {
  * } */
 
 export class XMaterial extends X3DObject {
+
+    #_color:number | string = 0xffffff
+    #_side:number = THREE.DoubleSide
+
+    declare _three_obj: any
+
     constructor(data:IX3DObjectData) {
         const defaults = {
             // roughness: (data.roughness) ? data.roughness : 1,
         }
 
 
-        super(data, defaults)
-        this._three_class=  threeMaterials[<string>data._type],
-        this.color =  (data.color) ? data.color : 0xffffff,
-        this.side = (data.side)  ? data.side : THREE.DoubleSide
+           //backwards compatibility
+           const fieldsToReplace = ["color","side"]
+
+           fieldsToReplace.forEach(field => {
+               if(data[field]) {
+                   data["_" + field] = data[field]
+                   delete data[field]
+               }
+           })
+
+           
+        super(data, defaults,true)
+        this.parse(data)
+        this._three_class=  threeMaterials[<string>data._type]
+        // this.color =  (data.color) ? data.color : 0xffffff,
+        // this.side = (data.side)  ? data.side : THREE.DoubleSide
 
 
 
@@ -239,8 +302,8 @@ export class XMaterial extends X3DObject {
         }
 
         let tca_params :{[name:string]:any} = {
-            color: this.color,
-            side: this.side,
+            color: this.#_color,
+            side: this.#_side,
             // roughness: this.roughness
         }
         
@@ -301,6 +364,13 @@ export class XMaterial extends X3DObject {
 
     }
 
+    set _color(color:number | string) {
+        this.#_color = color
+        if(this._three_obj) {
+            this._three_obj.color = new THREE.Color(color)
+        }
+    }
+
    
 }
 
@@ -332,12 +402,10 @@ export class XMesh extends X3DObject {
     }) {
         super(data, defaults)
         this._three_class = THREE.Mesh
-        if(!this._three_obj) {
-            
+        if(!this._three_obj) { 
             this._geometry = new XGeometry(<any>data._geometry)
             this._material = new XMaterial(<any>data._material)
         }
-
     }
 
     getThreeObject() {

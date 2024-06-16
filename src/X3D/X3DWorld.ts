@@ -196,15 +196,7 @@ export class X3DWorld {
                 const lgt:any = (xworld._scene._lights) ? xworld._scene._lights[light_name] : null
                 let light = await X3D.create(lgt)
                 light.name = light_name
-                
-                if (lgt._helper && lgt._light == "directional") {
-                    
-                    const helper = new THREE.DirectionalLightHelper(light.getThreeObject())
-                    this.scene.add(helper)
-                }
-                else {
-                    await this.addX3DObject(light)
-                }
+                await this.addX3DObject(light)
             })
         } else {
             _xlog.log("X3d world -> no Lights defined")
@@ -360,17 +352,6 @@ export class X3DWorld {
                     this.transformControlX3dObject?.setPositionFromVector3(pos)
                     this.transformControlX3dObject?.setRotationFromEuler(rot)
                     this.transformControlX3dObject?.setScaleFromVector3(scale)
-                    // XData.variables["tc-pos-x"] = pos.x.toFixed(2)
-                    // XData.variables["tc-pos-y"] = pos.y.toFixed(2)
-                    // XData.variables["tc-pos-z"] = pos.z.toFixed(2)
-                    
-                    // XData.variables["tc-rot-x"] = rot.x.toFixed(2)
-                    // XData.variables["tc-rot-y"] = rot.y.toFixed(2)
-                    // XData.variables["tc-rot-z"] = rot.z.toFixed(2)
-                    
-                    // XData.variables["tc-scale-x"] = scale.x.toFixed(2)
-                    // XData.variables["tc-scale-y"] = scale.y.toFixed(2)
-                    // XData.variables["tc-scale-z"] = scale.z.toFixed(2)
                 }
     
             })

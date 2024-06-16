@@ -135,7 +135,7 @@ export class XSphere extends XMesh {
     //             },
     //             _position: {x: THREE.MathUtils.randFloat(-0.5,0.5),y: THREE.MathUtils.randFloat(0.3,0.5),z: THREE.MathUtils.randFloat(0,2)},
     //             _rotation: {x: 90,y: 0,z: 0},
-    //             "onframe":"rotation x:++0.01"
+    //             "_on_frame":"rotation x:++0.01"
     //         }
     //     }
     // }

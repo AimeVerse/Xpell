@@ -132,9 +132,9 @@ export class X3DObject extends XObject {
     /**
      * protected fields should not be override by XData object 
      */
-    protected _animation_clips: { [name: string]: THREE.AnimationAction }
-    protected _clock: THREE.Clock
-    protected _fraction: number
+    protected _animation_clips!: { [name: string]: THREE.AnimationAction }
+    protected _clock!: THREE.Clock
+    protected _fraction!: number
     protected _animation_mixer!: THREE.AnimationMixer | null
     // protected _cache_cmd_txt!: string | undefined
     // protected _cache_jcmd: any
@@ -181,12 +181,24 @@ export class X3DObject extends XObject {
 
 
 
-    constructor(data: IX3DObjectData, defaults?: any) {
+    constructor(data: IX3DObjectData, defaults?: any,skipParse:boolean = false) {
         super(data, defaults, true)
-        super.init(data,false)
-        
-        this.parse3d(data)
+        if(! skipParse){
+            this.parse(data)
+        }
 
+        
+    }
+
+
+    parse(data: XObjectData,init:boolean = true) {
+        super.parse(<any>data, reservedWords)
+        this.parse3d(data)
+        if(init) this.init()
+    }
+
+
+    init() {
         this._animation = true
         this._animation_clips = {}
         // this._fade_duration = 0.25
@@ -214,11 +226,7 @@ export class X3DObject extends XObject {
 
         this.addXporterInstanceXporter(THREE.Vector3,vectorHandler)
         this.addXporterInstanceXporter(THREE.Euler,vectorHandler)
-
-// else if (tf instanceof THREE.Vector3 || tf instanceof THREE.Euler) {
-
     }
-
 
 
     /**
@@ -270,7 +278,7 @@ export class X3DObject extends XObject {
             this._fade_duration = 0.25
         }
 
-        this.parse(data, reservedWords)
+        // super.parse(data, reservedWords)
 
     }
 
@@ -384,13 +392,7 @@ export class X3DObject extends XObject {
 
 
 
-    get canon() {
-        return this.getCannonObject()
-    }
-
-    get three() {
-        return this.getThreeObject()
-    }
+    
 
     /**
      * This method gets the Three object of the X3DObject
@@ -445,7 +447,7 @@ export class X3DObject extends XObject {
         if (!this._cannon_obj && this._enable_physics) {
             let offset = new CANNON.Vec3(0, 0, 0)
             if (!this._cannon_shape) {
-                //using BoundingBox because CovexHull is FPS consuming and Mesh (Cannon.Trimesh) does not support collisions
+                //using BoundingBox because ConvexHull is FPS consuming and Mesh (Cannon.Trimesh) does not support collisions
                 let shape = ShapeType.BOX
                 if (this._collider) {
                     const collisionType = (<string>this._collider).toLowerCase()
@@ -473,6 +475,13 @@ export class X3DObject extends XObject {
         return <CANNON.Body>this._cannon_obj
     }
 
+    get canon() {
+        return this.getCannonObject()
+    }
+
+    get three() {
+        return this.getThreeObject()
+    }
 
     /**
      * This method creates Positional Audio from a source file and attach it to the 3D object

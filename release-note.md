@@ -1,5 +1,15 @@
 Xpell Release Notes
 
+
+11 June 2024
+-------------
+- X3D Object
+  - changed parse to skip subclass (X3DObject) and use the parent class (XObject) parse method
+  - XLight
+    - light can change color and intensity in real-time
+    - "rotate-color" nano-command to change light color according to frame number and HSL
+  - 
+
 03 June 2024
 -------------
 - XUI Object 
