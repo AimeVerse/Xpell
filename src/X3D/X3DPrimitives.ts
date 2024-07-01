@@ -375,8 +375,9 @@ export class XCircle extends XMesh {
 export class XModel extends X3DObject {
     static xtype = "xmodel"
 
-    constructor(data:IXObjectData) {
-        super(data)
+    constructor(data:IX3DObjectData) {
+        super(data,{_type:XModel.xtype},true)
+        this.parse(data)
         
         this._log_rules._load_model = true
     }

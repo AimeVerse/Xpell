@@ -8,7 +8,8 @@ Xpell Release Notes
   - XLight
     - light can change color and intensity in real-time
     - "rotate-color" nano-command to change light color according to frame number and HSL
-  - 
+  - DynaObject (DynaSphere) added to X3D
+
 
 03 June 2024
 -------------
