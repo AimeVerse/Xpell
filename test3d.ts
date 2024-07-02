@@ -220,14 +220,30 @@ async function main() {
             console.log("Start");
             
             const ball = X3D._o["ball"]
+            const line = X3D._o["line"]
+            const bezier_curve = X3D._o["bezier-curve"]
+            const audiolightcolumns = X3D._o["audio-light-columns"]
 
             const audioContext = new AudioContext();
             const analyser = audioContext.createAnalyser();
+            analyser.fftSize = 256;
             const microphone = await navigator.mediaDevices.getUserMedia({ audio: true });
             const source = audioContext.createMediaStreamSource(microphone);
             source.connect(analyser);
-            analyser.fftSize = 256;
             ball._audio_analyzer = analyser;
+            line._audio_analyzer = analyser;
+            bezier_curve._audio_analyzer = analyser;
+            audiolightcolumns._audio_analyzer = analyser;
+        }
+    })
+    XUI.add({
+        _type: "label",
+        _text: "Hello World",
+        // _parent_element: "xcontrols",
+        style: "position:absolute; top:10px; left:10px; background-color: white; color: black; padding: 10px; border-radius: 10px;",
+        _data_source: "fps",
+        _on_data: (xobj, e) => {
+            xobj._text = e
         }
     })
 
