@@ -19,7 +19,6 @@ import { _xlog ,_xem,IXData,XData,XModule,XModuleData, XObject, XObjectData} fro
 import X3DObject, { IX3DObjectData } from "./X3DObject"
 import { XCameraData, XLightData } from './X3DCoreObjects'
 import X3DPrimitives from "./X3DPrimitives"
-import DynaObjects from "./Objects/DynaObjects"
 import X3DWorld from './X3DWorld'
 import { X3DSceneBackground } from './X3DWorldSceneBackground'
 import { _x } from '../Core/Xpell';
@@ -108,14 +107,9 @@ export class X3DModule extends XModule {
     constructor() {
         super({ _name: "x3d" })
         this.importObjectPack(X3DPrimitives)
-        this.importObjectPack(DynaObjects)
-        //SpellObjects.load(this)
         XData.objects["x3d-om"] = this.om
-        //this.world = null
         this.x3dObjects = {}
         _xem.fire("x3d-init")
-        
-        
     }
 
 

@@ -67,7 +67,6 @@ export {XGeometry,XGroup,XMaterial,XMesh,
 } from "./src/X3D/X3DCoreObjects"
 
 export {X3DPrimitives,XBox,XCone,XCylinder,XPlane,XSphere,XTorus,XCircle} from "./src/X3D/X3DPrimitives"
-export {DynaSphere} from "./src/X3D/Objects/DynaObjects"
 export {X3DWorld,XWorldStatus} from "./src/X3D/X3DWorld"
 export {XEditor,XTransformControls } from "./src/XUI/XEditor"
 export {X3DLoader} from "./src/X3D/X3DLoader"
