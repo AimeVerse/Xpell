@@ -74,7 +74,7 @@ async function main() {
         _nano_commands: {
             "flip": (xcdm,xobj:XUIObjects) => {
                 const inf = (xcdm._params.loop == "true") ? true : false
-                xobj.animate(XUIAnimate._animations.FLIP,inf)
+                xobj
             }
         },
         _on_mount: "hide",

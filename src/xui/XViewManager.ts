@@ -136,14 +136,16 @@ export class XViewManager {
      * handle the hashchange browser event, used to support Back functionality.
      */
     onBrowserUrlHashChanged(): void {
+        try {
         // this function is being called by event emitter therefore "this" is NOT View Manager
-        let anc = window.location.hash
-        if (anc && anc.length > 1) {
-            let viewNameFromUrl = anc.substring(1);
-            if (XUI.vm.#_active_view != viewNameFromUrl) { //prevent double call on showPage
-                XUI.vm.showPage(viewNameFromUrl)
+            let anc = window.location.hash
+            if (anc && anc.length > 1) {
+                let viewNameFromUrl = anc.substring(1);
+                if (XUI.vm.#_active_view != viewNameFromUrl && XUI.vm.hasView(viewNameFromUrl)) { //prevent double call on showPage
+                    XUI.vm.showPage(viewNameFromUrl)
+                }
             }
-        }
+        }  catch (e) {}
     }
 
 

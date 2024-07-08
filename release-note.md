@@ -1,6 +1,10 @@
 Xpell Release Notes
 
 
+8 July 2024
+-------------
+- Catch error in onBrowserUrlHashChanged() method [critical]
+
 11 June 2024
 -------------
 - X3D Object
