@@ -26,6 +26,11 @@ npm install xpell
 ```
 
 
+# Compiling Xpell.js
+npm run build:types
+npx api-extractor run --local
+npm run build
+
 
 
 # Credits & License

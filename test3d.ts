@@ -1,4 +1,4 @@
-import * as THREE from 'three'
+
 
 import { XUI, _xem, X3D, X3DApp, _x, _xd, X3DObject, XGeometry, XMaterial } from "./src/index"
 
@@ -21,11 +21,12 @@ async function main() {
 
     _x.start()
 
-    XUI.createPlayer()
+    X3D.createPlayer("x3d-player","x3d-player")
+    XUI.createPlayer("xplayer","xplayer")
     XUI.add({
         _type: "button",
         _text: "Start",
-        style:"position:absolute; top:10px; right:10px;",
+        style:"position:absolute; top:10px; right:10px;pointer-events: all;",
         // _parent_element: "xplayer",
         _on_click: async (xobj) => {
             const sph = await X3D._o["my-x3d-object"]
@@ -43,7 +44,8 @@ async function main() {
         }
     })
 
-    const world = await X3D.loadDefaultApp()
+    
+    const world = await X3D.loadDefaultApp(true,"clear")
     
     const sphere = {
         _type: "circle",
@@ -64,7 +66,7 @@ async function main() {
     
     const sph = await X3D.add(sphere)
     sph.hide()
-    console.log(sph);
+    console.log(sph,world);
    
     
     // //get anaylzer from microphone

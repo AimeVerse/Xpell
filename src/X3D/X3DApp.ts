@@ -149,7 +149,7 @@ export class X3DAppGenerator {
         //update the orbit controls
         tmpApp._scene._controls["cam-control"]._active = orbitControls
         //update the background color
-        tmpApp._scene._background._params._color1 = bgColor
+        tmpApp._scene._background._params._color = bgColor
         //update the physics engine
         tmpApp._physics._active = enablePhysics
         return tmpApp as X3DApp

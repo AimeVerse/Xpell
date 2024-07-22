@@ -1,6 +1,6 @@
 {
   "name": "xpell",
-  "version": "1.4.7",
+  "version": "1.4.82",
   "description": "Xpell UI JS Framework",
   "files": [
     "dist",
@@ -8,8 +8,8 @@
     "types",
     "docs"
   ],
-  "types": "./dist/index.d.ts",
-  "typings": "./dist/index.d.ts",
+  "types": "./types/index.d.ts",
+  "typings": "./types/index.d.ts",
   "module": "./dist/xpell.es.js",
   "main": "./dist/xpell.cjs.js",
   "exports": {
@@ -24,7 +24,7 @@
     "docs": "typedoc --options ./typedoc.json --tsconfig ./",
     "types": "npx -p typescript tsc index.ts -t es2021 --declaration --allowJs --emitDeclarationOnly -moduleResolution node --outDir types",
     "build": "vite build",
-    "pub": "vite build && npm publish"
+    "build:types": "vite build && tsc --project tsconfig.types.json"
   },
   "author": "Tamir Fridman <fridman.tamir@gmail.com> (https://github.com/fridman-tamir)",
   "license": "GPL-3",
@@ -33,6 +33,7 @@
     "url": "git+https://github.com/AIMEVerse/Xpell"
   },
   "devDependencies": {
+    "@microsoft/api-extractor": "^7.47.2",
     "@types/node": "^18.0.6",
     "@types/three": "^0.142.0",
     "draco3d": "^1.5.6",

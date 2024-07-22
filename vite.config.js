@@ -24,7 +24,7 @@ export default {
     },
     target: 'modules',
     minify: true,
-    // outDir:"dist",
+    outDir:"dist",
     // root: "",
     // base:"",
     rollupOptions: {
@@ -38,13 +38,13 @@ export default {
           three: "THREE",
           "cannon-es": "CANNON",
           "three-to-cannon": "THREE_TO_CANNON",
-          
-        }
+        },
+        exports: 'named'
       }
     }
   },
   plugins: [dts({
-    outputDir: ['dist'],
+    outputDir: ['types'],
     // include: ['index.ts',"xpell-core"],
     exclude: ['src/ignore','public'],
     // aliasesExclude: [/^@components/],

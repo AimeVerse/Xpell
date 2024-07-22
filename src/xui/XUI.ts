@@ -285,16 +285,21 @@ export class XUIModule extends XModule {
     /**
      * This method creates a player element and append it to the DOM
      * @param playerId - optional id of the player element
-     * @param elementId - optional id of the element to append the player to, if not provided the player will be appended to the body
+     * @param parentElementId - optional id of the element to append the player to, if not provided the player will be appended to the body
      * @returns HTMLDivElement
      */
-    createPlayer(playerId:string = "xplayer",elementId?:string,cssClass?:string): HTMLDivElement {
-        const dobj = (elementId) ? document.getElementById(elementId) : document.body
+    createPlayer(playerId:string = "xplayer",cssClass?:string,parentElementId?:string): HTMLDivElement {
+        const dobj = (parentElementId) ? document.getElementById(parentElementId) : document.body
         const div = document.createElement("div")
         div.id = playerId
-        div.className = (cssClass) ? cssClass : "xplayer"
-        div.style.width = "100%"
-        div.style.height = "100%"
+        div.className = (cssClass) ? cssClass : playerId
+        if(!cssClass) {
+            div.style.width = "100%"
+            div.style.height = "100%"
+            div.style.position = "absolute"
+            div.style.top = "0"
+            div.style.left = "0"
+        }
         
         this._player_element = div
         if(dobj) {

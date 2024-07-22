@@ -2,6 +2,7 @@
 import * as THREE from 'three'
 import { RGBELoader } from 'three/examples/jsm/loaders/RGBELoader.js'
 import X3DWorld from './X3DWorld'
+import { _xlog } from '../Core/XLogger'
 
 
 
@@ -67,6 +68,8 @@ export const createSceneBackgroundBasicHandlers = (world: X3DWorld) => {
         const color = (params._color) ? params._color : "black"
         if (color == "clear" || color == "transparent") {
             scene.background = null
+            _xlog.log("X3D Scene Background is transparent");
+            
         }
         else {
             scene.background = new THREE.Color(color)

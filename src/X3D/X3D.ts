@@ -57,6 +57,34 @@ export class X3DModule extends XModule {
         _xem.fire("x3d-init")
     }
 
+    /**
+     * This method creates a player element and append it to the DOM
+     * @param playerId - optional id of the player element
+     * @param parentElementId - optional id of the element to append the player to, if not provided the player will be appended to the body
+     * @returns HTMLDivElement
+     */
+    createPlayer(playerId:string = "x3d-player",cssClass?:string,parentElementId?:string): HTMLDivElement {
+        const dobj = (parentElementId) ? document.getElementById(parentElementId) : document.body
+        const div = document.createElement("div")
+        div.id = playerId
+        div.className = (cssClass) ? cssClass : playerId
+        if(!cssClass) {
+            div.style.width = "100%"
+            div.style.height = "100%"
+            div.style.position = "absolute"
+            div.style.top = "0"
+            div.style.left = "0"
+        }
+        
+        this._player_element = div
+        if(dobj) {
+            dobj.style.margin = "0"
+            dobj.style.padding = "0"
+            dobj.appendChild(div)
+        }
+        return div
+    }
+
 
     /**
      * Loads XWorld from world data object
@@ -136,8 +164,6 @@ export class X3DModule extends XModule {
     async add(x3dObject: X3DObject | IX3DObjectData): Promise<X3DObject> {
         //this.om.addObject(<any>x3dObject)
         if (!(x3dObject instanceof X3DObject)) {
-            console.log("Creating new object");
-            
             x3dObject = await this.create(<any>x3dObject)
         }
         this._object_manager.addObject(<X3DObject>x3dObject)
@@ -180,14 +206,7 @@ export class X3DModule extends XModule {
         _xem.fire("x3d-world-load")
     }
 
-    // get_objects_available() {
-    //     const rejected_words = ["material", "geometry", "mesh"];
-    //     const obj_names = Object.keys(X3DPrimitives.getObjects());
-    //     let shapes_list = [];
-
-    //     shapes_list = obj_names.filter((el) => !rejected_words.includes(el));
-    //     return shapes_list
-    // }
+   
 
 
     enableRaycast(event = "click") {
@@ -250,32 +269,7 @@ export class X3DModule extends XModule {
 
     }
 
-    // set_world_control_target(cameraTarget:THREE.Vector3) {
-
-    //     if (this.world?.controls) {
-    //         //const cameraTarget = new THREE.Vector3(0.2,0.2,0)
-    //         //this.world.controls.target = cameraTarget
-    //         this.world.defaultCamera.position.set(cameraTarget.x, cameraTarget.y + 0.5, cameraTarget.z + 3)
-    //     }
-    // }
-
-
-    // document.addEventListener('keydown', (event) => {
-    //     // const world = this.world;
-
-    //     switch (event.code) {
-    //         case 'KeyG':
-    //             this.world.widgetControlls.setMode('translate')
-    //             break
-    //         case 'KeyR':
-    //             this.world.widgetControlls.setMode('rotate')
-    //             break
-    //         case 'KeyS':
-    //             this.world.widgetControlls.setMode('scale')
-    //             break
-    //     }
-    // })
-
+   
 
     /**
      * Add sky map (background to the world scene)
