@@ -1,12 +1,46 @@
 Xpell Release Notes
 
 
-8 July 2024
--------------
+21 July 2024 (1.4.8)
+---------------------
+- X3DApp types moved to X3DApp.ts file
+  - X3DAppGenerator - default X3DApp generator
+- X3D.loadDefaultApp method to load default X3DApp (Solid black background, Perspective Camera, Ambient Light and Orbit Control)
+- X3D.add can now accept a X3DObject or X3DObjectData (JSON)
+- XMesh new fields:
+  - _wireframe - boolean to set wireframe mode
+  - _color - color to set the mesh color
+- XSphere new fields:
+  - _radius - radius of the sphere
+  - _color & _wireframe is also applicable because XSphere is a subclass of XMesh
+- Xplane new fields:
+  - _width - width of the plane
+  - _height - height of the plane
+- XBox new fields:
+  - _width - width of the box
+  - _height - height of the box
+  - _depth - depth of the box
+- XCircle new fields:
+  - _radius - radius of the circle
+  - _theta_start - start angle of the circle
+  - _theta_length - length of the circle
+- XCone
+  - _radius - radius of the cone
+  - _height - height of the cone
+- XCylinder
+  - _radius_top - radius of the cylinder
+  - _radius_bottom - radius of the cylinder
+  - _height - height of the cylinder
+- XTorus
+  - _radius - radius of the torus
+  - _tube_radius - tube radius of the torus
+
+8 July 2024 (1.4.7)
+---------------------
 - Catch error in onBrowserUrlHashChanged() method [critical]
 
-11 June 2024
--------------
+11 June 2024 (1.4.6)
+---------------------
 - X3D Object
   - changed parse to skip subclass (X3DObject) and use the parent class (XObject) parse method
   - XLight

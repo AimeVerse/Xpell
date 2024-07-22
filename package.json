@@ -10,8 +10,8 @@
   ],
   "types": "./dist/index.d.ts",
   "typings": "./dist/index.d.ts",
-  "main": "./dist/xpell.umd.js",
   "module": "./dist/xpell.es.js",
+  "main": "./dist/xpell.cjs.js",
   "exports": {
     ".": {
       "import": "./dist/xpell.es.js",

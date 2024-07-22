@@ -124,11 +124,11 @@ export class XpellEngine {
      * Loads multiple module at ones
      * @param {Array<XModule>} xModulesArray 
      */
-    loadModules(xModulesArray:Array<XModule>):void {
-        const sthis = this //strong this
-        xModulesArray.forEach(mod => sthis.loadModule(mod))
+    loadModules(...xModulesArray:Array<XModule>  ):void {
+        xModulesArray.forEach(mod => this.loadModule(mod))
     }
 
+    
 
     /**
      * Display information about the Xpell engine to the console

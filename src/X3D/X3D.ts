@@ -17,7 +17,6 @@ import { _xlog ,_xem,IXData,XData,XModule,XModuleData, XObject, XObjectData} fro
 // import { XLogger as _xlog } from '../XLogger'
 
 import X3DObject, { IX3DObjectData } from "./X3DObject"
-import { XCameraData, XLightData } from './X3DCoreObjects'
 import X3DPrimitives from "./X3DPrimitives"
 import X3DWorld from './X3DWorld'
 import { X3DSceneBackground } from './X3DWorldSceneBackground'
@@ -34,62 +33,8 @@ const X3DEngineStatus = {
     Stopped: 3
 }
 
-export type X3DSceneControl = {
-    _type: "orbit" | "pointer" | "first-person" | "transform",
-    _active: boolean,
-    _params?: {
-        [k: string]: any
-    }
-}
-export type X3DPhysicsEngines = "cannon.js"
-export type X3DHelpers = "axes" | "skeleton"
 
-/**
- * X3DHelper Data 
- */
-export type X3AxesHelper = {
-    size:number
-}
-/**
- * X3DHelper Data 
- */
-
-export type XHelperData<Type> ={
-    _type: X3DHelpers, //helper type
-    _active: boolean, 
-    _params?: {
-        [Property in keyof Type]: Type[Property]
-    }
-}
-
-export type X3DApp = {
-    _parent_element: string , //id of the 3d player html tag 
-    _physics: {
-        _engine?: X3DPhysicsEngines,
-        _active: boolean,
-        _debug?: boolean //enable engine debugging by showing the cannon body shape
-    },
-    _scene: {
-        _helpers?: {
-            [k: string]: XHelperData<X3AxesHelper>
-        },
-        _lights?: {
-            [k: string]: XLightData
-        },
-        _cameras?: {
-            [k: string]: XCameraData
-        },
-        _background?: X3DSceneBackground
-        _controls?: {
-            [k: string]: X3DSceneControl
-        }
-        _objects?: {
-            [k: string]: IX3DObjectData
-        }
-        _raycast?:boolean
-    },
-
-}
+import { X3DApp, X3DAppGenerator } from './X3DApp'
 
 
 /**
@@ -124,6 +69,12 @@ export class X3DModule extends XModule {
         await this.loadApp(x3dWorldData)
     }
 
+
+    async loadDefaultApp(orbitControls:boolean = true,bgColor:string="black",enablePhysics?:boolean):Promise<X3DApp> {
+        const app:X3DApp =  X3DAppGenerator.getDefaultApp(orbitControls,bgColor,enablePhysics)
+        await this.loadApp(app)
+        return app
+    }
 
     async loadApp(x3dApp:X3DApp, autoRun = true) {
         this.world = new X3DWorld(x3dApp)
@@ -178,12 +129,20 @@ export class X3DModule extends XModule {
 
     /**
      * Add X3DObject to the object manager and world
-     * @param x3dObject X3DObject 
+     * 
+     * @param x3dObject X3DObject | IX3DObjectData - The X3DObject to add
+     * @returns The added X3DObject (after creation)
      */
-    async add(x3dObject: X3DObject) {
+    async add(x3dObject: X3DObject | IX3DObjectData): Promise<X3DObject> {
         //this.om.addObject(<any>x3dObject)
-        this._object_manager.addObject(<any>x3dObject)
-        await this.world?.addX3DObject(x3dObject)
+        if (!(x3dObject instanceof X3DObject)) {
+            console.log("Creating new object");
+            
+            x3dObject = await this.create(<any>x3dObject)
+        }
+        this._object_manager.addObject(<X3DObject>x3dObject)
+        await this.world?.addX3DObject(<X3DObject>x3dObject)
+        return <X3DObject>x3dObject
     }
 
     /**

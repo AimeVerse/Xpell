@@ -209,6 +209,14 @@ export interface HemisphereLightData extends XLightData {
 export class XGeometry extends X3DObject {
     // width:number
     // height:number
+
+    
+
+    //backward computability 
+    width:number = 0
+    height:number = 0
+    depth:number = 0
+
     constructor(data:IX3DObjectData, defaults?:IX3DObjectData) {
         if (!defaults) {
             defaults = {
@@ -218,6 +226,9 @@ export class XGeometry extends X3DObject {
                 depth: 0,
             }
         }
+        if(data.width) defaults.width = data.width
+        if(data.height) defaults.height = data.height
+        if(data.depth) defaults.depth = data.depth
         super(data, defaults,true)
         this.parse(data)
 
@@ -340,7 +351,7 @@ export class XMaterial extends X3DObject {
                             if (typeof lmap[key] == "string" && lmap[key].startsWith("$")) { // spell value
                                 const ks = lmap[key].split(" ")
                                 if (ks[0] == "$_v2") { //create vector 2
-                                    tca_params[key] = new THREE.Vector2(ks[1], ks[2])
+                                    tca_params[key] = new THREE.Vector2(<any>ks[1], <any>ks[2])
                                 }
                             } else {
                                 tca_params[key] = lmap[key]
@@ -390,26 +401,45 @@ export class XMesh extends X3DObject {
         return new XMesh(_xdata)
     }
 
-    // _geometry:XGeometry
-    // _material:XMaterial
+    _geometry!:XGeometry | IX3DObjectData
+    _material!:XMaterial | IX3DObjectData
+    _wireframe:boolean = false
 
+    protected __color:number | undefined  // private color field
 
     constructor(data:IX3DObjectData, defaults = {
         _type: "mesh",
         _geometry: null,
         _material: null,
         _positional_audio_source:null
-    }) {
-        super(data, defaults)
+    },skipParse = false) {
+        super(data, defaults,skipParse)
         this._three_class = THREE.Mesh
-        if(!this._three_obj) { 
-            this._geometry = new XGeometry(<any>data._geometry)
-            this._material = new XMaterial(<any>data._material)
+
+        if(data._wireframe) data._material.wireframe = true
+        this.parse(data)
+        
+        
+        
+    }
+
+    set _color(val:number) {
+        this.__color = val
+        if(this._material instanceof XMaterial) {
+            (<any>this._material.getThreeObject()).color = new THREE.Color(val)
+        } else if(this._material) {
+            this._material["color"] = val
         }
     }
 
-    getThreeObject() {
+    get _color() : number | undefined {
+        return this.__color
+    }
+
+    async getThreeObject() {
         if(!this._three_obj) {
+            this._geometry = new XGeometry(<any>this._geometry)
+            this._material = new XMaterial(<any>this._material)
             this._threes_class_args = [(<any>this._geometry).getThreeObject(), (<any>this._material).getThreeObject()]
         }
         return  super.getThreeObject()

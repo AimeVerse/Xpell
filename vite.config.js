@@ -14,11 +14,11 @@ export default {
   },
   build: {
     lib: {
-      entry: index,
+      entry: "./src/index.ts",
       name: 'xpell',
-
+      formats: ['es','umd','cjs'],
       //exclude public folder
-      exclude: ['public'],
+      // exclude: ['public'],
       // the proper extensions will be added
       fileName: format => `xpell.${format}.js`
     },
