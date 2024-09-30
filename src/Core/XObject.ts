@@ -633,6 +633,31 @@ export class XObject {
         this._children = []
     }
 
+    /**
+     * Remove a child from the XObject )
+     * @param child - the child to
+     * @returns void
+        */
+    removeChild(child: XObject, dispose = false) {
+        if (dispose) {
+            child.dispose()
+        } else {
+            const index = this._children.indexOf(child)
+            if (index > -1) this._children.splice(index, 1)
+            child._parent = null
+        }
+        
+    }
+
+    /**
+     * Add a child to the XObject
+     * @param child - the child to add
+     */
+    addChild(child: XObject) {
+        this._children.push(child)
+        child._parent = this
+    }
+
 }
 
 

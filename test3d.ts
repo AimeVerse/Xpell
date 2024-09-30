@@ -1,6 +1,6 @@
 
 
-import { XUI, _xem, X3D, X3DApp, _x, _xd, X3DObject, XGeometry, XMaterial } from "./src/index"
+import { XUI, _xem, X3D, X3DApp, _x, _xd, X3DObject, XGeometry, XMaterial, XUIObject } from "./src/index"
 
 export const TWO_PI = 2 * Math.PI;
 
@@ -71,7 +71,6 @@ async function main() {
     
     // //get anaylzer from microphone
    
-
 
 }
 

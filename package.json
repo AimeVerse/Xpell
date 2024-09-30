@@ -8,8 +8,7 @@
     "types",
     "docs"
   ],
-  "types": "./types/index.d.ts",
-  "typings": "./types/index.d.ts",
+  "types": "./dist/index.d.ts",
   "module": "./dist/xpell.es.js",
   "main": "./dist/xpell.cjs.js",
   "exports": {

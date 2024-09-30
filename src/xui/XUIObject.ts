@@ -7,12 +7,13 @@
  * @copyright Aime Technologies 2022, all right reserved
  */
 
-import { XUtils, _xd, XObject, XObjectData, _xem, XEventListenerOptions } from "../Core/Xpell"
+import { XUtils, _xd, XObject, XObjectData, _xem, XEventListenerOptions ,_xlog, XObjectOnEventIndex, XNanoCommand} from "../Core/Xpell"
 import XUI from "./XUI";
 import _xuiobject_basic_nano_commands from "./XUINanoCommands"
 const reservedWords = { _children: "child objects" }
 const xpellObjectHtmlFieldsMapping: { [k: string]: string } = { "_id": "id", "css-class": "class", "animation": "xyz", "input-type": "type" };
 import {XUIAnimate} from "./XUIAnimations"
+import { XDataXporter } from "../Core/XObject";
 
 /**
  *   ADD On Event support
@@ -21,17 +22,40 @@ import {XUIAnimate} from "./XUIAnimations"
  *  - check for events in getDOMObject and add them to the object
 */
 export class XUIObject extends XObject {
+
+    declare _id: string;
+    declare _type: string;
+    declare _children: Array<XObject | XObjectData>
+    declare _parent: XObject | null 
+    declare _name?: string
+    declare _data_source?: string //XData source
+    declare _on: XObjectOnEventIndex 
+    declare _once: XObjectOnEventIndex 
+    declare _on_create?: string | Function | undefined
+    declare _on_mount?: string | Function | undefined
+    declare _on_frame?: string | Function | undefined
+    declare _on_data?: string | Function | undefined
+    declare _on_event?: string | Function | undefined
+    declare _process_frame: boolean
+    declare _process_data: boolean 
+    declare protected _xem_options: XEventListenerOptions
+    declare protected _nano_commands: { [k: string]: XNanoCommand }
+    declare protected _cache_cmd_txt?: string;
+    declare protected _cache_jcmd?: any;
+    declare protected _event_listeners_ids: { [eventName: string]: string } 
+    declare protected _xporter: XDataXporter 
+
+
+
     // [k:string]: string | null | [] | undefined | Function | boolean | {}
     _html_tag: string
     _html_ns?: string | null
     protected _dom_object: any
-    _type: string  //[_SC.NODES.type]
     _html?: string | undefined
     _base_display?: string | undefined | null
     // text: string //depracted
     // _text?: string
     #_text: string = ""
-    _children: XUIObject[];
     _visible: boolean
     _parent_element?: string //used for mount parent HTML element id
     _on_click?: Function | string
@@ -126,7 +150,7 @@ export class XUIObject extends XObject {
 
             //--> change to support text content and children
             if (this._children.length > 0) {
-                this._children.forEach((child: XUIObject) => {
+                this._children.forEach((child: any) => {
                     const coo = child.getDOMObject()
                     dom_object.appendChild(coo);
                 })
@@ -226,6 +250,21 @@ export class XUIObject extends XObject {
         }
     }
 
+    /**
+     * Removes a child object from the XUIObject
+     * @param xObject - the child object to remove
+     */
+    removeChild(xObject: XUIObject) {
+        if (this._dom_object instanceof HTMLElement) {
+            try {
+
+                this._dom_object.removeChild(xObject.dom)
+            } catch (error) {
+                _xlog.log("Error removing child from dom")
+            }
+        }
+        super.removeChild(xObject)
+    }
 
 
     /**
@@ -294,6 +333,8 @@ export class XUIObject extends XObject {
             this.class = newClass
         }
     }
+
+    
 
 
     
@@ -449,7 +490,7 @@ export class XUIObject extends XObject {
             this.checkAndRunInternalFunction(this._once.show)
         }
 
-        this._children.forEach((child: XObject) => {
+        this._children.forEach((child: any) => {
             if (child.onShow && typeof child.onShow === 'function') {
                 child.onShow()
             }
@@ -468,7 +509,7 @@ export class XUIObject extends XObject {
             this.checkAndRunInternalFunction(this._once.hide)
         }
 
-        this._children.forEach((child: XObject) => {
+        this._children.forEach((child: any) => {
             if (child.onHide && typeof child.onHide === 'function') {
                 child.onHide()
             }
